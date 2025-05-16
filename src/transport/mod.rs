@@ -1,4 +1,3 @@
 pub mod http_client;
-pub mod websocket_client;
-pub mod model;
-pub mod ws_interface;
+pub mod lightstreamer_client;
+pub mod lightstreamer_interface;
