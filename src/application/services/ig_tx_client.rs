@@ -2,12 +2,12 @@ use std::str::FromStr;
 use async_trait::async_trait;
 use chrono::{DateTime, NaiveDate, NaiveDateTime, Utc};
 use reqwest::{Client, StatusCode};
-use regex::Regex;
 use tracing::debug;
 use crate::application::models::transaction::{RawTransaction, Transaction};
 use crate::config::Config;
 use crate::error::AppError;
 use crate::session::interface::IgSession;
+use crate::utils::parsing::{parse_instrument_name, InstrumentInfo};
 
 #[async_trait]
 pub trait IgTxFetcher {
@@ -22,22 +22,17 @@ pub trait IgTxFetcher {
 pub struct IgTxClient<'a> {
     cfg:   &'a Config,
     http:  Client,
-    re:    Regex,
 }
 
 impl<'a> IgTxClient<'a> {
     pub fn new(cfg: &'a Config) -> Self {
-        let re = Regex::new(
-            r"(?P<under>[\p{L}0-9 ]+?)\s+(?P<strike>\d+(?:\.\d+)?)\s+(?P<kind>PUT|CALL)"
-        ).unwrap();
-
+        
         Self {
             cfg,
             http: Client::builder()
                 .user_agent("ig-rs/0.1")
                 .build()
                 .expect("reqwest"),
-            re,
         }
     }
 
@@ -46,19 +41,14 @@ impl<'a> IgTxClient<'a> {
         format!("{}/{}", self.cfg.rest_api.base_url.trim_end_matches('/'), path)
     }
 
-    fn convert(&self, raw: RawTransaction) -> Transaction {
-        // -------- regex -------------
-        let caps = self.re.captures(&raw.instrument_name);
-
-        let (underlying, strike, option_type) = if let Some(c) = caps.as_ref() {
-            let under  = c.name("under").map(|m| m.as_str().trim().to_uppercase());
-            let strike = c.name("strike")
-                .and_then(|m| m.as_str().parse::<f64>().ok());
-            let kind   = c.name("kind").map(|m| m.as_str().to_string());
-            (under, strike, kind)
-        } else {
-            (None, None, None)
-        };
+    fn convert(&self, raw: RawTransaction) ->  Result<Transaction, AppError> {
+        
+        let instrument_info: InstrumentInfo  = parse_instrument_name(&raw.instrument_name)?;
+        let underlying = instrument_info.underlying;
+        let strike     = instrument_info.strike;
+        let option_type = instrument_info.option_type;
+        
+        
         
         let deal_date = NaiveDateTime::parse_from_str(&raw.date_utc, "%Y-%m-%dT%H:%M:%S")
             .map(|naive| naive.and_utc())
@@ -75,7 +65,7 @@ impl<'a> IgTxClient<'a> {
 
         let is_fee = raw.transaction_type == "WITH" && pnl_eur.abs() < 1.0;
 
-        Transaction {
+        Ok(Transaction {
             deal_date,
             underlying,
             strike,
@@ -86,7 +76,7 @@ impl<'a> IgTxClient<'a> {
             reference: raw.reference.clone(),
             is_fee,
             raw_json: raw.to_string(),
-        }
+        })
     }
 }
 
@@ -132,7 +122,7 @@ impl IgTxFetcher for IgTxClient<'_> {
 
             if raws.is_empty() { break; }
 
-            out.extend(raws.into_iter().map(|r| self.convert(r)));
+            out.extend(raws.into_iter().map(|r| self.convert(r).unwrap()));
 
             let meta = &json["metadata"]["pageData"];
             let total_pages = meta["totalPages"].as_u64().unwrap_or(1);

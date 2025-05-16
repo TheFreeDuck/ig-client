@@ -4,7 +4,7 @@
 
 use std::sync::Arc;
 use tokio::time::Duration;
-use tracing::info;
+use tracing::{info, error};
 
 use ig_client::{
     config::Config, session::auth::IgAuth, session::interface::IgAuthenticator,
@@ -20,14 +20,46 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Load configuration
     let config = Arc::new(Config::new());
     info!("Configuration loaded");
+    info!("API URL: {}", config.rest_api.base_url);
+    info!("Environment: {}", if config.rest_api.base_url.contains("demo") { "DEMO" } else { "PRODUCTION" });
+    
+    // Print credential information for debugging (without exposing sensitive data)
+    info!("Username: {}", config.credentials.username);
+    info!("API Key length: {}", config.credentials.api_key.len());
+    info!("API Key first 3 chars: {}", if config.credentials.api_key.len() > 3 {
+        &config.credentials.api_key[..3]
+    } else {
+        "too short"
+    });
+    
+    // Check if we're using default values (which would indicate .env issues)
+    if config.credentials.username == "default_username" || 
+       config.credentials.api_key == "default_api_key" ||
+       config.credentials.password == "default_password" {
+        error!("WARNING: Using default credentials! This indicates your .env file is not being loaded properly.");
+        error!("Please ensure your .env file exists and contains IG_USERNAME, IG_PASSWORD, and IG_API_KEY.");
+    }
 
     // Create authenticator and log in
     let authenticator = IgAuth::new(&config);
     info!("Authenticator created");
 
     info!("Logging in to IG...");
-    let session = authenticator.login().await?;
-    info!("Session started successfully");
+    let session = match authenticator.login().await {
+        Ok(session) => {
+            info!("Session started successfully");
+            info!("Account ID: {}", session.account_id);
+            info!("CST Token length: {}", session.cst.len());
+            info!("Security Token length: {}", session.token.len());
+            session
+        },
+        Err(e) => {
+            eprintln!("Failed to log in: {}", e);
+            eprintln!("Please check your credentials in the .env file");
+            eprintln!("Make sure your IG_USERNAME, IG_PASSWORD, and IG_API_KEY are correct");
+            return Err(Box::new(e) as Box<dyn std::error::Error>);
+        }
+    };
 
     // Create WebSocket client
     let ws_client = IgWebSocketClientImpl::new(Arc::clone(&config));
@@ -35,8 +67,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Connect to WebSocket server
     info!("Connecting to WebSocket server...");
-    ws_client.connect(&session).await?;
-    info!("Connected to WebSocket server");
+    match ws_client.connect(&session).await {
+        Ok(_) => info!("Connected to WebSocket server"),
+        Err(e) => {
+            eprintln!("Failed to connect to WebSocket server: {}", e);
+            eprintln!("This could be due to invalid credentials or network issues");
+            return Err(Box::new(e) as Box<dyn std::error::Error>);
+        }
+    };
 
     // Get receivers for updates
     let mut market_rx = ws_client.market_updates();
@@ -52,14 +90,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for market in &markets {
         info!("Subscribing to market: {}", market);
-        let subscription_id = ws_client.subscribe_market(market).await?;
-        info!("Subscribed with ID: {}", subscription_id);
+        let subscription_id = match ws_client.subscribe_market(market).await {
+            Ok(id) => {
+                info!("Subscribed with ID: {}", id);
+                id
+            },
+            Err(e) => {
+                error!("Failed to subscribe to market {}: {}", market, e);
+                continue;
+            }
+        };
+
     }
 
     // Subscribe to account updates
     info!("Subscribing to account updates");
-    let account_sub_id = ws_client.subscribe_account().await?;
-    info!("Subscribed to account updates with ID: {}", account_sub_id);
+    let account_sub_id = match ws_client.subscribe_account().await {
+        Ok(id) => {
+            info!("Subscribed to account updates with ID: {}", id);
+            id
+        },
+        Err(e) => {
+            error!("Failed to subscribe to account updates: {}", e);
+            String::new() // Empty string as fallback
+        }
+    };
 
     // Process updates for 60 seconds
     info!("Listening for updates for 60 seconds...");
@@ -92,11 +147,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     info!("Unsubscribing from account updates");
-    ws_client.unsubscribe(&account_sub_id).await?;
+    if !account_sub_id.is_empty() {
+        if let Err(e) = ws_client.unsubscribe(&account_sub_id).await {
+            error!("Failed to unsubscribe from account updates: {}", e);
+        } else {
+            info!("Unsubscribed from account updates");
+        }
+    }
 
     info!("Disconnecting from WebSocket server");
-    ws_client.disconnect().await?;
+    if let Err(e) = ws_client.disconnect().await {
+        error!("Failed to disconnect from WebSocket server: {}", e);
+    } else {
+        info!("Disconnected");
+    }
     info!("Disconnected");
 
-    Ok(())
+    Ok(()) as Result<(), Box<dyn std::error::Error>>
 }

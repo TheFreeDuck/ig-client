@@ -4,8 +4,9 @@ use std::fmt;
 use std::fmt::Debug;
 use std::str::FromStr;
 use sqlx::postgres::PgPoolOptions;
-use tracing::error;
+use tracing::{error, info, warn};
 use crate::storage::config::DatabaseConfig;
+use dotenv::dotenv;
 
 #[allow(dead_code)]
 #[derive(Debug, Deserialize, Clone)]
@@ -98,12 +99,40 @@ impl Default for Config {
 
 impl Config {
     pub fn new() -> Self {
+        // Cargar explícitamente el archivo .env
+        match dotenv() {
+            Ok(_) => info!("Successfully loaded .env file"),
+            Err(e) => warn!("Failed to load .env file: {}", e),
+        }
+        
+        // Verificar si las variables de entorno están configuradas
+        let username = get_env_or_default("IG_USERNAME", String::from("default_username"));
+        let password = get_env_or_default("IG_PASSWORD", String::from("default_password"));
+        let api_key = get_env_or_default("IG_API_KEY", String::from("default_api_key"));
+        
+        // Verificar si estamos usando valores predeterminados
+        if username == "default_username" {
+            error!("IG_USERNAME not found in environment variables or .env file");
+        }
+        if password == "default_password" {
+            error!("IG_PASSWORD not found in environment variables or .env file");
+        }
+        if api_key == "default_api_key" {
+            error!("IG_API_KEY not found in environment variables or .env file");
+        }
+        
+        // Imprimir información sobre las variables de entorno cargadas
+        info!("Environment variables loaded:");
+        info!("  IG_USERNAME: {}", if username == "default_username" { "Not set" } else { "Set" });
+        info!("  IG_PASSWORD: {}", if password == "default_password" { "Not set" } else { "Set" });
+        info!("  IG_API_KEY: {}", if api_key == "default_api_key" { "Not set" } else { "Set" });
+        
         Config {
             credentials: Credentials {
-                username: get_env_or_default("IG_USERNAME", String::from("default_username")),
-                password: get_env_or_default("IG_PASSWORD", String::from("default_password")),
+                username,
+                password,
                 account_id: get_env_or_default("IG_ACCOUNT_ID", String::from("default_account_id")),
-                api_key: get_env_or_default("IG_API_KEY", String::from("default_api_key")),
+                api_key,
                 client_token: None,
                 account_token: None,
             },
@@ -126,7 +155,7 @@ impl Config {
                     "DATABASE_URL",
                     String::from("postgres://postgres:postgres@localhost/ig"),
                 ),
-                max_connections: get_env_or_default("DB_MAX_CONNECTIONS", 5u32),
+                max_connections: get_env_or_default("DATABASE_MAX_CONNECTIONS", 5),
             },
         }
     }

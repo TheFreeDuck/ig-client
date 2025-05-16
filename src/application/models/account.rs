@@ -236,7 +236,7 @@ pub struct MarketData {
 /// Historial de transacciones
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct TransactionHistory {
-    pub transactions: Vec<Transaction>,
+    pub transactions: Vec<AccountTransaction>,
     pub metadata: TransactionMetadata,
 }
 
@@ -261,7 +261,7 @@ pub struct PageData {
 
 /// Transacción individual
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Transaction {
+pub struct AccountTransaction {
     pub date: String,
     #[serde(rename = "dateUtc")]
     pub date_utc: String,

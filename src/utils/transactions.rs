@@ -14,8 +14,8 @@ use crate::{
     session::interface::IgAuthenticator,
     storage::utils::store_transactions,
 };
-
-const DAYS_TO_BACK_LOOK: i64 = 10;
+use crate::application::models::transaction::Transaction;
+use crate::constants::DAYS_TO_BACK_LOOK;
 
 /// Fetch transactions from IG API and store them in the database
 ///
@@ -101,7 +101,7 @@ pub async fn fetch_transactions(
     cfg: &Config,
     from: DateTime<Utc>,
     to: DateTime<Utc>,
-) -> Result<Vec<crate::application::models::transaction::Transaction>, AppError> {
+) -> Result<Vec<Transaction>, AppError> {
     // Authenticate with IG
     let auth = IgAuth::new(cfg);
     let sess = auth.login().await?;

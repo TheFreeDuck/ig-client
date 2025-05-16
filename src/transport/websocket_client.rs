@@ -33,37 +33,46 @@ pub struct IgWebSocketClientImpl {
 }
 
 impl IgWebSocketClientImpl {
-    /// Connect directly to the Lightstreamer server
+    /// Connect directly to the Lightstreamer server using the approach from trading-ig Python library
     async fn connect_direct(&self, session: &IgSession) -> Result<(), AppError> {
         info!("Using direct WebSocket connection approach for Lightstreamer");
         
-        // Define the endpoints to try
+        // Try multiple endpoints - the key is to match the exact endpoints used in the trading-ig Python library
         let endpoints = vec![
+            // Endpoints for production environment
+            "wss://push.lightstreamer.com/lightstreamer",
+            // Endpoints for demo environment
+            "wss://demo-apd.marketdatasystems.com/lightstreamer",
+            // Additional endpoints that might work
             "wss://apd.marketdatasystems.com/lightstreamer",
-            "wss://apd145f.marketdatasystems.com/lightstreamer",
-            "wss://push.lightstreamer.com/lightstreamer"
+            "wss://apd148f.marketdatasystems.com/lightstreamer",
+            "wss://apd145f.marketdatasystems.com/lightstreamer"
         ];
         
-        // Generate a unique client ID
+        // Try multiple adapter sets - the key is to match the exact adapter sets used in the trading-ig Python library
+        let adapter_sets = vec![
+            // For production environment
+            "STREAMINGALL",
+            // For demo environment
+            "DEMO"
+        ];
+        
+        // Generate a client ID exactly as in the Python library
         let client_id = format!("IGCLIENT_{}", uuid::Uuid::new_v4().to_string().replace("-", ""));
         
-        // Set adapter set based on environment
-        let adapter_sets = if self.config.rest_api.base_url.contains("demo") {
-            vec!["DEMO-igindexdemo", "DEMO-igstreamer", "DEMO-iggroup"]
-        } else {
-            vec!["PROD-igindexlive", "PROD-ig", "PROD-iggroup"]
-        };
+        // Format the password exactly as in the Python library
+        let cst = session.cst.trim();
+        let token = session.token.trim();
+        let password = format!("CST-{}|XST-{}", cst, token);
         
-        // Format the password in the exact format expected by Lightstreamer
-        // Remove any whitespace and ensure there are no strange characters
-        let password = format!("CST-{}|XST-{}", 
-            session.cst.trim().replace(" ", ""), 
-            session.token.trim().replace(" ", "")
-        );
+        info!("Using client ID: {}", client_id);
+        info!("Using account ID: {}", session.account_id.trim());
+        info!("Using CST token of length: {}", cst.len());
+        info!("Using XST token of length: {}", token.len());
         
-        // Try each endpoint
+        // Try each endpoint and adapter set combination
         for endpoint in &endpoints {
-            info!("Trying to connect to Lightstreamer endpoint: {}", endpoint);
+            info!("Trying endpoint: {}", endpoint);
             
             // Create a WebSocket client with minimal configuration
             use tokio_tungstenite::tungstenite::client::IntoClientRequest;
@@ -75,7 +84,7 @@ impl IgWebSocketClientImpl {
                 }
             };
                     
-            // Add only the necessary headers
+            // Add headers exactly as in the Python library
             request.headers_mut().insert(
                 "Sec-WebSocket-Protocol",
                 tokio_tungstenite::tungstenite::http::HeaderValue::from_static("js.lightstreamer.com")
@@ -84,6 +93,11 @@ impl IgWebSocketClientImpl {
             request.headers_mut().insert(
                 "Origin",
                 tokio_tungstenite::tungstenite::http::HeaderValue::from_static("https://labs.ig.com")
+            );
+            
+            request.headers_mut().insert(
+                "User-Agent",
+                tokio_tungstenite::tungstenite::http::HeaderValue::from_static("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36")
             );
             
             // Connect to the WebSocket server
@@ -103,13 +117,12 @@ impl IgWebSocketClientImpl {
             // Split the WebSocket stream
             let (mut ws_tx, mut ws_rx) = ws_stream.split();
             
-            // Try with each adapter set
+            // Try each adapter set
             for adapter_set in &adapter_sets {
-                info!("Trying with adapter set: {}", adapter_set);
-                info!("Using client ID: {}", client_id);
+                info!("Trying adapter set: {}", adapter_set);
                 
-                // Send a session creation message
-                // Format based on the official Lightstreamer documentation
+                // Create the session creation message exactly as in the Python library
+                // Note: The Python library uses this exact format with \r\n line endings
                 let create_session_msg = format!(
                     "\r\n\r\nLS_op2=create\r\nLS_cid={}\r\nLS_adapter_set={}\r\nLS_user={}\r\nLS_password={}\r\n",
                     client_id,
@@ -118,7 +131,9 @@ impl IgWebSocketClientImpl {
                     password
                 );
                 
-                debug!("Session creation message: {}", create_session_msg.replace("\r\n", "[CR][LF]"));
+                info!("Session creation message: {}", create_session_msg.replace("\r\n", "[CR][LF]"));
+                
+                // Send the session creation message
                 match ws_tx.send(Message::Text(create_session_msg.into())).await {
                     Ok(_) => info!("Session creation message sent successfully"),
                     Err(e) => {
@@ -129,75 +144,72 @@ impl IgWebSocketClientImpl {
                 
                 info!("Waiting for server response...");
                 
-                // Wait for the server response
+                // Process the server response
                 if let Some(msg) = ws_rx.next().await {
                     match msg {
                         Ok(Message::Text(text)) => {
                             info!("Server response: {}", text);
                             
-                            // Check if the response contains an error
-                            if text.contains("error") || text.contains("Error") || text.contains("ERROR") || text.contains("Cannot continue") {
-                                error!("Server returned an error: {}", text);
-                                continue; // Try the next adapter set
-                            }
-                            
-                            // Check if the response is LOOP or contains CONOK (connection OK)
-                            if text.contains("LOOP") {
+                            if text.contains("CONOK") {
+                                info!("Successfully connected with adapter set: {}", adapter_set);
+                                
+                                // Create channels for sending/receiving messages
+                                let (tx, rx) = mpsc::channel::<Message>(100);
+                                *self.tx.lock().unwrap() = Some(tx.clone());
+                                
+                                // Set connection flag
+                                *self.connected.lock().unwrap() = true;
+                                
+                                // Start heartbeat
+                                self.start_heartbeat().await?;
+                                
+                                // Start tasks for receiving and sending messages
+                                self.start_tasks(ws_tx, ws_rx, tx, rx);
+                                
+                                return Ok(());
+                            } else if text.contains("LOOP") {
                                 info!("Server requested LOOP, reconnecting...");
                                 return self.connect(session).await;
-                            } else if !text.contains("CONOK") {
-                                warn!("Server response does not contain CONOK, trying next adapter set");
-                                continue; // Try the next adapter set
+                            } else if text.contains("ERROR") {
+                                error!("Server returned an error: {}", text);
+                                // Try the next adapter set
+                                continue;
+                            } else {
+                                warn!("Unexpected server response: {}", text);
+                                // Try the next adapter set
+                                continue;
                             }
-                            
-                            // If we got here, the connection was successful
-                            info!("Successfully connected with adapter set: {}", adapter_set);
-                            
-                            // Create channels for sending/receiving messages
-                            let (tx, rx) = mpsc::channel::<Message>(100);
-                            *self.tx.lock().unwrap() = Some(tx.clone());
-                            
-                            // Set connection flag
-                            *self.connected.lock().unwrap() = true;
-                            
-                            // Start heartbeat
-                            self.start_heartbeat().await?;
-                            
-                            // Start tasks for receiving and sending messages
-                            self.start_tasks(ws_tx, ws_rx, tx, rx);
-                            
-                            return Ok(());
                         },
                         Ok(Message::Close(frame)) => {
                             if let Some(frame) = frame {
                                 error!("Server closed the connection: {} - {}", frame.code, frame.reason);
-                                continue; // Try the next adapter set
                             } else {
                                 error!("Server closed the connection without a reason");
-                                continue; // Try the next adapter set
                             }
+                            // Try the next adapter set
+                            break;
                         },
                         Ok(_) => {
                             debug!("Received non-text message from server");
-                            continue; // Try the next adapter set
+                            // Try the next adapter set
+                            continue;
                         },
                         Err(e) => {
                             error!("Error receiving server response: {}", e);
-                            continue; // Try the next adapter set
+                            // Try the next adapter set
+                            break;
                         }
                     }
                 } else {
                     error!("No response received from server");
-                    continue; // Try the next adapter set
+                    // Try the next adapter set
+                    break;
                 }
             }
-            
-            // If we got here, all adapter sets failed for this endpoint
-            error!("All adapter sets failed for endpoint: {}", endpoint);
         }
         
-        // If we got here, all endpoints failed
-        error!("All endpoints failed");
+        // If we got here, all endpoints and adapter sets failed
+        error!("All endpoints and adapter sets failed");
         return Err(AppError::WebSocketError("All endpoints and adapter sets failed".to_string()));
     }
     
@@ -298,32 +310,32 @@ impl IgWebSocketClientImpl {
     }
     
     /// Handle incoming WebSocket messages
-    async fn handle_message(&self, msg: Message) -> Result<(), AppError> {
-        if msg.is_text() {
-            let text = msg.to_text().unwrap();
-            debug!("Message received: {}", text.replace("\r\n", "[CR][LF]\n"));
-            
-            // For Lightstreamer messages, we need a different parser
-            if text.contains("SUBOK") || text.contains("SUBCMD") || text.contains("CONOK") {
-                debug!("Lightstreamer control message: {}", text);
-            } else {
-                // Try to parse as JSON
-                match serde_json::from_str::<serde_json::Value>(text) {
-                    Ok(json) => {
-                        debug!("Parsed JSON message: {}", json);
-                        // Process the JSON message
-                    },
-                    Err(e) => {
-                        warn!("Could not parse message as JSON: {}", e);
-                        // Could be another Lightstreamer format
-                        debug!("Message content: {}", text);
-                    }
-                }
-            }
-        }
-        
-        Ok(())
-    }
+    // async fn handle_message(&self, msg: Message) -> Result<(), AppError> {
+    //     if msg.is_text() {
+    //         let text = msg.to_text().unwrap();
+    //         debug!("Message received: {}", text.replace("\r\n", "[CR][LF]\n"));
+    //         
+    //         // For Lightstreamer messages, we need a different parser
+    //         if text.contains("SUBOK") || text.contains("SUBCMD") || text.contains("CONOK") {
+    //             debug!("Lightstreamer control message: {}", text);
+    //         } else {
+    //             // Try to parse as JSON
+    //             match serde_json::from_str::<serde_json::Value>(text) {
+    //                 Ok(json) => {
+    //                     debug!("Parsed JSON message: {}", json);
+    //                     // Process the JSON message
+    //                 },
+    //                 Err(e) => {
+    //                     warn!("Could not parse message as JSON: {}", e);
+    //                     // Could be another Lightstreamer format
+    //                     debug!("Message content: {}", text);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     
+    //     Ok(())
+    // }
     
     /// Process a WebSocket message according to its type
     async fn process_message(&self, ws_msg: WebSocketMessage) -> Result<(), AppError> {
