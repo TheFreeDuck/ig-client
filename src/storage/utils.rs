@@ -2,6 +2,14 @@ use crate::application::models::transaction::Transaction;
 use crate::error::AppError;
 use sqlx::Executor;
 
+/// Stores a list of transactions in the database
+///
+/// # Arguments
+/// * `pool` - PostgreSQL connection pool
+/// * `txs` - List of transactions to store
+///
+/// # Returns
+/// * `Result<usize, AppError>` - Number of transactions inserted or an error
 pub async fn store_transactions(
     pool: &sqlx::PgPool,
     txs: &[Transaction],

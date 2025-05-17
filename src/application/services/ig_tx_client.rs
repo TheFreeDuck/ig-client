@@ -9,8 +9,18 @@ use reqwest::{Client, StatusCode};
 use std::str::FromStr;
 use tracing::debug;
 
+/// Interface for fetching transaction data from IG Markets
 #[async_trait]
 pub trait IgTxFetcher {
+    /// Fetches transactions within a date range
+    ///
+    /// # Arguments
+    /// * `sess` - Active IG session
+    /// * `from` - Start date for the transaction range
+    /// * `to` - End date for the transaction range
+    ///
+    /// # Returns
+    /// * `Result<Vec<Transaction>, AppError>` - List of transactions or an error
     async fn fetch_range(
         &self,
         sess: &IgSession,
@@ -19,12 +29,22 @@ pub trait IgTxFetcher {
     ) -> Result<Vec<Transaction>, AppError>;
 }
 
+/// Client for fetching transaction data from IG Markets API
 pub struct IgTxClient<'a> {
+    /// Configuration for the IG API
     cfg: &'a Config,
+    /// HTTP client for making requests
     http: Client,
 }
 
 impl<'a> IgTxClient<'a> {
+    /// Creates a new IG transaction client
+    ///
+    /// # Arguments
+    /// * `cfg` - Configuration for the IG API
+    ///
+    /// # Returns
+    /// * A new IgTxClient instance
     pub fn new(cfg: &'a Config) -> Self {
         Self {
             cfg,
@@ -35,6 +55,13 @@ impl<'a> IgTxClient<'a> {
         }
     }
 
+    /// Constructs a REST API URL from the base URL and path
+    ///
+    /// # Arguments
+    /// * `path` - API endpoint path
+    ///
+    /// # Returns
+    /// * Complete URL string
     #[allow(dead_code)]
     fn rest_url(&self, path: &str) -> String {
         format!(
@@ -44,6 +71,13 @@ impl<'a> IgTxClient<'a> {
         )
     }
 
+    /// Converts a raw transaction from the API to a structured Transaction
+    ///
+    /// # Arguments
+    /// * `raw` - Raw transaction data from the API
+    ///
+    /// # Returns
+    /// * `Result<Transaction, AppError>` - Converted transaction or an error
     fn convert(&self, raw: RawTransaction) -> Result<Transaction, AppError> {
         let instrument_info: InstrumentInfo = parse_instrument_name(&raw.instrument_name)?;
         let underlying = instrument_info.underlying;

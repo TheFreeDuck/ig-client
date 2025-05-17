@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
 
+/// Represents the current state of a market
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 pub enum MarketState {
     #[serde(rename = "closed")]
@@ -23,17 +24,29 @@ pub enum MarketState {
     Suspended,
 }
 
+/// Representation of market data received from the IG Markets streaming API
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct MarketData {
+    /// Name of the item this data belongs to
     item_name: String,
+    /// Position of the item in the subscription
     item_pos: i32,
+    /// All market fields
     fields: MarketFields,
+    /// Fields that have changed in this update
     changed_fields: MarketFields,
+    /// Whether this is a snapshot or an update
     is_snapshot: bool,
 }
 
 impl MarketData {
-    // This method converts an ItemUpdate to a MarketData object
+    /// Converts an ItemUpdate from the Lightstreamer API to a MarketData object
+    ///
+    /// # Arguments
+    /// * `item_update` - The ItemUpdate received from the Lightstreamer API
+    ///
+    /// # Returns
+    /// * `Result<Self, String>` - The converted MarketData or an error message
     pub fn from_item_update(item_update: &ItemUpdate) -> Result<Self, String> {
         // Extract the item_name, defaulting to an empty string if None
         let item_name = item_update.item_name.clone().unwrap_or_default();
@@ -63,7 +76,13 @@ impl MarketData {
         })
     }
 
-    // Helper method to create MarketFields from a HashMap
+    /// Helper method to create MarketFields from a HashMap of field values
+    ///
+    /// # Arguments
+    /// * `fields_map` - HashMap containing field names and their string values
+    ///
+    /// # Returns
+    /// * `Result<MarketFields, String>` - The parsed MarketFields or an error message
     fn create_market_fields(
         fields_map: &HashMap<String, Option<String>>,
     ) -> Result<MarketFields, String> {
@@ -136,6 +155,7 @@ impl From<&ItemUpdate> for MarketData {
     }
 }
 
+/// Fields containing market price and status information
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct MarketFields {
     #[serde(rename = "MID_OPEN")]

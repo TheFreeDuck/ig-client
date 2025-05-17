@@ -1,22 +1,29 @@
-// src/session/ig_auth.rs  (o donde te encaje)
+// Authentication module for IG Markets API
 
 use async_trait::async_trait;
 use reqwest::{Client, StatusCode};
 
 use crate::{
-    config::Config,   // <─ tu struct de antes
-    error::AuthError, // mismo enum/impl que ya usas
+    config::Config,
+    error::AuthError,
     session::interface::{IgAuthenticator, IgSession},
     session::response::SessionResp,
 };
 
-/// Mantiene una referencia a la Config global
+/// Authentication handler for IG Markets API
 pub struct IgAuth<'a> {
     cfg: &'a Config,
     http: Client,
 }
 
 impl<'a> IgAuth<'a> {
+    /// Creates a new IG authentication handler
+    ///
+    /// # Arguments
+    /// * `cfg` - Reference to the configuration
+    ///
+    /// # Returns
+    /// * A new IgAuth instance
     pub fn new(cfg: &'a Config) -> Self {
         Self {
             cfg,
@@ -27,7 +34,7 @@ impl<'a> IgAuth<'a> {
         }
     }
 
-    /// Devuelve la URL base correcta (demo vs live) según la config
+    /// Returns the correct base URL (demo vs live) according to the configuration
     fn rest_url(&self, path: &str) -> String {
         format!(
             "{}/{}",

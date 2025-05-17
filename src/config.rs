@@ -10,32 +10,48 @@ use tracing::{error, info, warn};
 
 #[allow(dead_code)]
 #[derive(Debug, Deserialize, Clone)]
+/// Authentication credentials for the IG Markets API
 pub struct Credentials {
+    /// Username for the IG Markets account
     pub username: String,
+    /// Password for the IG Markets account
     pub password: String,
+    /// Account ID for the IG Markets account
     pub account_id: String,
+    /// API key for the IG Markets API
     pub api_key: String,
     pub(crate) client_token: Option<String>,
     pub(crate) account_token: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
+/// Main configuration for the IG Markets API client
 pub struct Config {
+    /// Authentication credentials
     pub credentials: Credentials,
+    /// REST API configuration
     pub rest_api: RestApiConfig,
+    /// WebSocket API configuration
     pub websocket: WebSocketConfig,
+    /// Database configuration for data persistence
     pub database: DatabaseConfig,
 }
 
 #[derive(Debug, Deserialize, Clone)]
+/// Configuration for the REST API
 pub struct RestApiConfig {
+    /// Base URL for the IG Markets REST API
     pub base_url: String,
+    /// Timeout in seconds for REST API requests
     pub timeout: u64,
 }
 
 #[derive(Debug, Deserialize, Clone)]
+/// Configuration for the WebSocket API
 pub struct WebSocketConfig {
+    /// URL for the IG Markets WebSocket API
     pub url: String,
+    /// Reconnect interval in seconds for WebSocket connections
     pub reconnect_interval: u64,
 }
 
@@ -85,6 +101,16 @@ impl fmt::Display for WebSocketConfig {
     }
 }
 
+/// Gets an environment variable or returns a default value if not found or cannot be parsed
+///
+/// # Arguments
+///
+/// * `env_var` - The name of the environment variable
+/// * `default` - The default value to use if the environment variable is not found or cannot be parsed
+///
+/// # Returns
+///
+/// The parsed value of the environment variable or the default value
 pub fn get_env_or_default<T: FromStr>(env_var: &str, default: T) -> T
 where
     <T as FromStr>::Err: Debug,
@@ -105,6 +131,14 @@ impl Default for Config {
 }
 
 impl Config {
+    /// Creates a new configuration instance from environment variables
+    ///
+    /// Loads configuration from environment variables or .env file.
+    /// Uses default values if environment variables are not found.
+    ///
+    /// # Returns
+    ///
+    /// A new `Config` instance
     pub fn new() -> Self {
         // Cargar explícitamente el archivo .env
         match dotenv() {
@@ -188,6 +222,11 @@ impl Config {
         }
     }
 
+    /// Creates a PostgreSQL connection pool using the database configuration
+    ///
+    /// # Returns
+    ///
+    /// A Result containing either a PostgreSQL connection pool or an error
     pub async fn pg_pool(&self) -> Result<sqlx::Pool<sqlx::Postgres>, sqlx::Error> {
         PgPoolOptions::new()
             .max_connections(self.database.max_connections)

@@ -1,6 +1,6 @@
 [package]
-name = "ig_client"
-version = "0.1.1"
+name = "ig-client"
+version = "0.1.2"
 edition = "2024"
 authors = ["Joaquin Bejar <jb@taunais.com>"]
 description = "This crate provides a client for the IG Markets API"
@@ -35,7 +35,6 @@ include = [
 ]
 
 [dependencies]
-tokio-tungstenite = { version = "0.26.2", features = ["native-tls"] }
 tokio = { version = "1.45.0", features = ["rt", "rt-multi-thread", "macros", "time", "signal"] }
 chrono = { version = "0.4.41", features = ["serde"] }
 tracing = "0.1.41"
@@ -47,9 +46,6 @@ criterion = "0.5.1"
 sqlx = { version = "0.8.5", features = [ "postgres","macros","chrono","runtime-tokio-native-tls"]}
 async-trait = "0.1.88"
 regex = "1.11.1"
-uuid = { version = "1.16.0" , features = ["v4", "serde"] }
-futures-util = "0.3.31"
-url = "2.5.0"
 dotenv = "0.15.0"
 lightstreamer-rs = "0.1.3"
 

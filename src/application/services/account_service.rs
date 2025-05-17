@@ -13,19 +13,19 @@ use crate::{
     transport::http_client::IgHttpClient,
 };
 
-/// Interfaz para el servicio de cuenta
+/// Interface for the account service
 #[async_trait]
 pub trait AccountService: Send + Sync {
-    /// Obtiene información de todas las cuentas del usuario
+    /// Gets information about all user accounts
     async fn get_accounts(&self, session: &IgSession) -> Result<AccountInfo, AppError>;
 
-    /// Obtiene las posiciones abiertas
+    /// Gets open positions
     async fn get_positions(&self, session: &IgSession) -> Result<Positions, AppError>;
 
-    /// Obtiene las órdenes de trabajo
+    /// Gets working orders
     async fn get_working_orders(&self, session: &IgSession) -> Result<WorkingOrders, AppError>;
 
-    /// Obtiene la actividad de la cuenta
+    /// Gets account activity
     async fn get_activity(
         &self,
         session: &IgSession,
@@ -33,7 +33,7 @@ pub trait AccountService: Send + Sync {
         to: &str,
     ) -> Result<AccountActivity, AppError>;
 
-    /// Obtiene el historial de transacciones
+    /// Gets transaction history
     async fn get_transactions(
         &self,
         session: &IgSession,
@@ -44,22 +44,30 @@ pub trait AccountService: Send + Sync {
     ) -> Result<TransactionHistory, AppError>;
 }
 
-/// Implementación del servicio de cuenta
+/// Implementation of the account service
 pub struct AccountServiceImpl<T: IgHttpClient> {
     config: Arc<Config>,
     client: Arc<T>,
 }
 
 impl<T: IgHttpClient> AccountServiceImpl<T> {
-    /// Crea una nueva instancia del servicio de cuenta
+    /// Creates a new instance of the account service
     pub fn new(config: Arc<Config>, client: Arc<T>) -> Self {
         Self { config, client }
     }
 
+    /// Gets the current configuration
+    ///
+    /// # Returns
+    /// * The current configuration as an `Arc<Config>`
     pub fn get_config(&self) -> Arc<Config> {
         self.config.clone()
     }
 
+    /// Sets a new configuration
+    ///
+    /// # Arguments
+    /// * `config` - The new configuration to use
     pub fn set_config(&mut self, config: Arc<Config>) {
         self.config = config;
     }
@@ -68,7 +76,7 @@ impl<T: IgHttpClient> AccountServiceImpl<T> {
 #[async_trait]
 impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
     async fn get_accounts(&self, session: &IgSession) -> Result<AccountInfo, AppError> {
-        info!("Obteniendo información de cuentas");
+        info!("Getting account information");
 
         let result = self
             .client
@@ -76,29 +84,26 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
             .await?;
 
         debug!(
-            "Información de cuentas obtenida: {} cuentas",
+            "Account information obtained: {} accounts",
             result.accounts.len()
         );
         Ok(result)
     }
 
     async fn get_positions(&self, session: &IgSession) -> Result<Positions, AppError> {
-        info!("Obteniendo posiciones abiertas");
+        info!("Getting open positions");
 
         let result = self
             .client
             .request::<(), Positions>(Method::GET, "positions", session, None, "2")
             .await?;
 
-        debug!(
-            "Posiciones obtenidas: {} posiciones",
-            result.positions.len()
-        );
+        debug!("Positions obtained: {} positions", result.positions.len());
         Ok(result)
     }
 
     async fn get_working_orders(&self, session: &IgSession) -> Result<WorkingOrders, AppError> {
-        info!("Obteniendo órdenes de trabajo");
+        info!("Getting working orders");
 
         let result = self
             .client
@@ -106,7 +111,7 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
             .await?;
 
         debug!(
-            "Órdenes de trabajo obtenidas: {} órdenes",
+            "Working orders obtained: {} orders",
             result.working_orders.len()
         );
         Ok(result)
@@ -119,7 +124,7 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
         to: &str,
     ) -> Result<AccountActivity, AppError> {
         let path = format!("history/activity?from={}&to={}", from, to);
-        info!("Obteniendo actividad de la cuenta");
+        info!("Getting account activity");
 
         let result = self
             .client
@@ -127,7 +132,7 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
             .await?;
 
         debug!(
-            "Actividad de la cuenta obtenida: {} actividades",
+            "Account activity obtained: {} activities",
             result.activities.len()
         );
         Ok(result)
@@ -145,7 +150,7 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
             "history/transactions?from={}&to={}&pageSize={}&pageNumber={}",
             from, to, page_size, page_number
         );
-        info!("Obteniendo historial de transacciones");
+        info!("Getting transaction history");
 
         let result = self
             .client
@@ -153,7 +158,7 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
             .await?;
 
         debug!(
-            "Historial de transacciones obtenido: {} transacciones",
+            "Transaction history obtained: {} transactions",
             result.transactions.len()
         );
         Ok(result)

@@ -1,9 +1,12 @@
 use serde::Deserialize;
 use std::fmt;
 
+/// Configuration for database connections
 #[derive(Debug, Deserialize, Clone)]
 pub struct DatabaseConfig {
+    /// Database connection URL
     pub url: String,
+    /// Maximum number of connections in the connection pool
     pub max_connections: u32,
 }
 

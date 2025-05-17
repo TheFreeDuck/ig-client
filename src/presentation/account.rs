@@ -4,15 +4,22 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
 
+/// Representation of account data received from the IG Markets streaming API
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct AccountData {
+    /// Name of the item this data belongs to
     item_name: String,
+    /// Position of the item in the subscription
     item_pos: i32,
+    /// All account fields
     fields: AccountFields,
+    /// Fields that have changed in this update
     changed_fields: AccountFields,
+    /// Whether this is a snapshot or an update
     is_snapshot: bool,
 }
 
+/// Fields containing account financial information
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct AccountFields {
     #[serde(rename = "PNL")]
@@ -77,7 +84,13 @@ pub struct AccountFields {
 }
 
 impl AccountData {
-    // This method converts an ItemUpdate to an AccountData object
+    /// Converts an ItemUpdate from the Lightstreamer API to an AccountData object
+    ///
+    /// # Arguments
+    /// * `item_update` - The ItemUpdate received from the Lightstreamer API
+    ///
+    /// # Returns
+    /// * `Result<Self, String>` - The converted AccountData or an error message
     pub fn from_item_update(item_update: &ItemUpdate) -> Result<Self, String> {
         // Extract the item_name, defaulting to an empty string if None
         let item_name = item_update.item_name.clone().unwrap_or_default();
@@ -107,7 +120,13 @@ impl AccountData {
         })
     }
 
-    // Helper method to create AccountFields from a HashMap
+    /// Helper method to create AccountFields from a HashMap of field values
+    ///
+    /// # Arguments
+    /// * `fields_map` - HashMap containing field names and their string values
+    ///
+    /// # Returns
+    /// * `Result<AccountFields, String>` - The parsed AccountFields or an error message
     fn create_account_fields(
         fields_map: &HashMap<String, Option<String>>,
     ) -> Result<AccountFields, String> {

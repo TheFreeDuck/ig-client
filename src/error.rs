@@ -7,10 +7,14 @@ use reqwest::StatusCode;
 use std::fmt::{Display, Formatter};
 use std::{fmt, io};
 
+/// Error type for fetch operations
 #[derive(Debug)]
 pub enum FetchError {
+    /// Network error from reqwest
     Reqwest(reqwest::Error),
+    /// Database error from sqlx
     Sqlx(sqlx::Error),
+    /// Error during parsing
     Parser(String),
 }
 
@@ -38,13 +42,20 @@ impl From<sqlx::Error> for FetchError {
     }
 }
 
+/// Error type for authentication operations
 #[derive(Debug)]
 pub enum AuthError {
+    /// Network error from reqwest
     Network(reqwest::Error),
+    /// I/O error
     Io(io::Error),
+    /// JSON serialization or deserialization error
     Json(serde_json::Error),
+    /// Other unspecified error
     Other(String),
+    /// Invalid credentials error
     BadCredentials,
+    /// Unexpected HTTP status code
     Unexpected(StatusCode),
 }
 
@@ -94,17 +105,28 @@ impl From<AppError> for AuthError {
     }
 }
 
+/// General application error type
 #[derive(Debug)]
 pub enum AppError {
+    /// Network error from reqwest
     Network(reqwest::Error),
+    /// I/O error
     Io(io::Error),
+    /// JSON serialization or deserialization error
     Json(serde_json::Error),
+    /// Unexpected HTTP status code
     Unexpected(StatusCode),
+    /// Database error from sqlx
     Db(sqlx::Error),
+    /// Unauthorized access error
     Unauthorized,
+    /// Resource not found error
     NotFound,
+    /// API rate limit exceeded
     RateLimitExceeded,
+    /// Error during serialization or deserialization
     SerializationError(String),
+    /// WebSocket communication error
     WebSocketError(String),
 }
 

@@ -5,11 +5,20 @@ use std::sync::Arc;
 use tracing::log::debug;
 use tracing::{error, info};
 
+/// Listener for market data updates from the IG Markets streaming API
 pub struct MarketListener {
+    /// Callback function to be called when market data is received
     callback: Arc<dyn Fn(&MarketData) -> ListenerResult + Send + Sync>,
 }
 
 impl MarketListener {
+    /// Creates a new market listener with the specified callback function
+    ///
+    /// # Arguments
+    /// * `callback` - Function to be called when market data is received
+    ///
+    /// # Returns
+    /// * A new MarketListener instance
     pub fn new<F>(callback: F) -> Self
     where
         F: Fn(&MarketData) -> ListenerResult + Send + Sync + 'static,
@@ -19,6 +28,10 @@ impl MarketListener {
         }
     }
 
+    /// Sets a new callback function for this listener
+    ///
+    /// # Arguments
+    /// * `callback` - New function to be called when market data is received
     #[allow(dead_code)]
     fn set_callback<F>(&mut self, callback: F)
     where
@@ -27,10 +40,21 @@ impl MarketListener {
         self.callback = Arc::new(callback);
     }
 
+    /// Calls the callback function with the provided market data
+    ///
+    /// # Arguments
+    /// * `market_data` - Market data to pass to the callback
+    ///
+    /// # Returns
+    /// * Result of the callback function
     fn callback(&self, market_data: &MarketData) -> ListenerResult {
         (self.callback)(market_data)
     }
 
+    /// Creates a mock market listener for testing
+    ///
+    /// # Returns
+    /// * A MarketListener with a debug logging callback
     #[cfg(test)]
     pub fn mock() -> Self {
         Self::new(|data| {
