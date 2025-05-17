@@ -1,14 +1,10 @@
-use std::sync::Arc;
 use async_trait::async_trait;
 use reqwest::{Client, Method, RequestBuilder, Response, StatusCode};
-use serde::{de::DeserializeOwned, Serialize};
+use serde::{Serialize, de::DeserializeOwned};
+use std::sync::Arc;
 use tracing::{debug, error, info};
 
-use crate::{
-    config::Config,
-    error::AppError,
-    session::interface::IgSession,
-};
+use crate::{config::Config, error::AppError, session::interface::IgSession};
 
 /// Interface for the IG HTTP client
 #[async_trait]
@@ -109,8 +105,14 @@ impl IgHttpClientImpl {
                 Err(AppError::RateLimitExceeded)
             }
             _ => {
-                let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
-                error!("Request to {} failed with status {}: {}", url, status, error_text);
+                let error_text = response
+                    .text()
+                    .await
+                    .unwrap_or_else(|_| "Unknown error".to_string());
+                error!(
+                    "Request to {} failed with status {}: {}",
+                    url, status, error_text
+                );
                 Err(AppError::Unexpected(status))
             }
         }

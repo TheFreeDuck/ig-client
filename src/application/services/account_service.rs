@@ -55,11 +55,11 @@ impl<T: IgHttpClient> AccountServiceImpl<T> {
     pub fn new(config: Arc<Config>, client: Arc<T>) -> Self {
         Self { config, client }
     }
-    
+
     pub fn get_config(&self) -> Arc<Config> {
         self.config.clone()
     }
-    
+
     pub fn set_config(&mut self, config: Arc<Config>) {
         self.config = config;
     }

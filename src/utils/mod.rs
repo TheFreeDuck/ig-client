@@ -1,6 +1,4 @@
-mod error;
-
-pub mod logger;
 pub mod finance;
-pub mod transactions;
+pub mod logger;
 pub(crate) mod parsing;
+pub mod transactions;

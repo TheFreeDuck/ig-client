@@ -1,8 +1,8 @@
 /******************************************************************************
-    Author: Joaquín Béjar García
-    Email: jb@taunais.com 
-    Date: 13/5/25
- ******************************************************************************/
+   Author: Joaquín Béjar García
+   Email: jb@taunais.com
+   Date: 13/5/25
+******************************************************************************/
 use serde::{Deserialize, Serialize};
 
 /// Tipo de instrumento

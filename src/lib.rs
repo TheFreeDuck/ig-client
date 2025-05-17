@@ -16,6 +16,6 @@ pub mod transport;
 
 pub(crate) mod constants;
 
-pub mod utils;
 pub mod error;
 pub mod storage;
+pub mod utils;

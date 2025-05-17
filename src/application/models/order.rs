@@ -1,8 +1,8 @@
 /******************************************************************************
-    Author: Joaquín Béjar García
-    Email: jb@taunais.com 
-    Date: 13/5/25
- ******************************************************************************/
+   Author: Joaquín Béjar García
+   Email: jb@taunais.com
+   Date: 13/5/25
+******************************************************************************/
 use serde::{Deserialize, Serialize};
 
 /// Dirección de la orden (compra o venta)
@@ -188,7 +188,10 @@ pub struct UpdatePositionRequest {
     pub limit_level: Option<f64>,
     #[serde(rename = "trailingStop", skip_serializing_if = "Option::is_none")]
     pub trailing_stop: Option<bool>,
-    #[serde(rename = "trailingStopDistance", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "trailingStopDistance",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub trailing_stop_distance: Option<f64>,
 }
 

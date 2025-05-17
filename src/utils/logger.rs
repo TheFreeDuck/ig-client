@@ -104,8 +104,8 @@ mod tests_setup_logger_bis {
     use super::*;
     use std::sync::Mutex;
     use tracing::subscriber::with_default;
-    use tracing_subscriber::layer::SubscriberExt;
     use tracing_subscriber::Layer;
+    use tracing_subscriber::layer::SubscriberExt;
 
     static TEST_MUTEX: Mutex<()> = Mutex::new(());
 

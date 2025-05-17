@@ -136,7 +136,7 @@ pub struct PositionMarket {
     #[serde(rename = "marketStatus")]
     pub market_status: String,
     #[serde(rename = "scalingFactor")]
-    pub scaling_factor: i64
+    pub scaling_factor: i64,
 }
 
 /// Órdenes de trabajo

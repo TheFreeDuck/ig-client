@@ -1,11 +1,11 @@
 /******************************************************************************
-    Author: Joaquín Béjar García
-    Email: jb@taunais.com 
-    Date: 12/5/25
- ******************************************************************************/
-use std::fmt;
+   Author: Joaquín Béjar García
+   Email: jb@taunais.com
+   Date: 12/5/25
+******************************************************************************/
 use chrono::{DateTime, NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 /// Raw JSON coming from IG’s transactions endpoint
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -51,8 +51,7 @@ pub struct RawTransaction {
 
 impl fmt::Display for RawTransaction {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let s = serde_json::to_string(self)
-            .map_err(|_| fmt::Error)?;
+        let s = serde_json::to_string(self).map_err(|_| fmt::Error)?;
         write!(f, "{}", s)
     }
 }

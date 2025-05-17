@@ -1,19 +1,19 @@
+use crate::storage::config::DatabaseConfig;
+use dotenv::dotenv;
 use serde::Deserialize;
+use sqlx::postgres::PgPoolOptions;
 use std::env;
 use std::fmt;
 use std::fmt::Debug;
 use std::str::FromStr;
-use sqlx::postgres::PgPoolOptions;
 use tracing::{error, info, warn};
-use crate::storage::config::DatabaseConfig;
-use dotenv::dotenv;
 
 #[allow(dead_code)]
 #[derive(Debug, Deserialize, Clone)]
 pub struct Credentials {
     pub username: String,
     pub password: String,
-    pub(crate) account_id: String,
+    pub account_id: String,
     pub api_key: String,
     pub(crate) client_token: Option<String>,
     pub(crate) account_token: Option<String>,
@@ -41,10 +41,17 @@ pub struct WebSocketConfig {
 
 impl fmt::Display for Credentials {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{{\"username\":\"{}\",\"password\":\"[REDACTED]\",\"account_id\":\"[REDACTED]\",\"api_key\":\"[REDACTED]\",\"client_token\":{},\"account_token\":{}}}",
-               self.username,
-               self.client_token.as_ref().map_or("null".to_string(), |_| "\"[REDACTED]\"".to_string()),
-               self.account_token.as_ref().map_or("null".to_string(), |_| "\"[REDACTED]\"".to_string()))
+        write!(
+            f,
+            "{{\"username\":\"{}\",\"password\":\"[REDACTED]\",\"account_id\":\"[REDACTED]\",\"api_key\":\"[REDACTED]\",\"client_token\":{},\"account_token\":{}}}",
+            self.username,
+            self.client_token
+                .as_ref()
+                .map_or("null".to_string(), |_| "\"[REDACTED]\"".to_string()),
+            self.account_token
+                .as_ref()
+                .map_or("null".to_string(), |_| "\"[REDACTED]\"".to_string())
+        )
     }
 }
 
@@ -104,12 +111,12 @@ impl Config {
             Ok(_) => info!("Successfully loaded .env file"),
             Err(e) => warn!("Failed to load .env file: {}", e),
         }
-        
+
         // Verificar si las variables de entorno están configuradas
         let username = get_env_or_default("IG_USERNAME", String::from("default_username"));
         let password = get_env_or_default("IG_PASSWORD", String::from("default_password"));
         let api_key = get_env_or_default("IG_API_KEY", String::from("default_api_key"));
-        
+
         // Verificar si estamos usando valores predeterminados
         if username == "default_username" {
             error!("IG_USERNAME not found in environment variables or .env file");
@@ -120,13 +127,34 @@ impl Config {
         if api_key == "default_api_key" {
             error!("IG_API_KEY not found in environment variables or .env file");
         }
-        
+
         // Imprimir información sobre las variables de entorno cargadas
         info!("Environment variables loaded:");
-        info!("  IG_USERNAME: {}", if username == "default_username" { "Not set" } else { "Set" });
-        info!("  IG_PASSWORD: {}", if password == "default_password" { "Not set" } else { "Set" });
-        info!("  IG_API_KEY: {}", if api_key == "default_api_key" { "Not set" } else { "Set" });
-        
+        info!(
+            "  IG_USERNAME: {}",
+            if username == "default_username" {
+                "Not set"
+            } else {
+                "Set"
+            }
+        );
+        info!(
+            "  IG_PASSWORD: {}",
+            if password == "default_password" {
+                "Not set"
+            } else {
+                "Set"
+            }
+        );
+        info!(
+            "  IG_API_KEY: {}",
+            if api_key == "default_api_key" {
+                "Not set"
+            } else {
+                "Set"
+            }
+        );
+
         Config {
             credentials: Credentials {
                 username,
@@ -194,8 +222,8 @@ mod tests_config {
 
         for (key, value) in old_vars {
             match value {
-                Some(v) => unsafe {env::set_var(key, v)},
-                None => unsafe {env::remove_var(key)},
+                Some(v) => unsafe { env::set_var(key, v) },
+                None => unsafe { env::remove_var(key) },
             }
         }
     }
