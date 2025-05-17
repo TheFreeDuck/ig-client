@@ -1,5 +1,5 @@
 <div style="text-align: center;">
-<img src="https://raw.githubusercontent.com/joaquinbejar/ig-client/refs/heads/main/doc/images/logo.png" alt="ig-client" style="width: 100%; height: 100%;">
+<img src="https://raw.githubusercontent.com/joaquinbejar/ig-client/refs/heads/main/doc/images/logo.png" alt="ig-client" style="width: 80%; height: 80%;">
 </div>
 
 [![Dual License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)

@@ -5,22 +5,22 @@ use std::sync::Arc;
 use tracing::log::debug;
 use tracing::{error, info};
 
-/// Listener para datos de cuenta que procesa actualizaciones a través de un callback
-/// Seguro entre hilos y puede ser compartido entre hilos
+/// Account data listener that processes updates through a callback
+/// Thread-safe and can be shared between threads
 pub struct AccountListener {
     callback: Arc<dyn Fn(&AccountData) -> ListenerResult + Send + Sync>,
 }
 
 impl AccountListener {
-    /// Crea un nuevo AccountListener con el callback especificado
+    /// Creates a new AccountListener with the specified callback
     ///
     /// # Arguments
     ///
-    /// * `callback` - Una función que será llamada con las actualizaciones de datos de cuenta
+    /// * `callback` - A function that will be called with account data updates
     ///
     /// # Returns
     ///
-    /// Una nueva instancia de AccountListener
+    /// A new instance of AccountListener
     pub fn new<F>(callback: F) -> Self
     where
         F: Fn(&AccountData) -> ListenerResult + Send + Sync + 'static,
@@ -30,11 +30,11 @@ impl AccountListener {
         }
     }
 
-    /// Actualiza la función de callback
+    /// Updates the callback function
     ///
     /// # Arguments
     ///
-    /// * `callback` - La nueva función de callback
+    /// * `callback` - The new callback function
     #[allow(dead_code)]
     fn set_callback<F>(&mut self, callback: F)
     where
@@ -43,20 +43,20 @@ impl AccountListener {
         self.callback = Arc::new(callback);
     }
 
-    /// Ejecuta el callback con los datos de cuenta proporcionados
+    /// Executes the callback with the provided account data
     ///
     /// # Arguments
     ///
-    /// * `account_data` - Los datos de cuenta para pasar al callback
+    /// * `account_data` - The account data to pass to the callback
     ///
     /// # Returns
     ///
-    /// El resultado de la función de callback
+    /// The result of the callback function
     fn callback(&self, account_data: &AccountData) -> ListenerResult {
         (self.callback)(account_data)
     }
 
-    /// Solo para propósitos de prueba - crea un listener que registra pero no llama a ningún callback
+    /// For testing purposes only - creates a listener that logs but doesn't call any callback
     #[cfg(test)]
     pub fn mock() -> Self {
         Self::new(|data| {

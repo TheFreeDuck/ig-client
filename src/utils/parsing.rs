@@ -3,11 +3,17 @@ use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+/// Information about a financial instrument parsed from its name
+/// Used to extract details from instrument descriptions in the IG Markets API
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone, Default)]
 pub struct InstrumentInfo {
+    /// The underlying asset or market (e.g., "EU50", "GOLD", "US500")
     pub underlying: Option<String>,
+    /// The strike price for options
     pub strike: Option<f64>,
+    /// The type of option ("CALL" or "PUT")
     pub option_type: Option<String>,
+    /// Whether the instrument is an option
     pub is_option: bool,
 }
 

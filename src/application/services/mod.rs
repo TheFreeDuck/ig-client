@@ -10,9 +10,16 @@ mod market_listener;
 pub mod market_service;
 /// Module containing order service for creating and managing orders
 pub mod order_service;
+mod price_listener;
+
+mod chart_listener;
+mod trade_listener;
 /// Module containing common types used by services
 mod types;
 
 pub use account_listener::AccountListener;
+pub use chart_listener::ChartListener;
 pub use market_listener::MarketListener;
+pub use price_listener::PriceListener;
+pub use trade_listener::TradeListener;
 pub use types::ListenerResult;

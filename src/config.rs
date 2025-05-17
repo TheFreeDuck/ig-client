@@ -8,7 +8,6 @@ use std::fmt::Debug;
 use std::str::FromStr;
 use tracing::{error, info, warn};
 
-#[allow(dead_code)]
 #[derive(Debug, Deserialize, Clone)]
 /// Authentication credentials for the IG Markets API
 pub struct Credentials {
@@ -20,8 +19,10 @@ pub struct Credentials {
     pub account_id: String,
     /// API key for the IG Markets API
     pub api_key: String,
-    pub(crate) client_token: Option<String>,
-    pub(crate) account_token: Option<String>,
+    /// Client token for the IG Markets API
+    pub client_token: Option<String>,
+    /// Account token for the IG Markets API
+    pub account_token: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -140,18 +141,18 @@ impl Config {
     ///
     /// A new `Config` instance
     pub fn new() -> Self {
-        // Cargar explícitamente el archivo .env
+        // Explicitly load the .env file
         match dotenv() {
             Ok(_) => info!("Successfully loaded .env file"),
             Err(e) => warn!("Failed to load .env file: {}", e),
         }
 
-        // Verificar si las variables de entorno están configuradas
+        // Check if environment variables are configured
         let username = get_env_or_default("IG_USERNAME", String::from("default_username"));
         let password = get_env_or_default("IG_PASSWORD", String::from("default_password"));
         let api_key = get_env_or_default("IG_API_KEY", String::from("default_api_key"));
 
-        // Verificar si estamos usando valores predeterminados
+        // Check if we are using default values
         if username == "default_username" {
             error!("IG_USERNAME not found in environment variables or .env file");
         }
@@ -162,7 +163,7 @@ impl Config {
             error!("IG_API_KEY not found in environment variables or .env file");
         }
 
-        // Imprimir información sobre las variables de entorno cargadas
+        // Print information about loaded environment variables
         info!("Environment variables loaded:");
         info!(
             "  IG_USERNAME: {}",

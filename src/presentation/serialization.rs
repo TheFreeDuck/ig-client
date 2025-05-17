@@ -82,3 +82,28 @@ pub mod string_as_bool_opt {
         }
     }
 }
+
+pub mod option_string_empty_as_none {
+    use serde::{self, Deserialize, Deserializer, Serialize, Serializer};
+
+    pub fn serialize<S>(value: &Option<String>, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match value {
+            Some(s) if s.is_empty() => serializer.serialize_none(),
+            _ => value.serialize(serializer),
+        }
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let opt = Option::<String>::deserialize(deserializer)?;
+        match opt {
+            Some(s) if s.is_empty() => Ok(None),
+            _ => Ok(opt),
+        }
+    }
+}
