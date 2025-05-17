@@ -1,49 +1,73 @@
+use crate::storage::config::DatabaseConfig;
+use dotenv::dotenv;
 use serde::Deserialize;
+use sqlx::postgres::PgPoolOptions;
 use std::env;
 use std::fmt;
 use std::fmt::Debug;
 use std::str::FromStr;
-use sqlx::postgres::PgPoolOptions;
-use tracing::error;
-use crate::storage::config::DatabaseConfig;
+use tracing::{error, info, warn};
 
 #[allow(dead_code)]
 #[derive(Debug, Deserialize, Clone)]
+/// Authentication credentials for the IG Markets API
 pub struct Credentials {
+    /// Username for the IG Markets account
     pub username: String,
+    /// Password for the IG Markets account
     pub password: String,
-    pub(crate) account_id: String,
+    /// Account ID for the IG Markets account
+    pub account_id: String,
+    /// API key for the IG Markets API
     pub api_key: String,
     pub(crate) client_token: Option<String>,
     pub(crate) account_token: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
+/// Main configuration for the IG Markets API client
 pub struct Config {
+    /// Authentication credentials
     pub credentials: Credentials,
+    /// REST API configuration
     pub rest_api: RestApiConfig,
+    /// WebSocket API configuration
     pub websocket: WebSocketConfig,
+    /// Database configuration for data persistence
     pub database: DatabaseConfig,
 }
 
 #[derive(Debug, Deserialize, Clone)]
+/// Configuration for the REST API
 pub struct RestApiConfig {
+    /// Base URL for the IG Markets REST API
     pub base_url: String,
+    /// Timeout in seconds for REST API requests
     pub timeout: u64,
 }
 
 #[derive(Debug, Deserialize, Clone)]
+/// Configuration for the WebSocket API
 pub struct WebSocketConfig {
+    /// URL for the IG Markets WebSocket API
     pub url: String,
+    /// Reconnect interval in seconds for WebSocket connections
     pub reconnect_interval: u64,
 }
 
 impl fmt::Display for Credentials {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{{\"username\":\"{}\",\"password\":\"[REDACTED]\",\"account_id\":\"[REDACTED]\",\"api_key\":\"[REDACTED]\",\"client_token\":{},\"account_token\":{}}}",
-               self.username,
-               self.client_token.as_ref().map_or("null".to_string(), |_| "\"[REDACTED]\"".to_string()),
-               self.account_token.as_ref().map_or("null".to_string(), |_| "\"[REDACTED]\"".to_string()))
+        write!(
+            f,
+            "{{\"username\":\"{}\",\"password\":\"[REDACTED]\",\"account_id\":\"[REDACTED]\",\"api_key\":\"[REDACTED]\",\"client_token\":{},\"account_token\":{}}}",
+            self.username,
+            self.client_token
+                .as_ref()
+                .map_or("null".to_string(), |_| "\"[REDACTED]\"".to_string()),
+            self.account_token
+                .as_ref()
+                .map_or("null".to_string(), |_| "\"[REDACTED]\"".to_string())
+        )
     }
 }
 
@@ -77,6 +101,16 @@ impl fmt::Display for WebSocketConfig {
     }
 }
 
+/// Gets an environment variable or returns a default value if not found or cannot be parsed
+///
+/// # Arguments
+///
+/// * `env_var` - The name of the environment variable
+/// * `default` - The default value to use if the environment variable is not found or cannot be parsed
+///
+/// # Returns
+///
+/// The parsed value of the environment variable or the default value
 pub fn get_env_or_default<T: FromStr>(env_var: &str, default: T) -> T
 where
     <T as FromStr>::Err: Debug,
@@ -97,13 +131,70 @@ impl Default for Config {
 }
 
 impl Config {
+    /// Creates a new configuration instance from environment variables
+    ///
+    /// Loads configuration from environment variables or .env file.
+    /// Uses default values if environment variables are not found.
+    ///
+    /// # Returns
+    ///
+    /// A new `Config` instance
     pub fn new() -> Self {
+        // Cargar explícitamente el archivo .env
+        match dotenv() {
+            Ok(_) => info!("Successfully loaded .env file"),
+            Err(e) => warn!("Failed to load .env file: {}", e),
+        }
+
+        // Verificar si las variables de entorno están configuradas
+        let username = get_env_or_default("IG_USERNAME", String::from("default_username"));
+        let password = get_env_or_default("IG_PASSWORD", String::from("default_password"));
+        let api_key = get_env_or_default("IG_API_KEY", String::from("default_api_key"));
+
+        // Verificar si estamos usando valores predeterminados
+        if username == "default_username" {
+            error!("IG_USERNAME not found in environment variables or .env file");
+        }
+        if password == "default_password" {
+            error!("IG_PASSWORD not found in environment variables or .env file");
+        }
+        if api_key == "default_api_key" {
+            error!("IG_API_KEY not found in environment variables or .env file");
+        }
+
+        // Imprimir información sobre las variables de entorno cargadas
+        info!("Environment variables loaded:");
+        info!(
+            "  IG_USERNAME: {}",
+            if username == "default_username" {
+                "Not set"
+            } else {
+                "Set"
+            }
+        );
+        info!(
+            "  IG_PASSWORD: {}",
+            if password == "default_password" {
+                "Not set"
+            } else {
+                "Set"
+            }
+        );
+        info!(
+            "  IG_API_KEY: {}",
+            if api_key == "default_api_key" {
+                "Not set"
+            } else {
+                "Set"
+            }
+        );
+
         Config {
             credentials: Credentials {
-                username: get_env_or_default("IG_USERNAME", String::from("default_username")),
-                password: get_env_or_default("IG_PASSWORD", String::from("default_password")),
+                username,
+                password,
                 account_id: get_env_or_default("IG_ACCOUNT_ID", String::from("default_account_id")),
-                api_key: get_env_or_default("IG_API_KEY", String::from("default_api_key")),
+                api_key,
                 client_token: None,
                 account_token: None,
             },
@@ -126,11 +217,16 @@ impl Config {
                     "DATABASE_URL",
                     String::from("postgres://postgres:postgres@localhost/ig"),
                 ),
-                max_connections: get_env_or_default("DB_MAX_CONNECTIONS", 5u32),
+                max_connections: get_env_or_default("DATABASE_MAX_CONNECTIONS", 5),
             },
         }
     }
 
+    /// Creates a PostgreSQL connection pool using the database configuration
+    ///
+    /// # Returns
+    ///
+    /// A Result containing either a PostgreSQL connection pool or an error
     pub async fn pg_pool(&self) -> Result<sqlx::Pool<sqlx::Postgres>, sqlx::Error> {
         PgPoolOptions::new()
             .max_connections(self.database.max_connections)
@@ -165,8 +261,8 @@ mod tests_config {
 
         for (key, value) in old_vars {
             match value {
-                Some(v) => unsafe {env::set_var(key, v)},
-                None => unsafe {env::remove_var(key)},
+                Some(v) => unsafe { env::set_var(key, v) },
+                None => unsafe { env::remove_var(key) },
             }
         }
     }

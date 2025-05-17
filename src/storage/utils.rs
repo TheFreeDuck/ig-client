@@ -1,8 +1,15 @@
-
 use crate::application::models::transaction::Transaction;
 use crate::error::AppError;
-use sqlx::Executor;  
+use sqlx::Executor;
 
+/// Stores a list of transactions in the database
+///
+/// # Arguments
+/// * `pool` - PostgreSQL connection pool
+/// * `txs` - List of transactions to store
+///
+/// # Returns
+/// * `Result<usize, AppError>` - Number of transactions inserted or an error
 pub async fn store_transactions(
     pool: &sqlx::PgPool,
     txs: &[Transaction],
@@ -21,18 +28,18 @@ pub async fn store_transactions(
                     )
                     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
                     ON CONFLICT (raw_hash) DO NOTHING
-                    "#
+                    "#,
                 )
-                    .bind(&t.reference)
-                    .bind(t.deal_date)
-                    .bind(&t.underlying)
-                    .bind(t.strike)
-                    .bind(&t.option_type)
-                    .bind(t.expiry)
-                    .bind(&t.transaction_type)
-                    .bind(t.pnl_eur)
-                    .bind(t.is_fee)
-                    .bind(&t.raw_json),
+                .bind(&t.reference)
+                .bind(t.deal_date)
+                .bind(&t.underlying)
+                .bind(t.strike)
+                .bind(&t.option_type)
+                .bind(t.expiry)
+                .bind(&t.transaction_type)
+                .bind(t.pnl_eur)
+                .bind(t.is_fee)
+                .bind(&t.raw_json),
             )
             .await?;
 

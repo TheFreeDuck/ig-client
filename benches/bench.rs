@@ -4,7 +4,7 @@
    Date: 4/9/24
 ******************************************************************************/
 
-use criterion::{criterion_group, Criterion};
+use criterion::{Criterion, criterion_group};
 
 fn bench(_c: &mut Criterion) {}
 

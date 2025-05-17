@@ -1,18 +1,18 @@
 //! examples/login_example.rs
 //! cargo run --example login_example
 
-use ig_client::{
-    config::Config,
-};
-use tracing::{info, error};
-use tracing_subscriber::FmtSubscriber;
+use ig_client::config::Config;
 use ig_client::session::auth::IgAuth;
 use ig_client::session::interface::IgAuthenticator;
+use tracing::{error, info};
+use tracing_subscriber::FmtSubscriber;
 
 #[tokio::main]
 async fn main() {
     // Simple console logger
-    let sub = FmtSubscriber::builder().with_max_level(tracing::Level::INFO).finish();
+    let sub = FmtSubscriber::builder()
+        .with_max_level(tracing::Level::INFO)
+        .finish();
     tracing::subscriber::set_global_default(sub).expect("setting default subscriber failed");
 
     // 1. Load config from env (see Config::new)

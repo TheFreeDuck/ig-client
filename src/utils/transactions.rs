@@ -6,6 +6,8 @@ use chrono::{DateTime, Duration, Utc};
 use sqlx::PgPool;
 use tracing::{debug, info};
 
+use crate::application::models::transaction::Transaction;
+use crate::constants::DAYS_TO_BACK_LOOK;
 use crate::{
     application::services::ig_tx_client::{IgTxClient, IgTxFetcher},
     config::Config,
@@ -14,8 +16,6 @@ use crate::{
     session::interface::IgAuthenticator,
     storage::utils::store_transactions,
 };
-
-const DAYS_TO_BACK_LOOK: i64 = 10;
 
 /// Fetch transactions from IG API and store them in the database
 ///
@@ -64,7 +64,7 @@ pub async fn fetch_and_store_transactions(
 
     // Create the transaction client
     let tx_client = IgTxClient::new(cfg);
-    
+
     // Calculate date range
     let to = Utc::now();
     let from = if let Some(days) = from_days_ago {
@@ -101,7 +101,7 @@ pub async fn fetch_transactions(
     cfg: &Config,
     from: DateTime<Utc>,
     to: DateTime<Utc>,
-) -> Result<Vec<crate::application::models::transaction::Transaction>, AppError> {
+) -> Result<Vec<Transaction>, AppError> {
     // Authenticate with IG
     let auth = IgAuth::new(cfg);
     let sess = auth.login().await?;
@@ -109,7 +109,7 @@ pub async fn fetch_transactions(
 
     // Create the transaction client
     let tx_client = IgTxClient::new(cfg);
-    
+
     // Fetch transactions
     debug!("Fetching transactions from {} to {}", from, to);
     let txs = tx_client.fetch_range(&sess, from, to).await?;
