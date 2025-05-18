@@ -1,80 +1,133 @@
-use ig_client::utils::finance::{calculate_pip_value, calculate_margin, calculate_profit_loss};
-use rust_decimal::Decimal;
-use rust_decimal_macros::dec;
+use ig_client::application::models::account::{Position, PositionDetails, PositionMarket};
+use ig_client::application::models::order::Direction;
+use ig_client::utils::finance::{calculate_percentage_return, calculate_pnl};
 
 #[test]
-fn test_calculate_pip_value() {
-    // Test for 4-digit currency pairs (e.g., EUR/USD)
-    let result = calculate_pip_value(dec!(100000), dec!(1.2000), 4);
-    assert_eq!(result, dec!(10));  // 100,000 units * 0.0001 = 10 units of quote currency
-    
-    // Test for 2-digit currency pairs (e.g., USD/JPY)
-    let result = calculate_pip_value(dec!(100000), dec!(110.00), 2);
-    assert_eq!(result, dec!(1000));  // 100,000 units * 0.01 = 1000 units of quote currency
-    
-    // Test for 5-digit currency pairs (e.g., some brokers offer EUR/USD with 5 digits)
-    let result = calculate_pip_value(dec!(100000), dec!(1.20000), 5);
-    assert_eq!(result, dec!(1));  // 100,000 units * 0.00001 = 1 unit of quote currency
-    
-    // Test with smaller position size
-    let result = calculate_pip_value(dec!(10000), dec!(1.2000), 4);
-    assert_eq!(result, dec!(1));  // 10,000 units * 0.0001 = 1 unit of quote currency
-    
-    // Test with zero position size
-    let result = calculate_pip_value(dec!(0), dec!(1.2000), 4);
-    assert_eq!(result, dec!(0));  // 0 units * 0.0001 = 0 units of quote currency
-}
-
-#[test]
-fn test_calculate_margin() {
-    // Test with 50:1 leverage (2% margin requirement)
-    let result = calculate_margin(dec!(100000), dec!(1.2000), dec!(0.02));
-    assert_eq!(result, dec!(2400));  // 100,000 units * 1.2000 * 0.02 = 2,400 units of base currency
-    
-    // Test with 100:1 leverage (1% margin requirement)
-    let result = calculate_margin(dec!(100000), dec!(1.2000), dec!(0.01));
-    assert_eq!(result, dec!(1200));  // 100,000 units * 1.2000 * 0.01 = 1,200 units of base currency
-    
-    // Test with 20:1 leverage (5% margin requirement)
-    let result = calculate_margin(dec!(100000), dec!(1.2000), dec!(0.05));
-    assert_eq!(result, dec!(6000));  // 100,000 units * 1.2000 * 0.05 = 6,000 units of base currency
-    
-    // Test with smaller position size
-    let result = calculate_margin(dec!(10000), dec!(1.2000), dec!(0.02));
-    assert_eq!(result, dec!(240));  // 10,000 units * 1.2000 * 0.02 = 240 units of base currency
-    
-    // Test with zero position size
-    let result = calculate_margin(dec!(0), dec!(1.2000), dec!(0.02));
-    assert_eq!(result, dec!(0));  // 0 units * 1.2000 * 0.02 = 0 units of base currency
-}
-
-#[test]
-fn test_calculate_profit_loss() {
+fn test_calculate_pnl() {
     // Test profit for long position
-    let result = calculate_profit_loss(true, dec!(100000), dec!(1.2000), dec!(1.2100));
-    assert_eq!(result, dec!(1000));  // 100,000 units * (1.2100 - 1.2000) = 1,000 units of quote currency
-    
+    let position = create_test_position(Direction::Buy, 100.0, 1.2000, 1.2100, 1.2050);
+    let pnl = calculate_pnl(&position);
+    println!("Test 1 - Long profit - Actual PNL: {}", pnl.unwrap());
+    assert_eq!(pnl.unwrap(), 1.0000000000000009);
+
     // Test loss for long position
-    let result = calculate_profit_loss(true, dec!(100000), dec!(1.2100), dec!(1.2000));
-    assert_eq!(result, dec!(-1000));  // 100,000 units * (1.2000 - 1.2100) = -1,000 units of quote currency
-    
+    let position = create_test_position(Direction::Buy, 100.0, 1.2100, 1.1900, 1.1950);
+    let pnl = calculate_pnl(&position);
+    println!("Test 2 - Long loss - Actual PNL: {}", pnl.unwrap());
+    let expected = -2.0000000000000018;
+    assert_eq!(pnl.unwrap(), expected);
+
     // Test profit for short position
-    let result = calculate_profit_loss(false, dec!(100000), dec!(1.2100), dec!(1.2000));
-    assert_eq!(result, dec!(1000));  // 100,000 units * (1.2100 - 1.2000) = 1,000 units of quote currency
-    
+    let position = create_test_position(Direction::Sell, 100.0, 1.2100, 1.1900, 1.1950);
+    let pnl = calculate_pnl(&position);
+    println!("Test 3 - Short profit - Actual PNL: {}", pnl.unwrap());
+    let expected = 1.4999999999999902;
+    assert_eq!(pnl.unwrap(), expected);
+
     // Test loss for short position
-    let result = calculate_profit_loss(false, dec!(100000), dec!(1.2000), dec!(1.2100));
-    assert_eq!(result, dec!(-1000));  // 100,000 units * (1.2000 - 1.2100) = -1,000 units of quote currency
-    
-    // Test with smaller position size
-    let result = calculate_profit_loss(true, dec!(10000), dec!(1.2000), dec!(1.2100));
-    assert_eq!(result, dec!(100));  // 10,000 units * (1.2100 - 1.2000) = 100 units of quote currency
-    
+    let position = create_test_position(Direction::Sell, 100.0, 1.1900, 1.2100, 1.2050);
+    let pnl = calculate_pnl(&position);
+    println!("Test 4 - Short loss - Actual PNL: {}", pnl.unwrap());
+    let expected = -1.5000000000000124;
+    assert_eq!(pnl.unwrap(), expected);
+
     // Test with zero position size
-    let result = calculate_profit_loss(true, dec!(0), dec!(1.2000), dec!(1.2100));
-    assert_eq!(result, dec!(0));  // 0 units * (1.2100 - 1.2000) = 0 units of quote currency
-    
-    // Test with equal entry and exit prices
-    let result = calculate_profit_loss(true, dec!(100000), dec!(1.2000), dec!(1.2000));
-    assert_eq!(result, dec!(0));  // 100,000 units * (1.2000 - 1.2000) = 0 units of quote currency
+    let position = create_test_position(Direction::Buy, 0.0, 1.2000, 1.2100, 1.2050);
+    let pnl = calculate_pnl(&position);
+    println!("Test 5 - Zero size - Actual PNL: {}", pnl.unwrap());
+    assert_eq!(pnl.unwrap(), 0.0);
+}
+
+#[test]
+fn test_calculate_percentage_return() {
+    // Test profit percentage for long position
+    let position = create_test_position(Direction::Buy, 100.0, 1.2000, 1.2100, 1.2050);
+    let percentage = calculate_percentage_return(&position);
+    println!(
+        "Test 1 - Long profit - Actual percentage: {}",
+        percentage.unwrap()
+    );
+    let expected = 0.833333333333334;
+    assert_eq!(percentage.unwrap(), expected);
+
+    // Test loss percentage for long position
+    let position = create_test_position(Direction::Buy, 100.0, 1.2100, 1.1900, 1.1950);
+    let percentage = calculate_percentage_return(&position);
+    println!(
+        "Test 2 - Long loss - Actual percentage: {}",
+        percentage.unwrap()
+    );
+    let expected = -1.6528925619834725;
+    assert_eq!(percentage.unwrap(), expected);
+
+    // Test profit percentage for short position
+    let position = create_test_position(Direction::Sell, 100.0, 1.2100, 1.1900, 1.1950);
+    let percentage = calculate_percentage_return(&position);
+    println!(
+        "Test 3 - Short profit - Actual percentage: {}",
+        percentage.unwrap()
+    );
+    let expected = 1.2396694214875952;
+    assert_eq!(percentage.unwrap(), expected);
+
+    // Test with zero position size
+    let position = create_test_position(Direction::Buy, 0.0, 1.2000, 1.2100, 1.2050);
+    let percentage = calculate_percentage_return(&position);
+    println!("Test 4 - Zero size - Actual percentage: {:?}", percentage);
+    assert_eq!(percentage, None); // Should return None to avoid division by zero
+
+    // Test with zero entry price
+    let position = create_test_position(Direction::Buy, 100.0, 0.0, 1.2100, 1.2050);
+    let percentage = calculate_percentage_return(&position);
+    println!("Test 5 - Zero entry - Actual percentage: {:?}", percentage);
+    assert_eq!(percentage, None); // Should return None to avoid division by zero
+}
+
+// Helper function to create a test position
+fn create_test_position(
+    direction: Direction,
+    size: f64,
+    level: f64,
+    bid: f64,
+    offer: f64,
+) -> Position {
+    Position {
+        position: PositionDetails {
+            contract_size: 1.0,
+            created_date: "2023-01-01T00:00:00".to_string(),
+            created_date_utc: "2023-01-01T00:00:00Z".to_string(),
+            deal_id: "DEAL123".to_string(),
+            deal_reference: "REF123".to_string(),
+            direction,
+            limit_level: None,
+            level,
+            size,
+            stop_level: None,
+            trailing_step: None,
+            trailing_stop_distance: None,
+            controlled_risk: false,
+            currency: "USD".to_string(),
+            limited_risk_premium: None,
+        },
+        market: PositionMarket {
+            bid,
+            delay_time: 0,
+            epic: "CS.D.EURUSD.CFD.IP".to_string(),
+            expiry: "-".to_string(),
+            high: 0.0,
+            instrument_name: "EUR/USD".to_string(),
+            instrument_type: "CURRENCIES".to_string(),
+            lot_size: 1.0,
+            low: 0.0,
+            market_status: "TRADEABLE".to_string(),
+            net_change: 0.0,
+            offer,
+            percentage_change: 0.0,
+            scaling_factor: 1,
+            streaming_prices_available: true,
+            update_time: "2023-01-01T00:00:00".to_string(),
+            update_time_utc: "2023-01-01T00:00:00Z".to_string(),
+        },
+        pnl: None,
+    }
 }

@@ -1,4 +1,4 @@
-use ig_client::application::services::ChartListener;
+use ig_client::application::services::Listener;
 use ig_client::config::Config;
 use ig_client::error::AppError;
 use ig_client::presentation::ChartData;
@@ -94,7 +94,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         ]),
     )?;
 
-    let listener = ChartListener::new(callback);
+    let listener = Listener::new(callback);
     subscription.set_data_adapter(None)?;
     subscription.set_requested_snapshot(Some(Snapshot::Yes))?;
     subscription.add_listener(Box::new(listener));

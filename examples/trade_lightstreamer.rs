@@ -1,4 +1,4 @@
-use ig_client::application::services::TradeListener;
+use ig_client::application::services::Listener;
 use ig_client::config::Config;
 use ig_client::error::AppError;
 use ig_client::presentation::TradeData;
@@ -86,7 +86,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         ]),
     )?;
 
-    let listener = TradeListener::new(callback);
+    let listener = Listener::new(callback);
     subscription.set_data_adapter(None)?;
     subscription.set_requested_snapshot(Some(Snapshot::Yes))?;
     subscription.add_listener(Box::new(listener));

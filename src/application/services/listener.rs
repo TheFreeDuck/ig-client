@@ -1,18 +1,21 @@
 use crate::application::services::ListenerResult;
-use crate::presentation::TradeData;
 use lightstreamer_rs::subscription::{ItemUpdate, SubscriptionListener};
+use std::fmt::{Debug, Display};
 use std::sync::Arc;
 use tracing::log::debug;
 use tracing::{error, info};
 
 /// Trade data listener that processes updates through a callback
 /// Thread-safe and can be shared between threads
-pub struct TradeListener {
+pub struct Listener<T> {
     /// The callback function that will be called with trade data updates
-    callback: Arc<dyn Fn(&TradeData) -> ListenerResult + Send + Sync>,
+    callback: Arc<dyn Fn(&T) -> ListenerResult + Send + Sync>,
 }
 
-impl TradeListener {
+impl<T> Listener<T>
+where
+    T: 'static,
+{
     /// Creates a new TradeListener with the specified callback
     ///
     /// # Arguments
@@ -22,11 +25,12 @@ impl TradeListener {
     /// # Returns
     ///
     /// A new instance of TradeListener
+    #[allow(dead_code)]
     pub fn new<F>(callback: F) -> Self
     where
-        F: Fn(&TradeData) -> ListenerResult + Send + Sync + 'static,
+        F: Fn(&T) -> ListenerResult + Send + Sync + 'static,
     {
-        TradeListener {
+        Listener {
             callback: Arc::new(callback),
         }
     }
@@ -39,7 +43,7 @@ impl TradeListener {
     #[allow(dead_code)]
     fn set_callback<F>(&mut self, callback: F)
     where
-        F: Fn(&TradeData) -> ListenerResult + Send + Sync + 'static,
+        F: Fn(&T) -> ListenerResult + Send + Sync + 'static,
     {
         self.callback = Arc::new(callback);
     }
@@ -53,13 +57,17 @@ impl TradeListener {
     /// # Returns
     ///
     /// The result of the callback function
-    fn callback(&self, trade_data: &TradeData) -> ListenerResult {
-        (self.callback)(trade_data)
+    fn callback(&self, data: &T) -> ListenerResult {
+        (self.callback)(data)
     }
 
     /// For testing purposes only - creates a listener that logs but doesn't call any callback
     #[cfg(test)]
-    pub fn mock() -> Self {
+    #[allow(dead_code)]
+    pub fn mock() -> Self
+    where
+        T: Display + Debug,
+    {
         Self::new(|data| {
             debug!("Mock trade callback received: {}", data);
             Ok(())
@@ -67,12 +75,15 @@ impl TradeListener {
     }
 }
 
-impl SubscriptionListener for TradeListener {
+impl<T> SubscriptionListener for Listener<T>
+where
+    T: for<'a> From<&'a ItemUpdate> + Display + Debug + 'static,
+{
     fn on_item_update(&self, update: &ItemUpdate) {
-        let trade_data: TradeData = update.into();
+        let data: T = T::from(update);
 
-        match self.callback(&trade_data) {
-            Ok(_) => debug!("{}", trade_data),
+        match self.callback(&data) {
+            Ok(_) => debug!("{}", data),
             Err(e) => error!("Error in trade data callback: {}", e),
         }
     }

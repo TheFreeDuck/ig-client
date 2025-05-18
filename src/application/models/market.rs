@@ -3,6 +3,7 @@
    Email: jb@taunais.com
    Date: 13/5/25
 ******************************************************************************/
+use std::fmt::Display;
 use serde::{Deserialize, Serialize};
 
 /// Instrument type
@@ -178,7 +179,7 @@ pub struct MarketSearchResult {
 }
 
 /// Basic market data
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct MarketData {
     /// Unique identifier for the market
     pub epic: String,
@@ -212,6 +213,13 @@ pub struct MarketData {
     pub bid: Option<f64>,
     /// Current offer/ask price
     pub offer: Option<f64>,
+}
+
+impl Display for MarketData {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let json = serde_json::to_string(self).unwrap_or_else(|_| "Invalid JSON".to_string());
+        write!(f, "{}", json)
+    }
 }
 
 /// Model for historical prices
