@@ -3,8 +3,8 @@
    Email: jb@taunais.com
    Date: 13/5/25
 ******************************************************************************/
-use std::fmt::Display;
 use serde::{Deserialize, Serialize};
+use std::fmt::Display;
 
 /// Instrument type
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

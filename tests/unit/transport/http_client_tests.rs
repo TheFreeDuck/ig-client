@@ -1,8 +1,8 @@
 use ig_client::config::{Config, RestApiConfig};
 use ig_client::session::interface::IgSession;
 use ig_client::transport::http_client::IgHttpClientImpl;
-use std::sync::Arc;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 fn create_test_config() -> Arc<Config> {
     Arc::new(Config {
@@ -40,4 +40,3 @@ fn test_http_client_new() {
     let config = create_test_config();
     let _client = IgHttpClientImpl::new(config.clone());
 }
-

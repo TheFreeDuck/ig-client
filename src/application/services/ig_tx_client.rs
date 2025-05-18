@@ -178,8 +178,8 @@ impl IgTxFetcher for IgTxClient<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::Config;
     use crate::application::models::transaction::RawTransaction;
+    use crate::config::Config;
 
     #[test]
     fn test_rest_url() {
@@ -220,7 +220,10 @@ mod tests {
         assert!(!tx.is_fee);
         assert_eq!(
             tx.deal_date.timestamp(),
-            NaiveDateTime::parse_from_str(&raw.date_utc, "%Y-%m-%dT%H:%M:%S").unwrap().and_utc().timestamp()
+            NaiveDateTime::parse_from_str(&raw.date_utc, "%Y-%m-%dT%H:%M:%S")
+                .unwrap()
+                .and_utc()
+                .timestamp()
         );
         assert!(tx.raw_json.contains(&raw.reference));
     }

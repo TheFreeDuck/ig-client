@@ -124,3 +124,22 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
         Ok(result)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::Config;
+    use crate::transport::http_client::IgHttpClientImpl;
+    use std::sync::Arc;
+
+    #[test]
+    fn test_get_and_set_config() {
+        let config = Arc::new(Config::new());
+        let client = Arc::new(IgHttpClientImpl::new(config.clone()));
+        let mut service = MarketServiceImpl::new(config.clone(), client.clone());
+        assert!(std::ptr::eq(service.get_config(), &*config));
+        let new_cfg = Arc::new(Config::default());
+        service.set_config(new_cfg.clone());
+        assert!(std::ptr::eq(service.get_config(), &*new_cfg));
+    }
+}

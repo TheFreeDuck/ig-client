@@ -33,7 +33,6 @@ pub enum OrderType {
     StopLimit,
 }
 
-
 /// Represents the status of an order or transaction in the system.
 ///
 /// This enum covers various states an order can be in throughout its lifecycle,

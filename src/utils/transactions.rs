@@ -2,7 +2,7 @@
 //
 // Transaction utilities for the IG client
 
-use chrono::{DateTime, Duration, Utc, NaiveDate};
+use chrono::{DateTime, Duration, NaiveDate, Utc};
 use sqlx::PgPool;
 use tracing::{debug, info};
 

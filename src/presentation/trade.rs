@@ -1,11 +1,10 @@
+use crate::application::models::order::{Direction, OrderType, Status, TimeInForce};
 use crate::presentation::serialization::{option_string_empty_as_none, string_as_float_opt};
 use lightstreamer_rs::subscription::ItemUpdate;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::collections::HashMap;
 use std::fmt;
-use crate::application::models::order::{Direction, OrderType, TimeInForce, Status};
-
 
 /// Main structure for trade data received from the IG Markets API
 /// Contains information about trades, positions and working orders
@@ -23,156 +22,159 @@ pub struct TradeData {
     pub is_snapshot: bool,
 }
 
-// Main fields
+/// Main fields for a trade update, containing core trade data.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct TradeFields {
+    /// Optional confirmation details for the trade.
     #[serde(rename = "CONFIRMS")]
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub confirms: Option<String>,
-
+    /// Optional open position update details.
     #[serde(rename = "OPU")]
     #[serde(default)]
     pub opu: Option<OpenPositionUpdate>,
-
+    /// Optional working order update details.
     #[serde(rename = "WOU")]
     #[serde(default)]
     pub wou: Option<WorkingOrderUpdate>,
 }
 
-// Structure for Open Position Update (OPU)
+/// Structure representing details of an open position update.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct OpenPositionUpdate {
+    /// Unique deal reference for the open position.
     #[serde(rename = "dealReference")]
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub deal_reference: Option<String>,
-
+    /// Unique deal identifier for the position.
     #[serde(rename = "dealId")]
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub deal_id: Option<String>,
-
+    /// Direction of the trade position (buy or sell).
     #[serde(default)]
     pub direction: Option<Direction>,
-
+    /// Epic identifier for the instrument.
     #[serde(default)]
     pub epic: Option<String>,
-
+    /// Status of the position.
     #[serde(default)]
     pub status: Option<Status>,
-
+    /// Deal status of the position.
     #[serde(rename = "dealStatus")]
     #[serde(default)]
     pub deal_status: Option<Status>,
-
+    /// Price level of the position.
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub level: Option<f64>,
-
+    /// Position size.
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub size: Option<f64>,
-
+    /// Currency of the position.
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub currency: Option<String>,
-
+    /// Timestamp of the position update.
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
-    pub timestamp: Option<String>, // We can convert to DateTime if needed
-
+    pub timestamp: Option<String>,
+    /// Channel through which the update was received.
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub channel: Option<String>,
-
+    /// Expiry date of the position, if applicable.
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub expiry: Option<String>,
-
+    /// Original deal identifier for the position.
     #[serde(rename = "dealIdOrigin")]
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub deal_id_origin: Option<String>,
 }
 
-// Structure for Working Order Update (WOU)
+/// Structure representing details of a working order update.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct WorkingOrderUpdate {
+    /// Unique deal reference for the working order.
     #[serde(rename = "dealReference")]
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub deal_reference: Option<String>,
-
+    /// Unique deal identifier for the working order.
     #[serde(rename = "dealId")]
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub deal_id: Option<String>,
-
+    /// Direction of the working order (buy or sell).
     #[serde(default)]
     pub direction: Option<Direction>,
-
+    /// Epic identifier for the working order instrument.
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub epic: Option<String>,
-
+    /// Status of the working order.
     #[serde(default)]
     pub status: Option<Status>,
-
+    /// Deal status of the working order.
     #[serde(rename = "dealStatus")]
     #[serde(default)]
     pub deal_status: Option<Status>,
-
+    /// Price level at which the working order is set.
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub level: Option<f64>,
-
+    /// Working order size.
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub size: Option<f64>,
-
+    /// Currency of the working order.
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub currency: Option<String>,
-
+    /// Timestamp of the working order update.
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
-    pub timestamp: Option<String>, // We can convert to DateTime if needed
-
+    pub timestamp: Option<String>,
+    /// Channel through which the working order update was received.
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub channel: Option<String>,
-
+    /// Expiry date of the working order.
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
     pub expiry: Option<String>,
-
+    /// Stop distance for guaranteed stop orders.
     #[serde(rename = "stopDistance")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub stop_distance: Option<f64>,
-
+    /// Limit distance for guaranteed stop orders.
     #[serde(rename = "limitDistance")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub limit_distance: Option<f64>,
-
+    /// Whether the stop is guaranteed.
     #[serde(rename = "guaranteedStop")]
     #[serde(default)]
     pub guaranteed_stop: Option<bool>,
-
+    /// Type of the order (e.g., market, limit).
     #[serde(rename = "orderType")]
     #[serde(default)]
     pub order_type: Option<OrderType>,
-
+    /// Time in force for the order.
     #[serde(rename = "timeInForce")]
     #[serde(default)]
     pub time_in_force: Option<TimeInForce>,
-
+    /// Good till date for the working order.
     #[serde(rename = "goodTillDate")]
     #[serde(with = "option_string_empty_as_none")]
     #[serde(default)]
-    pub good_till_date: Option<String>, // We can convert to DateTime if needed
+    pub good_till_date: Option<String>,
 }
 
 impl TradeData {
@@ -204,7 +206,7 @@ impl TradeData {
             changed_fields_map.insert(key.clone(), Some(value.clone()));
         }
         let changed_fields = Self::create_trade_fields(&changed_fields_map)?;
-        
+
         Ok(TradeData {
             item_name,
             item_pos,
@@ -219,9 +221,9 @@ impl TradeData {
         fields_map: &HashMap<String, Option<String>>,
     ) -> Result<TradeFields, String> {
         // Helper function to safely get a field value
-        let get_field = |key: &str| -> Option<String> { 
+        let get_field = |key: &str| -> Option<String> {
             let field = fields_map.get(key).cloned().flatten();
-            match field { 
+            match field {
                 Some(ref s) if s.is_empty() => None,
                 _ => field,
             }
@@ -258,7 +260,7 @@ impl TradeData {
         } else {
             None
         };
-        
+
         Ok(TradeFields { confirms, opu, wou })
     }
 }

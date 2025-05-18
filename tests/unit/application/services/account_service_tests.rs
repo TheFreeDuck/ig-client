@@ -22,7 +22,7 @@ fn test_account_info_structure() {
             status: "ENABLED".to_string(),
         }],
     };
-    
+
     assert_eq!(account_info.accounts.len(), 1);
     assert_eq!(account_info.accounts[0].account_id, "ACCOUNT-123");
     assert_eq!(account_info.accounts[0].account_name, "Test Account");
@@ -39,7 +39,7 @@ fn test_positions_structure() {
     let positions = Positions {
         positions: Vec::new(),
     };
-    
+
     assert!(positions.positions.is_empty());
 }
 
@@ -49,7 +49,7 @@ fn test_working_orders_structure() {
     let working_orders = WorkingOrders {
         working_orders: Vec::new(),
     };
-    
+
     assert!(working_orders.working_orders.is_empty());
 }
 
@@ -59,7 +59,7 @@ fn test_account_activity_structure() {
     let activity = AccountActivity {
         activities: Vec::new(),
     };
-    
+
     assert!(activity.activities.is_empty());
 }
 
@@ -77,7 +77,7 @@ fn test_transaction_history_structure() {
             size: 0,
         },
     };
-    
+
     assert!(history.transactions.is_empty());
     assert_eq!(history.metadata.page_data.page_size, 10);
     assert_eq!(history.metadata.page_data.page_number, 1);

@@ -276,15 +276,15 @@ pub enum SubscriptionType {
 //         let is_demo = ws_url.contains("demo");
 //
 //         // Determine the server address based on environment
-//         // Según la documentación de IG, la URL correcta es:
+//         // According to IG's documentation, the correct URL is:
 //         let server_address = if is_demo {
 //             "https://demo-apd.marketdatasystems.com/lightstreamer"
 //         } else {
 //             "https://apd.marketdatasystems.com/lightstreamer"
 //         };
 //
-//         // Para IG Markets, no necesitamos especificar un adapter set
-//         // Dejamos esto vacío para que funcione correctamente
+//         // For IG Markets, we don't need to specify an adapter set
+//         // Leave this empty for proper functionality
 //         let adapter_set = "";
 //
 //         info!("Using Lightstreamer server: {}", server_address);
@@ -301,10 +301,10 @@ pub enum SubscriptionType {
 //         info!("Using XST token of length: {}", token.len());
 //
 //         // Create the Lightstreamer client
-//         // Usamos el constructor con parámetros
+//         // We use the constructor with parameters
 //         let mut client = LightstreamerClient::new(
 //             Some(server_address),
-//             None, // No usamos adapter_set
+//             None, // No adapter set
 //             Some(session.account_id.trim()),
 //             Some(&password),
 //         ).map_err(|e| AppError::WebSocketError(format!("Failed to create Lightstreamer client: {}", e)))?;
@@ -394,7 +394,7 @@ pub enum SubscriptionType {
 //         }
 //
 //         // Create Lightstreamer subscription
-//         // Usamos los mismos campos que se muestran en el Companion
+//         // We use the same fields as shown in the Companion
 //         let mut ls_subscription = Subscription::new(
 //             SubscriptionMode::Merge,
 //             Some(vec![epic.to_string()]),
@@ -463,8 +463,8 @@ pub enum SubscriptionType {
 //         }
 //
 //         // Create Lightstreamer subscription
-//         // Para suscripciones de cuenta, necesitamos usar el formato correcto para IG
-//         // Según la documentación, debemos usar ACCOUNT:{accountId} como item
+//         // For account subscriptions, we need to use the correct format for IG
+//         // According to the documentation, we should use ACCOUNT:{accountId} as item
 //         let account_id = self.config.credentials.account_id.trim().to_string();
 //         let account_item = format!("ACCOUNT:{}", account_id);
 //

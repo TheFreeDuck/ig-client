@@ -1,8 +1,11 @@
 #[cfg(test)]
 mod tests {
-    use serde_json::json;
     use assert_json_diff::assert_json_eq;
-    use ig_client::application::models::market::{Currency, DealingRules, HistoricalPricesResponse, Instrument, InstrumentType, MarketData, MarketDetails, MarketSearchResult, PriceAllowance, PricePoint};
+    use ig_client::application::models::market::{
+        Currency, DealingRules, HistoricalPricesResponse, Instrument, InstrumentType, MarketData,
+        MarketDetails, MarketSearchResult, PriceAllowance, PricePoint,
+    };
+    use serde_json::json;
 
     #[test]
     fn test_instrument_type_serialization() {
@@ -36,7 +39,8 @@ mod tests {
         ];
 
         for (json_str, expected_type) in types {
-            let deserialized: InstrumentType = serde_json::from_str(&format!("\"{}\"", json_str)).unwrap();
+            let deserialized: InstrumentType =
+                serde_json::from_str(&format!("\"{}\"", json_str)).unwrap();
             assert_eq!(deserialized, expected_type);
         }
     }
@@ -80,7 +84,10 @@ mod tests {
         assert_eq!(instrument.high_limit_price, Some(1.5));
         assert_eq!(instrument.low_limit_price, Some(0.5));
         assert_eq!(instrument.margin_factor, Some(3.33));
-        assert_eq!(instrument.margin_factor_unit, Some("PERCENTAGE".to_string()));
+        assert_eq!(
+            instrument.margin_factor_unit,
+            Some("PERCENTAGE".to_string())
+        );
         assert_eq!(instrument.slippage_factor, Some(0.5));
         assert_eq!(instrument.limited_risk_premium, Some(0.1));
         assert_eq!(instrument.news_code, Some("eurusd".to_string()));
@@ -154,7 +161,10 @@ mod tests {
 
         assert_eq!(market_details.instrument.epic, "IX.D.FTSE.CFD.IP");
         assert_eq!(market_details.instrument.name, "FTSE 100");
-        assert_eq!(market_details.instrument.instrument_type, InstrumentType::Indices);
+        assert_eq!(
+            market_details.instrument.instrument_type,
+            InstrumentType::Indices
+        );
 
         assert_eq!(market_details.snapshot.market_status, "OPEN");
         assert_eq!(market_details.snapshot.net_change, Some(15.5));
@@ -181,7 +191,10 @@ mod tests {
         assert_eq!(dealing_rules.min_controlled_risk_stop_distance, Some(5.0));
         assert_eq!(dealing_rules.min_normal_stop_or_limit_distance, Some(2.0));
         assert_eq!(dealing_rules.max_stop_or_limit_distance, Some(2000.0));
-        assert_eq!(dealing_rules.market_order_preference, "AVAILABLE_DEFAULT_ON");
+        assert_eq!(
+            dealing_rules.market_order_preference,
+            "AVAILABLE_DEFAULT_ON"
+        );
         assert_eq!(dealing_rules.trailing_stops_preference, "AVAILABLE");
     }
 
@@ -225,7 +238,10 @@ mod tests {
         assert_eq!(search_result.markets.len(), 2);
         assert_eq!(search_result.markets[0].epic, "CS.D.EURUSD.CFD.IP");
         assert_eq!(search_result.markets[0].instrument_name, "EUR/USD");
-        assert_eq!(search_result.markets[0].instrument_type, InstrumentType::Currencies);
+        assert_eq!(
+            search_result.markets[0].instrument_type,
+            InstrumentType::Currencies
+        );
         assert_eq!(search_result.markets[0].bid, Some(1.0876));
 
         assert_eq!(search_result.markets[1].epic, "CS.D.GBPUSD.CFD.IP");
@@ -312,10 +328,16 @@ mod tests {
 
         assert_eq!(prices_response.instrument_type, InstrumentType::Currencies);
         assert_eq!(prices_response.prices.len(), 1);
-        assert_eq!(prices_response.prices[0].snapshot_time, "2023-05-13T10:00:00");
+        assert_eq!(
+            prices_response.prices[0].snapshot_time,
+            "2023-05-13T10:00:00"
+        );
         assert_eq!(prices_response.prices[0].open_price.bid, Some(1.0870));
         assert_eq!(prices_response.prices[0].open_price.ask, Some(1.0872));
-        assert_eq!(prices_response.prices[0].open_price.last_traded, Some(1.0871));
+        assert_eq!(
+            prices_response.prices[0].open_price.last_traded,
+            Some(1.0871)
+        );
         assert_eq!(prices_response.prices[0].last_traded_volume, Some(25000));
 
         assert_eq!(prices_response.allowance.remaining_allowance, 9995);

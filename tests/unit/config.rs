@@ -80,31 +80,30 @@ fn test_get_env_or_default_nonexistent() {
 
 #[test]
 fn test_config_with_env_vars() {
-    // En lugar de verificar los valores específicos, vamos a verificar que
-    // la función get_env_or_default funciona correctamente
+    // Instead of checking specific values, verify that the get_env_or_default function works correctly
 
-    // Prueba con variable existente
+    // Test with an existing environment variable
     unsafe {
         env::set_var("TEST_VAR_EXISTS", "test_value");
     }
     let result = get_env_or_default("TEST_VAR_EXISTS", String::from("default_value"));
     assert_eq!(result, "test_value");
 
-    // Prueba con variable inexistente
+    // Test with a non-existent environment variable
     unsafe {
         env::remove_var("TEST_VAR_NOT_EXISTS");
     }
     let result = get_env_or_default("TEST_VAR_NOT_EXISTS", String::from("default_value"));
     assert_eq!(result, "default_value");
 
-    // Prueba con valor numérico
+    // Test with a numeric environment variable value
     unsafe {
         env::set_var("TEST_VAR_NUMBER", "42");
     }
     let result = get_env_or_default("TEST_VAR_NUMBER", 0);
     assert_eq!(result, 42);
 
-    // Prueba con valor numérico inválido
+    // Test with an invalid numeric value
     unsafe {
         env::set_var("TEST_VAR_INVALID_NUMBER", "not_a_number");
     }
@@ -114,7 +113,7 @@ fn test_config_with_env_vars() {
 
 #[test]
 fn test_credentials_display() {
-    // Guardar valores originales
+    // Save original values
     let _orig_username = env::var("IG_USERNAME").ok();
     let _orig_password = env::var("IG_PASSWORD").ok();
     let _orig_api_key = env::var("IG_API_KEY").ok();
@@ -160,7 +159,7 @@ fn test_credentials_display() {
     assert!(!display_str.contains("key456"));
     assert!(display_str.contains("[REDACTED]"));
 
-    // Restaurar valores originales
+    // Restore original values
     unsafe {
         match _orig_username {
             Some(val) => env::set_var("IG_USERNAME", val),

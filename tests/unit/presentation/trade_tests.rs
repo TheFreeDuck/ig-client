@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
-    use lightstreamer_rs::subscription::ItemUpdate;
-    use std::collections::HashMap;
     use ig_client::application::models::order::{Direction, OrderType, Status, TimeInForce};
     use ig_client::presentation::TradeData;
+    use lightstreamer_rs::subscription::ItemUpdate;
+    use std::collections::HashMap;
 
     fn create_item_update(
         item_name: Option<String>,
@@ -92,7 +92,8 @@ mod tests {
         assert_eq!(gtc_json, "\"GOOD_TILL_CANCELLED\"");
         assert_eq!(gtd_json, "\"GOOD_TILL_DATE\"");
 
-        let gtc_deserialized: TimeInForce = serde_json::from_str("\"GOOD_TILL_CANCELLED\"").unwrap();
+        let gtc_deserialized: TimeInForce =
+            serde_json::from_str("\"GOOD_TILL_CANCELLED\"").unwrap();
         let gtd_deserialized: TimeInForce = serde_json::from_str("\"GOOD_TILL_DATE\"").unwrap();
 
         assert_eq!(gtc_deserialized, TimeInForce::GoodTillCancelled);
@@ -116,8 +117,11 @@ mod tests {
 
         assert_eq!(trade_data.item_name, "TestItem");
         assert_eq!(trade_data.item_pos, 1);
-        assert_eq!(trade_data.is_snapshot, true);
-        assert_eq!(trade_data.fields.confirms, Some("TestConfirm123".to_string()));
+        assert!(trade_data.is_snapshot);
+        assert_eq!(
+            trade_data.fields.confirms,
+            Some("TestConfirm123".to_string())
+        );
         assert!(trade_data.fields.opu.is_none());
         assert!(trade_data.fields.wou.is_none());
     }
@@ -155,7 +159,7 @@ mod tests {
 
         assert_eq!(trade_data.item_name, "TestItem");
         assert_eq!(trade_data.item_pos, 1);
-        assert_eq!(trade_data.is_snapshot, true);
+        assert!(trade_data.is_snapshot);
 
         let opu = trade_data.fields.opu.unwrap();
         assert_eq!(opu.deal_reference, Some("REF123".to_string()));
@@ -211,7 +215,7 @@ mod tests {
 
         assert_eq!(trade_data.item_name, "TestItem");
         assert_eq!(trade_data.item_pos, 2);
-        assert_eq!(trade_data.is_snapshot, false);
+        assert!(!trade_data.is_snapshot);
 
         let wou = trade_data.fields.wou.unwrap();
         assert_eq!(wou.deal_reference, Some("REF456".to_string()));
@@ -272,10 +276,13 @@ mod tests {
 
         assert_eq!(trade_data.item_name, "TestItem");
         assert_eq!(trade_data.item_pos, 3);
-        assert_eq!(trade_data.is_snapshot, false);
+        assert!(!trade_data.is_snapshot);
 
         // Check fields
-        assert_eq!(trade_data.fields.confirms, Some("TestConfirm123".to_string()));
+        assert_eq!(
+            trade_data.fields.confirms,
+            Some("TestConfirm123".to_string())
+        );
         assert!(trade_data.fields.opu.is_some());
         assert!(trade_data.fields.wou.is_some());
 
@@ -304,7 +311,7 @@ mod tests {
 
         assert_eq!(trade_data.item_name, "TestItem");
         assert_eq!(trade_data.item_pos, 4);
-        assert_eq!(trade_data.is_snapshot, true);
+        assert!(trade_data.is_snapshot);
 
         // None because we use option_string_empty_as_none for confirms
         assert_eq!(trade_data.fields.confirms, None);
@@ -349,8 +356,11 @@ mod tests {
 
         assert_eq!(trade_data.item_name, "TestItem");
         assert_eq!(trade_data.item_pos, 6);
-        assert_eq!(trade_data.is_snapshot, true);
-        assert_eq!(trade_data.fields.confirms, Some("TestConfirm123".to_string()));
+        assert!(trade_data.is_snapshot);
+        assert_eq!(
+            trade_data.fields.confirms,
+            Some("TestConfirm123".to_string())
+        );
     }
 
     #[test]
@@ -375,19 +385,13 @@ mod tests {
 
     #[test]
     fn test_from_item_update_with_missing_fields() {
-        let item_update = create_item_update(
-            None,
-            8,
-            false,
-            HashMap::new(),
-            HashMap::new(),
-        );
+        let item_update = create_item_update(None, 8, false, HashMap::new(), HashMap::new());
 
         let trade_data = TradeData::from_item_update(&item_update).unwrap();
 
         assert_eq!(trade_data.item_name, "");
         assert_eq!(trade_data.item_pos, 8);
-        assert_eq!(trade_data.is_snapshot, false);
+        assert!(!trade_data.is_snapshot);
         assert!(trade_data.fields.confirms.is_none());
         assert!(trade_data.fields.opu.is_none());
         assert!(trade_data.fields.wou.is_none());

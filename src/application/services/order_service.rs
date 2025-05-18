@@ -156,3 +156,25 @@ impl<T: IgHttpClient + 'static> OrderService for OrderServiceImpl<T> {
         Ok(result)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::config::Config;
+    use crate::transport::http_client::IgHttpClientImpl;
+    use std::sync::Arc;
+
+    #[test]
+    fn test_get_and_set_config() {
+        let config = Arc::new(Config::new());
+        let client = Arc::new(IgHttpClientImpl::new(config.clone()));
+        let mut service = OrderServiceImpl::new(config.clone(), client.clone());
+
+        let cfg1 = service.get_config();
+        assert!(Arc::ptr_eq(&cfg1, &config));
+
+        let new_cfg = Arc::new(Config::default());
+        service.set_config(new_cfg.clone());
+        assert!(Arc::ptr_eq(&service.get_config(), &new_cfg));
+    }
+}

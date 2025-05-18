@@ -1,9 +1,9 @@
 use crate::application::models::transaction::Transaction;
 use crate::error::AppError;
-use sqlx::Executor;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use serde_json;
+use sqlx::Executor;
 
 /// Stores a list of transactions in the database
 ///

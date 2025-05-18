@@ -242,7 +242,7 @@ mod tests {
 
     #[test]
     fn test_fee_entry() {
-        let json = r#"{"instrumentName":"Cargo por tarifa de los Gráficos en April 25"}"#;
+        let json = r#"{"instrumentName":"Fee charge for charts on April 25"}"#;
         let info = parse_instrument_from_json(json).unwrap();
         assert!(!info.is_option);
         assert_eq!(info.underlying, None);

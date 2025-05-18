@@ -4,6 +4,7 @@ mod market;
 mod chart;
 mod price;
 pub(crate) mod serialization;
+/// Trade-related presentation module containing data structures for trade updates.
 pub mod trade;
 
 pub use account::AccountData;
