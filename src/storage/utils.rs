@@ -1,5 +1,8 @@
 use crate::application::models::transaction::Transaction;
 use crate::error::AppError;
+use serde::Serialize;
+use serde::de::DeserializeOwned;
+use serde_json;
 use sqlx::Executor;
 
 /// Stores a list of transactions in the database
@@ -48,4 +51,14 @@ pub async fn store_transactions(
 
     tx.commit().await?;
     Ok(inserted)
+}
+
+/// Serializes a value to a JSON string
+pub fn serialize_to_json<T: Serialize>(value: &T) -> Result<String, serde_json::Error> {
+    serde_json::to_string(value)
+}
+
+/// Deserializes a JSON string into a value
+pub fn deserialize_from_json<T: DeserializeOwned>(s: &str) -> Result<T, serde_json::Error> {
+    serde_json::from_str(s)
 }

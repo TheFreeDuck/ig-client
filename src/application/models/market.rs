@@ -4,6 +4,7 @@
    Date: 13/5/25
 ******************************************************************************/
 use serde::{Deserialize, Serialize};
+use std::fmt::Display;
 
 /// Instrument type
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -178,7 +179,7 @@ pub struct MarketSearchResult {
 }
 
 /// Basic market data
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct MarketData {
     /// Unique identifier for the market
     pub epic: String,
@@ -212,6 +213,13 @@ pub struct MarketData {
     pub bid: Option<f64>,
     /// Current offer/ask price
     pub offer: Option<f64>,
+}
+
+impl Display for MarketData {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let json = serde_json::to_string(self).unwrap_or_else(|_| "Invalid JSON".to_string());
+        write!(f, "{}", json)
+    }
 }
 
 /// Model for historical prices

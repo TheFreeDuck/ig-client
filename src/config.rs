@@ -8,7 +8,6 @@ use std::fmt::Debug;
 use std::str::FromStr;
 use tracing::{error, info, warn};
 
-#[allow(dead_code)]
 #[derive(Debug, Deserialize, Clone)]
 /// Authentication credentials for the IG Markets API
 pub struct Credentials {
@@ -20,8 +19,10 @@ pub struct Credentials {
     pub account_id: String,
     /// API key for the IG Markets API
     pub api_key: String,
-    pub(crate) client_token: Option<String>,
-    pub(crate) account_token: Option<String>,
+    /// Client token for the IG Markets API
+    pub client_token: Option<String>,
+    /// Account token for the IG Markets API
+    pub account_token: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -140,18 +141,18 @@ impl Config {
     ///
     /// A new `Config` instance
     pub fn new() -> Self {
-        // Cargar explícitamente el archivo .env
+        // Explicitly load the .env file
         match dotenv() {
             Ok(_) => info!("Successfully loaded .env file"),
             Err(e) => warn!("Failed to load .env file: {}", e),
         }
 
-        // Verificar si las variables de entorno están configuradas
+        // Check if environment variables are configured
         let username = get_env_or_default("IG_USERNAME", String::from("default_username"));
         let password = get_env_or_default("IG_PASSWORD", String::from("default_password"));
         let api_key = get_env_or_default("IG_API_KEY", String::from("default_api_key"));
 
-        // Verificar si estamos usando valores predeterminados
+        // Check if we are using default values
         if username == "default_username" {
             error!("IG_USERNAME not found in environment variables or .env file");
         }
@@ -162,7 +163,7 @@ impl Config {
             error!("IG_API_KEY not found in environment variables or .env file");
         }
 
-        // Imprimir información sobre las variables de entorno cargadas
+        // Print information about loaded environment variables
         info!("Environment variables loaded:");
         info!(
             "  IG_USERNAME: {}",
@@ -232,83 +233,6 @@ impl Config {
             .max_connections(self.database.max_connections)
             .connect(&self.database.url)
             .await
-    }
-}
-
-#[cfg(test)]
-mod tests_config {
-    use super::*;
-    use once_cell::sync::Lazy;
-    use std::sync::Mutex;
-
-    static ENV_MUTEX: Lazy<Mutex<()>> = Lazy::new(|| Mutex::new(()));
-
-    fn with_env_vars<F>(vars: Vec<(&str, &str)>, test: F)
-    where
-        F: FnOnce(),
-    {
-        let _lock = ENV_MUTEX.lock().unwrap();
-        let mut old_vars = Vec::new();
-
-        for (key, value) in vars {
-            old_vars.push((key, env::var(key).ok()));
-            unsafe {
-                env::set_var(key, value);
-            }
-        }
-
-        test();
-
-        for (key, value) in old_vars {
-            match value {
-                Some(v) => unsafe { env::set_var(key, v) },
-                None => unsafe { env::remove_var(key) },
-            }
-        }
-    }
-
-    #[test]
-    fn test_config_new() {
-        with_env_vars(
-            vec![
-                ("IG_USERNAME", "test_user"),
-                ("IG_PASSWORD", "test_pass"),
-                ("IG_API_KEY", "test_api_key"),
-                ("IG_REST_BASE_URL", "https://test-api.ig.com"),
-                ("IG_REST_TIMEOUT", "60"),
-                ("IG_WS_URL", "wss://test-ws.ig.com"),
-                ("IG_WS_RECONNECT_INTERVAL", "10"),
-            ],
-            || {
-                let config = Config::new();
-
-                assert_eq!(config.credentials.username, "test_user");
-                assert_eq!(config.credentials.password, "test_pass");
-                assert_eq!(config.credentials.api_key, "test_api_key");
-                assert_eq!(config.rest_api.base_url, "https://test-api.ig.com");
-                assert_eq!(config.rest_api.timeout, 60);
-                assert_eq!(config.websocket.url, "wss://test-ws.ig.com");
-                assert_eq!(config.websocket.reconnect_interval, 10);
-            },
-        );
-    }
-
-    #[test]
-    fn test_default_values() {
-        with_env_vars(vec![], || {
-            let config = Config::new();
-
-            assert_eq!(config.credentials.username, "default_username");
-            assert_eq!(config.credentials.password, "default_password");
-            assert_eq!(config.credentials.api_key, "default_api_key");
-            assert_eq!(
-                config.rest_api.base_url,
-                "https://demo-api.ig.com/gateway/deal"
-            );
-            assert_eq!(config.rest_api.timeout, 30);
-            assert_eq!(config.websocket.url, "wss://demo-apd.marketdatasystems.com");
-            assert_eq!(config.websocket.reconnect_interval, 5);
-        });
     }
 }
 

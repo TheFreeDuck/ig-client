@@ -35,14 +35,14 @@ pub trait IgHttpClient: Send + Sync {
         T: Serialize + Send + Sync + 'static;
 }
 
-/// Implementación del cliente HTTP para IG
+/// Implementation of the HTTP client for IG
 pub struct IgHttpClientImpl {
     config: Arc<Config>,
     client: Client,
 }
 
 impl IgHttpClientImpl {
-    /// Crea una nueva instancia del cliente HTTP
+    /// Creates a new instance of the HTTP client
     pub fn new(config: Arc<Config>) -> Self {
         let client = Client::builder()
             .user_agent("ig-client/0.1.0")
@@ -53,7 +53,7 @@ impl IgHttpClientImpl {
         Self { config, client }
     }
 
-    /// Construye la URL completa para una petición
+    /// Builds the complete URL for a request
     fn build_url(&self, path: &str) -> String {
         format!(
             "{}/{}",
@@ -62,7 +62,7 @@ impl IgHttpClientImpl {
         )
     }
 
-    /// Añade los headers comunes a todas las peticiones
+    /// Adds common headers to all requests
     fn add_common_headers(&self, builder: RequestBuilder, version: &str) -> RequestBuilder {
         builder
             .header("X-IG-API-KEY", &self.config.credentials.api_key)
@@ -71,14 +71,14 @@ impl IgHttpClientImpl {
             .header("Version", version)
     }
 
-    /// Añade los headers de autenticación a una petición
+    /// Adds authentication headers to a request
     fn add_auth_headers(&self, builder: RequestBuilder, session: &IgSession) -> RequestBuilder {
         builder
             .header("CST", &session.cst)
             .header("X-SECURITY-TOKEN", &session.token)
     }
 
-    /// Procesa la respuesta HTTP
+    /// Processes the HTTP response
     async fn process_response<R>(&self, response: Response) -> Result<R, AppError>
     where
         R: DeserializeOwned,

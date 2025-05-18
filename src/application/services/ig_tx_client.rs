@@ -174,3 +174,81 @@ impl IgTxFetcher for IgTxClient<'_> {
         Ok(out)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::application::models::transaction::RawTransaction;
+    use crate::config::Config;
+
+    #[test]
+    fn test_rest_url() {
+        unsafe {
+            std::env::set_var("IG_REST_BASE_URL", "https://api.example.com");
+            std::env::set_var("IG_REST_TIMEOUT", "60");
+            std::env::set_var("IG_WS_URL", "wss://ws.example.com");
+            std::env::set_var("IG_WS_RECONNECT_INTERVAL", "10");
+        }
+        let config = Config::new();
+        let client = IgTxClient::new(&config);
+        assert_eq!(client.rest_url("path"), "https://api.example.com/path");
+    }
+
+    #[test]
+    fn test_convert_basic() {
+        let config = Config::new();
+        let client = IgTxClient::new(&config);
+        let raw = RawTransaction {
+            date: "".to_string(),
+            date_utc: "2024-01-01T12:00:00".to_string(),
+            open_date_utc: "".to_string(),
+            instrument_name: "EURUSD".to_string(),
+            period: "".to_string(),
+            pnl_raw: "E1000".to_string(),
+            transaction_type: "DEAL".to_string(),
+            reference: "REF123".to_string(),
+            open_level: "".to_string(),
+            close_level: "".to_string(),
+            size: "".to_string(),
+            currency: "".to_string(),
+            cash_transaction: false,
+        };
+        let tx = client.convert(raw.clone()).unwrap();
+        assert_eq!(tx.transaction_type, raw.transaction_type);
+        assert_eq!(tx.reference, raw.reference);
+        assert_eq!(tx.pnl_eur, 1000.0);
+        assert!(!tx.is_fee);
+        assert_eq!(
+            tx.deal_date.timestamp(),
+            NaiveDateTime::parse_from_str(&raw.date_utc, "%Y-%m-%dT%H:%M:%S")
+                .unwrap()
+                .and_utc()
+                .timestamp()
+        );
+        assert!(tx.raw_json.contains(&raw.reference));
+    }
+
+    #[test]
+    fn test_convert_fee() {
+        let config = Config::new();
+        let client = IgTxClient::new(&config);
+        let raw = RawTransaction {
+            date: "".to_string(),
+            date_utc: "2024-01-02T00:00:00".to_string(),
+            open_date_utc: "".to_string(),
+            instrument_name: "".to_string(),
+            period: "".to_string(),
+            pnl_raw: "E0.5".to_string(),
+            transaction_type: "WITH".to_string(),
+            reference: "FEE".to_string(),
+            open_level: "".to_string(),
+            close_level: "".to_string(),
+            size: "".to_string(),
+            currency: "".to_string(),
+            cash_transaction: false,
+        };
+        let tx = client.convert(raw.clone()).unwrap();
+        assert_eq!(tx.pnl_eur, 0.5);
+        assert!(tx.is_fee);
+    }
+}
