@@ -1,9 +1,6 @@
-use std::sync::Arc;
 use ig_client::application::models::market::{
     InstrumentType, MarketData, MarketSearchResult, MarketDetails, MarketSnapshot, Instrument, Currency, HistoricalPricesResponse
 };
-use ig_client::application::services::market_service::{MarketService, MarketServiceImpl};
-use ig_client::config::Config;
 use ig_client::session::interface::IgSession;
 
 #[test]

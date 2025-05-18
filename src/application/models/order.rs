@@ -6,20 +6,22 @@
 use serde::{Deserialize, Serialize};
 
 /// Order direction (buy or sell)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum Direction {
     /// Buy direction (long position)
+    #[default]
     Buy,
     /// Sell direction (short position)
     Sell,
 }
 
 /// Order type
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum OrderType {
     /// Limit order - executed when price reaches specified level
+    #[default]
     Limit,
     /// Market order - executed immediately at current market price
     Market,
@@ -31,13 +33,36 @@ pub enum OrderType {
     StopLimit,
 }
 
-/// Order status
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+
+/// Represents the status of an order or transaction in the system.
+///
+/// This enum covers various states an order can be in throughout its lifecycle,
+/// from creation to completion or cancellation.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[serde(rename_all = "UPPERCASE")]
-pub enum OrderStatus {
-    /// Order has been accepted by the system
+pub enum Status {
+    /// Order has been amended or modified after initial creation
+    Amended,
+    /// Order has been deleted from the system
+    Deleted,
+    /// Order has been completely closed with all positions resolved
+    #[serde(rename = "FULLY_CLOSED")]
+    FullyClosed,
+    /// Order has been opened and is active in the market
+    Opened,
+    /// Order has been partially closed with some positions still open
+    #[serde(rename = "PARTIALLY_CLOSED")]
+    PartiallyClosed,
+    /// Order has been closed but may differ from FullyClosed in context
+    Closed,
+    /// Default state - order is open and active in the market
+    #[default]
+    Open,
+    /// Order has been updated with new parameters
+    Updated,
+    /// Order has been accepted by the system or exchange
     Accepted,
-    /// Order has been rejected by the system
+    /// Order has been rejected by the system or exchange
     Rejected,
     /// Order is currently working (waiting to be filled)
     Working,
@@ -50,10 +75,11 @@ pub enum OrderStatus {
 }
 
 /// Order duration (time in force)
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub enum TimeInForce {
     /// Order remains valid until cancelled by the client
     #[serde(rename = "GOOD_TILL_CANCELLED")]
+    #[default]
     GoodTillCancelled,
     /// Order remains valid until a specified date
     #[serde(rename = "GOOD_TILL_DATE")]
@@ -184,7 +210,7 @@ pub struct OrderConfirmation {
     /// Date and time of the confirmation
     pub date: String,
     /// Status of the order (accepted, rejected, etc.)
-    pub status: OrderStatus,
+    pub status: Status,
     /// Reason for rejection if applicable
     pub reason: Option<String>,
     /// Unique identifier for the deal

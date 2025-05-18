@@ -1,6 +1,6 @@
-use ig_client::storage::utils::{serialize_to_json, deserialize_from_json};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use ig_client::storage::utils::{serialize_to_json, deserialize_from_json};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 struct TestStruct {

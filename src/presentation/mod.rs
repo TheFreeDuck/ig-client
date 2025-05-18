@@ -4,7 +4,7 @@ mod market;
 mod chart;
 mod price;
 pub(crate) mod serialization;
-mod trade;
+pub mod trade;
 
 pub use account::AccountData;
 pub use chart::ChartData;

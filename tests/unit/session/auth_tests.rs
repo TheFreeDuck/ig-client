@@ -1,7 +1,6 @@
 use ig_client::config::Config;
 use ig_client::session::auth::IgAuth;
 use ig_client::session::interface::IgSession;
-// use mockito::server_url;
 use once_cell::sync::Lazy;
 use std::env;
 use std::sync::Mutex;
@@ -63,8 +62,6 @@ fn create_test_config() -> Config {
 fn test_ig_auth_new() {
     let config = create_test_config();
     let _auth = IgAuth::new(&config);
-
-    // Just test that we can create an IgAuth instance without panicking
 }
 
 #[test]
@@ -78,28 +75,4 @@ fn test_ig_session_new() {
     assert_eq!(session.cst, "CST123");
     assert_eq!(session.token, "XST456");
     assert_eq!(session.account_id, "ACC789");
-}
-
-#[tokio::test]
-#[ignore = "Skipping as mockito::mock is private"]
-async fn test_ig_auth_login_success() {
-    // Test implementation would go here
-}
-
-#[tokio::test]
-#[ignore = "Skipping as mockito::mock is private"]
-async fn test_ig_auth_login_failure() {
-    // Test implementation would go here
-}
-
-#[tokio::test]
-#[ignore = "Skipping as mockito::mock is private"]
-async fn test_ig_auth_refresh_success() {
-    // Test implementation would go here
-}
-
-#[tokio::test]
-#[ignore = "Skipping as mockito::mock is private"]
-async fn test_ig_auth_refresh_failure() {
-    // Test implementation would go here
 }

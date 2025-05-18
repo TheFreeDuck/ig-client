@@ -2,7 +2,7 @@
 //
 // Transaction utilities for the IG client
 
-use chrono::{DateTime, Duration, Utc};
+use chrono::{DateTime, Duration, Utc, NaiveDate};
 use sqlx::PgPool;
 use tracing::{debug, info};
 
@@ -116,4 +116,39 @@ pub async fn fetch_transactions(
     debug!("Fetched {} transactions", txs.len());
 
     Ok(txs)
+}
+
+/// Formats a transaction ID by combining type, date, instrument, and id with '|'
+pub fn format_transaction_id(tx_type: &str, date: &str, instrument: &str, id: &str) -> String {
+    format!("{}|{}|{}|{}", tx_type, date, instrument, id)
+}
+
+/// Parses a transaction ID into its components: (type, date, instrument, id)
+pub fn parse_transaction_id(id_str: &str) -> (&str, &str, &str, &str) {
+    let mut parts = id_str.splitn(4, '|');
+    let t = parts.next().unwrap_or("");
+    let d = parts.next().unwrap_or("");
+    let inst = parts.next().unwrap_or("");
+    let id_rest = parts.next().unwrap_or("");
+    (t, d, inst, id_rest)
+}
+
+/// Extracts the transaction type component from a transaction ID
+pub fn extract_transaction_type(id_str: &str) -> &str {
+    parse_transaction_id(id_str).0
+}
+
+/// Extracts the date component from a transaction ID as `NaiveDate`
+pub fn extract_transaction_date(id_str: &str) -> Option<NaiveDate> {
+    let date_str = parse_transaction_id(id_str).1;
+    if date_str.is_empty() {
+        None
+    } else {
+        NaiveDate::parse_from_str(date_str, "%Y-%m-%d").ok()
+    }
+}
+
+/// Extracts the instrument component from a transaction ID
+pub fn extract_transaction_instrument(id_str: &str) -> &str {
+    parse_transaction_id(id_str).2
 }
