@@ -33,10 +33,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let account_service = AccountServiceImpl::new(Arc::clone(&config), Arc::clone(&http_client));
     info!("Account service created");
 
-    // Get open positions
-    info!("Fetching open positions...");
-    let mut activity = match account_service
-        .get_activity(
+    // Get account activity with detailed information
+    info!("Fetching account activity with details...");
+    let activity = match account_service
+        .get_activity_with_details(
             &session,
             "2025-03-01T00:00:00Z",
             "2025-04-01T00:00:00Z",
@@ -54,18 +54,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     if activity.activities.is_empty() {
-        info!("No open positions currently");
+        info!("No activities found for the specified period");
     } else {
-        info!("Open positions: {}", activity.activities.len());
+        info!("Activities found: {}", activity.activities.len());
 
-        // Display positions
-        for (i, position) in activity.activities.iter_mut().enumerate() {
-            // Log the position as pretty JSON
+        // Display activities with detailed information
+        for (i, activity_item) in activity.activities.iter().enumerate() {
+            // Log the activity as pretty JSON
             info!(
-                "Transactions #{}: {}",
+                "Activity #{}: {}",
                 i + 1,
-                serde_json::to_string_pretty(&serde_json::to_value(position).unwrap()).unwrap()
+                serde_json::to_string_pretty(&serde_json::to_value(&activity_item).unwrap()).unwrap()
             );
+            
+            info!("---"); // Separator between activities
         }
     }
 

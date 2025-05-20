@@ -1,0 +1,16 @@
+
+#[macro_export]
+macro_rules! impl_json_display {
+    ($($t:ty),+) => {
+        $(
+            impl std::fmt::Display for $t {
+                fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                    match serde_json::to_string(self) {
+                        Ok(pretty_json) => write!(f, "{}", pretty_json),
+                        Err(e) => write!(f, "Error serializing to JSON: {}", e),
+                    }
+                }
+            }
+        )+
+    }
+}

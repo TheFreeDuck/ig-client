@@ -6,3 +6,4 @@ pub mod logger;
 pub mod parsing;
 /// Module containing transaction fetching and storage utilities
 pub mod transactions;
+pub mod display;

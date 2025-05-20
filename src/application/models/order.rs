@@ -4,6 +4,7 @@
    Date: 13/5/25
 ******************************************************************************/
 use serde::{Deserialize, Serialize};
+use crate::impl_json_display;
 
 /// Order direction (buy or sell)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
@@ -15,6 +16,8 @@ pub enum Direction {
     /// Sell direction (short position)
     Sell,
 }
+
+impl_json_display!(Direction);
 
 /// Order type
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]

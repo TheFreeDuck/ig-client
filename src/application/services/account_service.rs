@@ -106,6 +106,27 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
         );
         Ok(result)
     }
+    
+    async fn get_activity_with_details(
+        &self,
+        session: &IgSession,
+        from: &str,
+        to: &str,
+    ) -> Result<AccountActivity, AppError> {
+        let path = format!("history/activity?from={}&to={}&detailed=true", from, to);
+        info!("Getting detailed account activity");
+
+        let result = self
+            .client
+            .request::<(), AccountActivity>(Method::GET, &path, session, None, "3")
+            .await?;
+
+        debug!(
+            "Detailed account activity obtained: {} activities",
+            result.activities.len()
+        );
+        Ok(result)
+    }
 
     async fn get_transactions(
         &self,
