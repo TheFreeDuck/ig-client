@@ -255,3 +255,34 @@ pub struct PriceAllowance {
     #[serde(rename = "allowanceExpiry")]
     pub allowance_expiry: i64,
 }
+
+/// Response model for market navigation
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct MarketNavigationResponse {
+    /// List of navigation nodes at the current level
+    #[serde(default, deserialize_with = "deserialize_null_as_empty_vec")]
+    pub nodes: Vec<MarketNavigationNode>,
+    /// List of markets at the current level
+    #[serde(default, deserialize_with = "deserialize_null_as_empty_vec")]
+    pub markets: Vec<MarketData>,
+}
+
+/// Helper function to deserialize null values as empty vectors
+#[allow(dead_code)]
+fn deserialize_null_as_empty_vec<'de, D, T>(deserializer: D) -> Result<Vec<T>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+    T: serde::Deserialize<'de>,
+{
+    let opt = Option::deserialize(deserializer)?;
+    Ok(opt.unwrap_or_default())
+}
+
+/// Node in the market navigation hierarchy
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct MarketNavigationNode {
+    /// Unique identifier for the node
+    pub id: String,
+    /// Display name of the node
+    pub name: String,
+}

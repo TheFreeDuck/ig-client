@@ -1,6 +1,6 @@
 use crate::application::services::MarketService;
 use crate::{
-    application::models::market::{HistoricalPricesResponse, MarketDetails, MarketSearchResult},
+    application::models::market::{HistoricalPricesResponse, MarketDetails, MarketNavigationResponse, MarketSearchResult},
     config::Config,
     error::AppError,
     session::interface::IgSession,
@@ -93,6 +93,41 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
             .await?;
 
         debug!("Historical prices obtained for: {}", epic);
+        Ok(result)
+    }
+
+    async fn get_market_navigation(
+        &self,
+        session: &IgSession,
+    ) -> Result<MarketNavigationResponse, AppError> {
+        let path = "marketnavigation";
+        info!("Getting top-level market navigation nodes");
+
+        let result = self
+            .client
+            .request::<(), MarketNavigationResponse>(Method::GET, path, session, None, "1")
+            .await?;
+
+        debug!("{} navigation nodes found", result.nodes.len());
+        debug!("{} markets found at root level", result.markets.len());
+        Ok(result)
+    }
+
+    async fn get_market_navigation_node(
+        &self,
+        session: &IgSession,
+        node_id: &str,
+    ) -> Result<MarketNavigationResponse, AppError> {
+        let path = format!("marketnavigation/{}", node_id);
+        info!("Getting market navigation node: {}", node_id);
+
+        let result = self
+            .client
+            .request::<(), MarketNavigationResponse>(Method::GET, &path, session, None, "1")
+            .await?;
+
+        debug!("{} child nodes found", result.nodes.len());
+        debug!("{} markets found in node {}", result.markets.len(), node_id);
         Ok(result)
     }
 }

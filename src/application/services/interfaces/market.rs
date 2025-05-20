@@ -1,5 +1,5 @@
 use crate::application::models::market::{
-    HistoricalPricesResponse, MarketDetails, MarketSearchResult,
+    HistoricalPricesResponse, MarketDetails, MarketNavigationResponse, MarketSearchResult,
 };
 use crate::error::AppError;
 use crate::session::interface::IgSession;
@@ -31,4 +31,25 @@ pub trait MarketService: Send + Sync {
         from: &str,
         to: &str,
     ) -> Result<HistoricalPricesResponse, AppError>;
+
+    /// Gets the top-level market navigation nodes
+    /// 
+    /// This method returns the root nodes of the market hierarchy, which can be used
+    /// to navigate through the available markets.
+    async fn get_market_navigation(
+        &self,
+        session: &IgSession,
+    ) -> Result<MarketNavigationResponse, AppError>;
+
+    /// Gets the market navigation node with the specified ID
+    /// 
+    /// This method returns the child nodes and markets under the specified node ID.
+    /// 
+    /// # Arguments
+    /// * `node_id` - The ID of the navigation node to retrieve
+    async fn get_market_navigation_node(
+        &self,
+        session: &IgSession,
+        node_id: &str,
+    ) -> Result<MarketNavigationResponse, AppError>;
 }
