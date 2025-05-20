@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize, PartialEq)]
 #[serde(rename_all = "UPPERCASE")]
+/// Types of financial instruments available in the IG Markets API
 pub enum InstrumentType {
     /// Binary options
     Binary,

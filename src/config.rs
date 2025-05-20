@@ -40,8 +40,11 @@ pub struct Config {
     /// Database configuration for data persistence
     pub database: DatabaseConfig,
 
+    /// Number of hours between transaction fetching operations
     pub sleep_hours: u64,
+    /// Number of items to retrieve per page in API requests
     pub page_size: u32,
+    /// Number of days to look back when fetching historical data
     pub days_to_look_back: i64,
 }
 

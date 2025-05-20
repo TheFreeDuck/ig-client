@@ -121,6 +121,10 @@ impl From<&AccountTransaction> for StoreTransaction {
     }
 }
 
+/// Collection of processed transactions from IG Markets
+///
+/// This struct is a wrapper around a vector of `StoreTransaction` objects
+/// and provides convenient methods for accessing and converting transaction data.
 pub struct TransactionList(pub Vec<StoreTransaction>);
 
 impl AsRef<[StoreTransaction]> for TransactionList {

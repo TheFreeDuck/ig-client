@@ -436,6 +436,7 @@ pub mod session;
 /// Network transport and API communication
 pub mod transport;
 
+/// Module containing global constants used throughout the library
 pub mod constants;
 
 /// Error types and handling

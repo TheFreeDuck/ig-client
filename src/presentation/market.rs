@@ -8,13 +8,20 @@ use std::fmt;
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum MarketState {
+    /// Market is closed for trading
     Closed,
+    /// Market is offline and not available
     #[default]
     Offline,
+    /// Market is open and available for trading
     Tradeable,
+    /// Market is in edit mode
     Edit,
+    /// Market is in auction phase
     Auction,
+    /// Market is in auction phase but editing is not allowed
     AuctionNoEdit,
+    /// Market is temporarily suspended
     Suspended,
 }
 

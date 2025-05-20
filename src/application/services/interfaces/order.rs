@@ -7,6 +7,11 @@ use crate::session::interface::IgSession;
 use async_trait::async_trait;
 
 #[async_trait]
+/// Service for creating, updating, and managing trading orders with the IG Markets API
+///
+/// This trait defines the interface for interacting with the IG Markets order endpoints,
+/// allowing clients to create new orders, get order confirmations, update existing positions,
+/// and close positions.
 pub trait OrderService: Send + Sync {
     /// Creates a new order
     async fn create_order(

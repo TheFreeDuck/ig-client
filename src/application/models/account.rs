@@ -78,13 +78,18 @@ pub struct ActivityPaging {
 }
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
+/// Type of account activity
 pub enum ActivityType {
+    /// Activity related to editing stop and limit orders
     #[serde(rename = "EDIT_STOP_AND_LIMIT")]
     EditStopAndLimit,
+    /// Activity related to positions
     #[serde(rename = "POSITION")]
     Position,
+    /// System-generated activity
     #[serde(rename = "SYSTEM")]
     System,
+    /// Activity related to working orders
     #[serde(rename = "WORKING_ORDER")]
     WorkingOrder,
 }
