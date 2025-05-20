@@ -544,8 +544,9 @@ pub struct AccountTransaction {
     /// UTC date and time of the transaction
     #[serde(rename = "dateUtc")]
     pub date_utc: String,
+    /// Represents the date and time in UTC when an event or entity was opened or initiated.
     #[serde(rename = "openDateUtc")]
-    pub(crate) open_date_utc: String,
+    pub open_date_utc: String,
     /// Name of the instrument
     #[serde(rename = "instrumentName")]
     pub instrument_name: String,

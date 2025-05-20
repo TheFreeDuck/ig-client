@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use ig_client::{version, VERSION};
+    use ig_client::{VERSION, version};
 
     #[test]
     fn test_version_constant() {

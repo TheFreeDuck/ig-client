@@ -1,32 +1,36 @@
 use crate::application::models::account::AccountTransaction;
+use crate::impl_json_display;
 use crate::utils::parsing::{InstrumentInfo, parse_instrument_name};
 use chrono::{DateTime, Datelike, Duration, NaiveDate, NaiveDateTime, Utc, Weekday};
+use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
 /// Represents a processed transaction from IG Markets with parsed fields
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct StoreTransaction {
     /// Date and time when the transaction was executed
-    pub(crate) deal_date: DateTime<Utc>,
+    pub deal_date: DateTime<Utc>,
     /// Underlying asset or instrument (e.g., "GOLD", "US500")
-    pub(crate) underlying: Option<String>,
+    pub underlying: Option<String>,
     /// Strike price for options
-    pub(crate) strike: Option<f64>,
+    pub strike: Option<f64>,
     /// Type of option ("CALL" or "PUT")
-    pub(crate) option_type: Option<String>,
+    pub option_type: Option<String>,
     /// Expiration date for options
-    pub(crate) expiry: Option<NaiveDate>,
+    pub expiry: Option<NaiveDate>,
     /// Type of transaction (e.g., "DEAL", "WITH")
-    pub(crate) transaction_type: String,
+    pub transaction_type: String,
     /// Profit and loss in EUR
-    pub(crate) pnl_eur: f64,
+    pub pnl_eur: f64,
     /// Unique reference for the transaction
-    pub(crate) reference: String,
+    pub reference: String,
     /// Whether this transaction is a fee
-    pub(crate) is_fee: bool,
+    pub is_fee: bool,
     /// Original JSON string of the transaction
-    pub(crate) raw_json: String,
+    pub raw_json: String,
 }
+
+impl_json_display!(StoreTransaction);
 
 impl From<AccountTransaction> for StoreTransaction {
     fn from(raw: AccountTransaction) -> Self {
