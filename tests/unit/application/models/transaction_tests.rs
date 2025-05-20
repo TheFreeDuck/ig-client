@@ -1,4 +1,4 @@
-use ig_client::application::models::transaction::RawTransaction;
+use ig_client::application::models::account::AccountTransaction;
 
 // Sample JSON for a simple transaction
 fn sample_raw_transaction_json() -> &'static str {
@@ -19,7 +19,7 @@ fn sample_raw_transaction_json3() -> &'static str {
 fn test_raw_transaction_display_and_serialization() {
     let json = sample_raw_transaction_json();
     // Deserialize from JSON
-    let raw_tx: RawTransaction = serde_json::from_str(json).expect("Failed to parse JSON");
+    let raw_tx: AccountTransaction = serde_json::from_str(json).expect("Failed to parse JSON");
     // Display implementation should produce valid JSON
     let display_str = raw_tx.to_string();
     assert!(display_str.contains("\"instrumentName\":\"CS.D.EURUSD.CFD.IP\""));
@@ -28,7 +28,7 @@ fn test_raw_transaction_display_and_serialization() {
     let serialized = serde_json::to_string(&raw_tx).expect("Failed to serialize RawTransaction");
     assert!(serialized.contains("\"reference\":\"REF123\""));
     // Deserialize again and compare display outputs
-    let raw_tx2: RawTransaction =
+    let raw_tx2: AccountTransaction =
         serde_json::from_str(&serialized).expect("Failed to parse serialized JSON");
     assert_eq!(display_str, raw_tx2.to_string());
 }
@@ -37,7 +37,7 @@ fn test_raw_transaction_display_and_serialization() {
 fn test_transaction_creation() {
     let json = sample_raw_transaction_json2();
     // Deserialize from JSON
-    let raw_tx: RawTransaction = serde_json::from_str(json).expect("Failed to parse JSON");
+    let raw_tx: AccountTransaction = serde_json::from_str(json).expect("Failed to parse JSON");
     // Test the display implementation
     let display_str = raw_tx.to_string();
     assert!(display_str.contains("\"instrumentName\":\"CS.D.EURUSD.CFD.IP\""));
@@ -49,14 +49,14 @@ fn test_transaction_creation() {
 fn test_raw_transaction_serialization() {
     let json = sample_raw_transaction_json3();
     // Deserialize from JSON
-    let raw_tx: RawTransaction = serde_json::from_str(json).expect("Failed to parse JSON");
+    let raw_tx: AccountTransaction = serde_json::from_str(json).expect("Failed to parse JSON");
     // Test serialization to JSON
     let serialized = serde_json::to_string(&raw_tx).expect("Failed to serialize RawTransaction");
     assert!(serialized.contains("\"instrumentName\":\"CS.D.AAPL.CFD.IP\""));
     assert!(serialized.contains("\"transactionType\":\"DEAL\""));
     assert!(serialized.contains("\"reference\":\"OPT123\""));
     // Test deserialization back to RawTransaction
-    let deserialized: RawTransaction =
+    let deserialized: AccountTransaction =
         serde_json::from_str(&serialized).expect("Failed to parse serialized JSON");
     // Convert back to JSON to verify the data was preserved
     let serialized_again = serde_json::to_string(&deserialized)

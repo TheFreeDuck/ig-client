@@ -92,7 +92,7 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
         from: &str,
         to: &str,
     ) -> Result<AccountActivity, AppError> {
-        let path = format!("history/activity?from={}&to={}", from, to);
+        let path = format!("history/activity?from={}&to={}&pageSize=500", from, to);
         info!("Getting account activity");
 
         let result = self
@@ -113,7 +113,7 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
         from: &str,
         to: &str,
     ) -> Result<AccountActivity, AppError> {
-        let path = format!("history/activity?from={}&to={}&detailed=true", from, to);
+        let path = format!("history/activity?from={}&to={}&detailed=true&pageSize=500", from, to);
         info!("Getting detailed account activity");
 
         let result = self

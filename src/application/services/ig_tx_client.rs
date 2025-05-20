@@ -1,13 +1,12 @@
-use crate::application::models::transaction::{RawTransaction, Transaction};
+use crate::application::models::transaction::{StoreTransaction};
 use crate::config::Config;
 use crate::error::AppError;
 use crate::session::interface::IgSession;
-use crate::utils::parsing::{InstrumentInfo, parse_instrument_name};
 use async_trait::async_trait;
-use chrono::{DateTime, NaiveDate, NaiveDateTime, Utc};
+use chrono::{DateTime, Utc};
 use reqwest::{Client, StatusCode};
-use std::str::FromStr;
 use tracing::debug;
+use crate::application::models::account::AccountTransaction;
 
 /// Interface for fetching transaction data from IG Markets
 #[async_trait]
@@ -26,7 +25,7 @@ pub trait IgTxFetcher {
         sess: &IgSession,
         from: DateTime<Utc>,
         to: DateTime<Utc>,
-    ) -> Result<Vec<Transaction>, AppError>;
+    ) -> Result<Vec<StoreTransaction>, AppError>;
 }
 
 /// Client for fetching transaction data from IG Markets API
@@ -70,51 +69,7 @@ impl<'a> IgTxClient<'a> {
             path
         )
     }
-
-    /// Converts a raw transaction from the API to a structured Transaction
-    ///
-    /// # Arguments
-    /// * `raw` - Raw transaction data from the API
-    ///
-    /// # Returns
-    /// * `Result<Transaction, AppError>` - Converted transaction or an error
-    fn convert(&self, raw: RawTransaction) -> Result<Transaction, AppError> {
-        let instrument_info: InstrumentInfo = parse_instrument_name(&raw.instrument_name)?;
-        let underlying = instrument_info.underlying;
-        let strike = instrument_info.strike;
-        let option_type = instrument_info.option_type;
-
-        let deal_date = NaiveDateTime::parse_from_str(&raw.date_utc, "%Y-%m-%dT%H:%M:%S")
-            .map(|naive| naive.and_utc())
-            .unwrap_or_else(|_| Utc::now());
-
-        let pnl_eur = raw
-            .pnl_raw
-            .trim_start_matches('E')
-            .parse::<f64>()
-            .unwrap_or(0.0);
-
-        let expiry = raw.period.split_once('-').and_then(|(mon, yy)| {
-            chrono::Month::from_str(mon).ok().and_then(|m| {
-                NaiveDate::from_ymd_opt(2000 + yy.parse::<i32>().ok()?, m.number_from_month(), 1)
-            })
-        });
-
-        let is_fee = raw.transaction_type == "WITH" && pnl_eur.abs() < 1.0;
-
-        Ok(Transaction {
-            deal_date,
-            underlying,
-            strike,
-            option_type,
-            expiry,
-            transaction_type: raw.transaction_type.clone(),
-            pnl_eur,
-            reference: raw.reference.clone(),
-            is_fee,
-            raw_json: raw.to_string(),
-        })
-    }
+    
 }
 
 #[async_trait]
@@ -124,7 +79,7 @@ impl IgTxFetcher for IgTxClient<'_> {
         sess: &IgSession,
         from: DateTime<Utc>,
         to: DateTime<Utc>,
-    ) -> Result<Vec<Transaction>, AppError> {
+    ) -> Result<Vec<StoreTransaction>, AppError> {
         let mut page = 1;
         let mut out = Vec::new();
 
@@ -154,14 +109,14 @@ impl IgTxFetcher for IgTxClient<'_> {
             }
 
             let json: serde_json::Value = resp.json().await?;
-            let raws: Vec<RawTransaction> =
+            let raws: Vec<AccountTransaction> =
                 serde_json::from_value(json["transactions"].clone()).unwrap_or_default();
 
             if raws.is_empty() {
                 break;
             }
 
-            out.extend(raws.into_iter().map(|r| self.convert(r).unwrap()));
+            out.extend(raws.into_iter().map(|r| StoreTransaction::from(r)));
 
             let meta = &json["metadata"]["pageData"];
             let total_pages = meta["totalPages"].as_u64().unwrap_or(1);
@@ -177,8 +132,8 @@ impl IgTxFetcher for IgTxClient<'_> {
 
 #[cfg(test)]
 mod tests {
+    use chrono::NaiveDateTime;
     use super::*;
-    use crate::application::models::transaction::RawTransaction;
     use crate::config::Config;
 
     #[test]
@@ -198,13 +153,13 @@ mod tests {
     fn test_convert_basic() {
         let config = Config::new();
         let client = IgTxClient::new(&config);
-        let raw = RawTransaction {
+        let raw = AccountTransaction {
             date: "".to_string(),
             date_utc: "2024-01-01T12:00:00".to_string(),
             open_date_utc: "".to_string(),
             instrument_name: "EURUSD".to_string(),
             period: "".to_string(),
-            pnl_raw: "E1000".to_string(),
+            profit_and_loss: "E1000".to_string(),
             transaction_type: "DEAL".to_string(),
             reference: "REF123".to_string(),
             open_level: "".to_string(),
@@ -213,7 +168,7 @@ mod tests {
             currency: "".to_string(),
             cash_transaction: false,
         };
-        let tx = client.convert(raw.clone()).unwrap();
+        let tx: StoreTransaction = StoreTransaction::from(raw.clone());
         assert_eq!(tx.transaction_type, raw.transaction_type);
         assert_eq!(tx.reference, raw.reference);
         assert_eq!(tx.pnl_eur, 1000.0);
@@ -232,13 +187,13 @@ mod tests {
     fn test_convert_fee() {
         let config = Config::new();
         let client = IgTxClient::new(&config);
-        let raw = RawTransaction {
+        let raw = AccountTransaction {
             date: "".to_string(),
             date_utc: "2024-01-02T00:00:00".to_string(),
             open_date_utc: "".to_string(),
             instrument_name: "".to_string(),
             period: "".to_string(),
-            pnl_raw: "E0.5".to_string(),
+            profit_and_loss: "E0.5".to_string(),
             transaction_type: "WITH".to_string(),
             reference: "FEE".to_string(),
             open_level: "".to_string(),
@@ -247,7 +202,7 @@ mod tests {
             currency: "".to_string(),
             cash_transaction: false,
         };
-        let tx = client.convert(raw.clone()).unwrap();
+        let tx: StoreTransaction = StoreTransaction::from(raw.clone());
         assert_eq!(tx.pnl_eur, 0.5);
         assert!(tx.is_fee);
     }

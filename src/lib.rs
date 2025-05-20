@@ -436,7 +436,7 @@ pub mod session;
 /// Network transport and API communication
 pub mod transport;
 
-pub(crate) mod constants;
+pub mod constants;
 
 /// Error types and handling
 pub mod error;

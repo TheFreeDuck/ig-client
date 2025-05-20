@@ -6,6 +6,8 @@ use ig_client::{
     session::auth::IgAuth, session::interface::IgAuthenticator,
     transport::http_client::IgHttpClientImpl, utils::logger::setup_logger,
 };
+use ig_client::application::models::transaction::{StoreTransaction, TransactionList};
+use ig_client::storage::utils::store_transactions;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -33,14 +35,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let account_service = AccountServiceImpl::new(Arc::clone(&config), Arc::clone(&http_client));
     info!("Account service created");
 
-    // Get open positions
-    info!("Fetching open positions...");
+    // Get open transactions
+    info!("Fetching open transactions...");
     let mut transactions = match account_service
         .get_transactions(
             &session,
             "2025-03-01T00:00:00Z",
             "2025-04-01T00:00:00Z",
-            100,
+            0,
             1,
         )
         .await{
@@ -55,20 +57,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }; 
 
     if transactions.transactions.is_empty() {
-        info!("No open positions currently");
+        info!("No open transactions currently");
     } else {
-        info!("Open positions: {}", transactions.transactions.len());
+        info!("Open transactions: {}", transactions.transactions.len());
 
-        // Display positions
-        for (i, position) in transactions.transactions.iter_mut().enumerate() {
-            // Log the position as pretty JSON
+        for (i, transaction) in transactions.transactions.iter_mut().enumerate() {
+            // Log the transaction as pretty JSON
             info!(
                 "Transactions #{}: {}",
                 i + 1,
-                serde_json::to_string_pretty(&serde_json::to_value(position).unwrap()).unwrap()
+                serde_json::to_string_pretty(&serde_json::to_value(transaction).unwrap()).unwrap()
             );
         }
     }
+    let pool = config.pg_pool().await?;
+    // Store the transactions
+    let tx = TransactionList::from(&transactions.transactions);
+    let tx = tx.as_ref();
+    let inserted = store_transactions(&pool, tx).await?;
+    info!("Inserted {} rows", inserted);
 
     Ok(())
 }

@@ -6,21 +6,15 @@ use std::fmt;
 
 /// Represents the current state of a market
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[serde(rename_all = "UPPERCASE")]
 pub enum MarketState {
-    #[serde(rename = "closed")]
     Closed,
-    #[serde(rename = "offline")]
     #[default]
     Offline,
-    #[serde(rename = "tradeable")]
     Tradeable,
-    #[serde(rename = "edit")]
     Edit,
-    #[serde(rename = "auction")]
     Auction,
-    #[serde(rename = "auction_no_edit")]
     AuctionNoEdit,
-    #[serde(rename = "suspended")]
     Suspended,
 }
 

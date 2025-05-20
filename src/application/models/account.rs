@@ -4,8 +4,10 @@
    Date: 13/5/25
 ******************************************************************************/
 use serde::{Deserialize, Serialize};
+use crate::application::models::market::InstrumentType;
 use crate::impl_json_display;
-use super::order::{Direction, Status};
+use crate::presentation::MarketState;
+use super::order::{Direction, OrderType, Status, TimeInForce};
 
 /// Account information
 #[derive(Debug, Clone, Deserialize)]
@@ -366,6 +368,7 @@ pub struct PositionMarket {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct WorkingOrders {
     /// List of pending working orders
+    #[serde(rename = "workingOrders")]
     pub working_orders: Vec<WorkingOrder>,
 }
 
@@ -398,7 +401,7 @@ pub struct WorkingOrderData {
     pub order_level: f64,
     /// Time in force for the order
     #[serde(rename = "timeInForce")]
-    pub time_in_force: String,
+    pub time_in_force: TimeInForce,
     /// Expiry date for GTD orders
     #[serde(rename = "goodTillDate")]
     pub good_till_date: Option<String>,
@@ -416,7 +419,7 @@ pub struct WorkingOrderData {
     pub guaranteed_stop: bool,
     /// Type of the order
     #[serde(rename = "orderType")]
-    pub order_type: String,
+    pub order_type: OrderType,
     /// Distance for stop loss
     #[serde(rename = "stopDistance")]
     pub stop_distance: Option<f64>,
@@ -455,12 +458,12 @@ pub struct MarketData {
     pub expiry: String,
     /// Current status of the market
     #[serde(rename = "marketStatus")]
-    pub market_status: String,
+    pub market_status: MarketState,
     /// Unique identifier for the market
     pub epic: String,
     /// Type of the instrument
     #[serde(rename = "instrumentType")]
-    pub instrument_type: String,
+    pub instrument_type: InstrumentType,
     /// Size of one lot
     #[serde(rename = "lotSize")]
     pub lot_size: f64,
@@ -536,6 +539,8 @@ pub struct AccountTransaction {
     /// UTC date and time of the transaction
     #[serde(rename = "dateUtc")]
     pub date_utc: String,
+    #[serde(rename = "openDateUtc")]
+    pub(crate) open_date_utc: String,
     /// Name of the instrument
     #[serde(rename = "instrumentName")]
     pub instrument_name: String,
@@ -563,3 +568,5 @@ pub struct AccountTransaction {
     #[serde(rename = "cashTransaction")]
     pub cash_transaction: bool,
 }
+
+impl_json_display!(AccountTransaction);

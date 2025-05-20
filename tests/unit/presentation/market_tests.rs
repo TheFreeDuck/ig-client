@@ -2,10 +2,11 @@
 mod tests {
     use assert_json_diff::assert_json_eq;
     use ig_client::application::models::market::{
-        Currency, DealingRules, HistoricalPricesResponse, Instrument, InstrumentType, MarketData,
+        Currency, DealingRules, HistoricalPricesResponse, Instrument, MarketData,
         MarketDetails, MarketSearchResult, PriceAllowance, PricePoint,
     };
     use serde_json::json;
+    use ig_client::presentation::InstrumentType;
 
     #[test]
     fn test_instrument_type_serialization() {
