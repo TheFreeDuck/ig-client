@@ -1,11 +1,11 @@
-use std::sync::Arc;
-use tracing::{error, info};
 use ig_client::application::services::AccountService;
 use ig_client::{
     application::services::account_service::AccountServiceImpl, config::Config,
     session::auth::IgAuth, session::interface::IgAuthenticator,
     transport::http_client::IgHttpClientImpl, utils::logger::setup_logger,
 };
+use std::sync::Arc;
+use tracing::{error, info};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -36,12 +36,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Get account activity with detailed information
     info!("Fetching account activity with details...");
     let activity = match account_service
-        .get_activity_with_details(
-            &session,
-            "2025-03-01T00:00:00Z",
-            "2025-04-01T00:00:00Z",
-        )
-        .await {
+        .get_activity_with_details(&session, "2025-03-01T00:00:00Z", "2025-04-01T00:00:00Z")
+        .await
+    {
         Ok(activity) => activity,
         Err(e) => {
             error!("Failed to get activity: {}", e);
@@ -50,7 +47,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 e
             )));
         }
-        
     };
 
     if activity.activities.is_empty() {
@@ -64,9 +60,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             info!(
                 "Activity #{}: {}",
                 i + 1,
-                serde_json::to_string_pretty(&serde_json::to_value(&activity_item).unwrap()).unwrap()
+                serde_json::to_string_pretty(&serde_json::to_value(activity_item).unwrap())
+                    .unwrap()
             );
-            
+
             info!("---"); // Separator between activities
         }
     }

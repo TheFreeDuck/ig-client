@@ -1,10 +1,9 @@
-use std::sync::Arc;
-use tracing::{error, info};
 use ig_client::{
-    config::Config,
-    session::auth::IgAuth, session::interface::IgAuthenticator,
+    config::Config, session::auth::IgAuth, session::interface::IgAuthenticator,
     utils::logger::setup_logger,
 };
+use std::sync::Arc;
+use tracing::{error, info};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -13,7 +12,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Create configuration using the default Config implementation
     let config = Arc::new(Config::new());
     info!("Configuration loaded");
-    
+
     // Create authenticator
     let authenticator = IgAuth::new(&config);
     info!("Authenticator created");
@@ -22,7 +21,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Logging in to IG...");
     let session = authenticator.login().await?;
     info!("Session started successfully");
-    
 
     // Get activity with raw response handling
     info!("Fetching account activity...");
@@ -31,8 +29,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         config.rest_api.base_url.trim_end_matches('/'),
         "history/activity?from=2025-03-01T00:00:00Z&to=2025-04-01T00:00:00Z&detailed=true"
     );
-    
-    
+
     let client = reqwest::Client::new();
     let response = client
         .get(&url)
@@ -44,7 +41,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .header("X-SECURITY-TOKEN", &session.token)
         .send()
         .await?;
-    
+
     if response.status().is_success() {
         // Get the raw text response to see the actual structure
         let text = response.text().await?;

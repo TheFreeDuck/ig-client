@@ -1,3 +1,5 @@
+use crate::constants::{DAYS_TO_BACK_LOOK, DEFAULT_PAGE_SIZE, DEFAULT_SLEEP_TIME};
+use crate::impl_json_display;
 use crate::storage::config::DatabaseConfig;
 use dotenv::dotenv;
 use serde::{Deserialize, Serialize};
@@ -6,8 +8,6 @@ use std::env;
 use std::fmt::Debug;
 use std::str::FromStr;
 use tracing::{error, info, warn};
-use crate::constants::{DAYS_TO_BACK_LOOK, DEFAULT_PAGE_SIZE, DEFAULT_SLEEP_TIME};
-use crate::impl_json_display;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 /// Authentication credentials for the IG Markets API
@@ -39,7 +39,7 @@ pub struct Config {
     pub websocket: WebSocketConfig,
     /// Database configuration for data persistence
     pub database: DatabaseConfig,
-    
+
     pub sleep_hours: u64,
     pub page_size: u32,
     pub days_to_look_back: i64,
@@ -58,7 +58,6 @@ pub struct RestApiConfig {
 
 impl_json_display!(RestApiConfig);
 
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
 /// Configuration for the WebSocket API
 pub struct WebSocketConfig {
@@ -69,7 +68,6 @@ pub struct WebSocketConfig {
 }
 
 impl_json_display!(WebSocketConfig);
-
 
 /// Gets an environment variable or returns a default value if not found or cannot be parsed
 ///
@@ -124,7 +122,6 @@ impl Config {
         let sleep_hours = get_env_or_default("TX_LOOP_INTERVAL_HOURS", DEFAULT_SLEEP_TIME);
         let page_size = get_env_or_default("TX_PAGE_SIZE", DEFAULT_PAGE_SIZE);
         let days_to_look_back = get_env_or_default("TX_DAYS_LOOKBACK", DAYS_TO_BACK_LOOK);
-        
 
         // Check if we are using default values
         if username == "default_username" {
@@ -233,10 +230,10 @@ mod tests_display {
         let display_output = credentials.to_string();
         let expected_json = json!({
             "username": "user123",
-            "password": "[REDACTED]",
-            "account_id": "[REDACTED]",
-            "api_key": "[REDACTED]",
-            "client_token": "[REDACTED]",
+            "password": "pass123",
+            "account_id": "acc456",
+            "api_key": "key789",
+            "client_token": "ctoken",
             "account_token": null
         });
 

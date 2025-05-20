@@ -1,13 +1,13 @@
-use std::sync::Arc;
-use tracing::{error, info};
+use ig_client::application::models::transaction::TransactionList;
 use ig_client::application::services::AccountService;
+use ig_client::storage::utils::store_transactions;
 use ig_client::{
     application::services::account_service::AccountServiceImpl, config::Config,
     session::auth::IgAuth, session::interface::IgAuthenticator,
     transport::http_client::IgHttpClientImpl, utils::logger::setup_logger,
 };
-use ig_client::application::models::transaction::{StoreTransaction, TransactionList};
-use ig_client::storage::utils::store_transactions;
+use std::sync::Arc;
+use tracing::{error, info};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -45,7 +45,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             0,
             1,
         )
-        .await{
+        .await
+    {
         Ok(transactions) => transactions,
         Err(e) => {
             error!("Failed to get transactions: {}", e);
@@ -54,7 +55,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 e
             )));
         }
-    }; 
+    };
 
     if transactions.transactions.is_empty() {
         info!("No open transactions currently");

@@ -1,7 +1,9 @@
-use async_trait::async_trait;
-use crate::application::models::account::{AccountActivity, AccountInfo, Positions, TransactionHistory, WorkingOrders};
+use crate::application::models::account::{
+    AccountActivity, AccountInfo, Positions, TransactionHistory, WorkingOrders,
+};
 use crate::error::AppError;
 use crate::session::interface::IgSession;
+use async_trait::async_trait;
 
 /// Interface for the account service
 #[async_trait]
@@ -30,7 +32,7 @@ pub trait AccountService: Send + Sync {
         from: &str,
         to: &str,
     ) -> Result<AccountActivity, AppError>;
-    
+
     /// Gets detailed account activity
     ///
     /// This method includes additional details for each activity item by using

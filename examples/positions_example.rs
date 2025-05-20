@@ -1,5 +1,3 @@
-use std::sync::Arc;
-use tracing::info;
 use ig_client::application::services::AccountService;
 use ig_client::{
     application::services::account_service::AccountServiceImpl, config::Config,
@@ -7,6 +5,8 @@ use ig_client::{
     transport::http_client::IgHttpClientImpl, utils::finance::calculate_pnl,
     utils::logger::setup_logger,
 };
+use std::sync::Arc;
+use tracing::info;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

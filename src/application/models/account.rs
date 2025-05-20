@@ -3,11 +3,11 @@
    Email: jb@taunais.com
    Date: 13/5/25
 ******************************************************************************/
-use serde::{Deserialize, Serialize};
+use super::order::{Direction, OrderType, Status, TimeInForce};
 use crate::application::models::market::InstrumentType;
 use crate::impl_json_display;
 use crate::presentation::MarketState;
-use super::order::{Direction, OrderType, Status, TimeInForce};
+use serde::{Deserialize, Serialize};
 
 /// Account information
 #[derive(Debug, Clone, Deserialize)]

@@ -1,7 +1,4 @@
-use async_trait::async_trait;
-use reqwest::Method;
-use std::sync::Arc;
-use tracing::{debug, info};
+use crate::application::services::AccountService;
 use crate::{
     application::models::account::{
         AccountActivity, AccountInfo, Positions, TransactionHistory, WorkingOrders,
@@ -11,7 +8,10 @@ use crate::{
     session::interface::IgSession,
     transport::http_client::IgHttpClient,
 };
-use crate::application::services::AccountService;
+use async_trait::async_trait;
+use reqwest::Method;
+use std::sync::Arc;
+use tracing::{debug, info};
 
 /// Implementation of the account service
 pub struct AccountServiceImpl<T: IgHttpClient> {
@@ -106,14 +106,17 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
         );
         Ok(result)
     }
-    
+
     async fn get_activity_with_details(
         &self,
         session: &IgSession,
         from: &str,
         to: &str,
     ) -> Result<AccountActivity, AppError> {
-        let path = format!("history/activity?from={}&to={}&detailed=true&pageSize=500", from, to);
+        let path = format!(
+            "history/activity?from={}&to={}&detailed=true&pageSize=500",
+            from, to
+        );
         info!("Getting detailed account activity");
 
         let result = self

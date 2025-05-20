@@ -1,7 +1,3 @@
-use async_trait::async_trait;
-use reqwest::Method;
-use std::sync::Arc;
-use tracing::{debug, info};
 use crate::application::services::OrderService;
 use crate::{
     application::models::order::{
@@ -13,8 +9,10 @@ use crate::{
     session::interface::IgSession,
     transport::http_client::IgHttpClient,
 };
-
-/// Interface for the order service
+use async_trait::async_trait;
+use reqwest::Method;
+use std::sync::Arc;
+use tracing::{debug, info};
 
 /// Implementation of the order service
 pub struct OrderServiceImpl<T: IgHttpClient> {

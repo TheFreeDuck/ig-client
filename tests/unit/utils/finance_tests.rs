@@ -1,7 +1,7 @@
-use tracing::info;
 use ig_client::application::models::account::{Position, PositionDetails, PositionMarket};
 use ig_client::application::models::order::Direction;
 use ig_client::utils::finance::{calculate_percentage_return, calculate_pnl};
+use tracing::info;
 
 #[test]
 fn test_calculate_pnl() {

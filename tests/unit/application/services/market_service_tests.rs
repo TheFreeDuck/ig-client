@@ -1,6 +1,6 @@
 use ig_client::application::models::market::{
-    Currency, HistoricalPricesResponse, Instrument, MarketData, MarketDetails,
-    MarketSearchResult, MarketSnapshot,
+    Currency, HistoricalPricesResponse, Instrument, MarketData, MarketDetails, MarketSearchResult,
+    MarketSnapshot,
 };
 use ig_client::presentation::InstrumentType;
 use ig_client::session::interface::IgSession;

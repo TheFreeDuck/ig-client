@@ -2,11 +2,11 @@
 mod tests {
     use assert_json_diff::assert_json_eq;
     use ig_client::application::models::market::{
-        Currency, DealingRules, HistoricalPricesResponse, Instrument, MarketData,
-        MarketDetails, MarketSearchResult, PriceAllowance, PricePoint,
+        Currency, DealingRules, HistoricalPricesResponse, Instrument, MarketData, MarketDetails,
+        MarketSearchResult, PriceAllowance, PricePoint,
     };
-    use serde_json::json;
     use ig_client::presentation::InstrumentType;
+    use serde_json::json;
 
     #[test]
     fn test_instrument_type_serialization() {
@@ -29,14 +29,33 @@ mod tests {
     #[test]
     fn test_instrument_type_deserialization() {
         let types = vec![
-            ("SHARES", InstrumentType::Shares),
+            ("BINARY", InstrumentType::Binary),
+            ("BUNGEE_CAPPED", InstrumentType::BungeeCapped),
+            ("BUNGEE_COMMODITIES", InstrumentType::BungeeCommodities),
+            ("BUNGEE_CURRENCIES", InstrumentType::BungeeCurrencies),
+            ("BUNGEE_INDICES", InstrumentType::BungeeIndices),
+            ("COMMODITIES", InstrumentType::Commodities),
             ("CURRENCIES", InstrumentType::Currencies),
             ("INDICES", InstrumentType::Indices),
+            (
+                "KNOCKOUTS_COMMODITIES",
+                InstrumentType::KnockoutsCommodities,
+            ),
+            ("KNOCKOUTS_CURRENCIES", InstrumentType::KnockoutsCurrencies),
+            ("KNOCKOUTS_INDICES", InstrumentType::KnockoutsIndices),
+            ("KNOCKOUTS_SHARES", InstrumentType::KnockoutsShares),
+            ("OPT_COMMODITIES", InstrumentType::OptCommodities),
+            ("OPT_CURRENCIES", InstrumentType::OptCurrencies),
+            ("OPT_INDICES", InstrumentType::OptIndices),
+            ("OPT_RATES", InstrumentType::OptRates),
+            ("OPT_SHARES", InstrumentType::OptShares),
+            ("RATES", InstrumentType::Rates),
+            ("SECTORS", InstrumentType::Sectors),
+            ("SHARES", InstrumentType::Shares),
             ("SPRINT_MARKET", InstrumentType::SprintMarket),
-            ("COMMODITIES", InstrumentType::Commodities),
+            ("TEST_MARKET", InstrumentType::TestMarket),
+            ("UNKNOWN", InstrumentType::Unknown),
             ("OPTIONS", InstrumentType::Options),
-            ("BINARY", InstrumentType::Binary),
-            ("UNKNOWN_TYPE", InstrumentType::Unknown),
         ];
 
         for (json_str, expected_type) in types {

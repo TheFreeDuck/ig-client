@@ -1,7 +1,6 @@
+pub(crate) use crate::presentation::InstrumentType;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
-pub(crate) use crate::presentation::InstrumentType;
-
 
 /// Model for a market instrument
 #[derive(Debug, Clone, Deserialize)]

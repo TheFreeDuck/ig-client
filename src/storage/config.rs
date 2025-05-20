@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use crate::impl_json_display;
+use serde::{Deserialize, Serialize};
 
 /// Configuration for database connections
 #[derive(Debug, Serialize, Deserialize, Clone)]

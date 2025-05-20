@@ -1,7 +1,9 @@
-use async_trait::async_trait;
-use crate::application::models::market::{HistoricalPricesResponse, MarketDetails, MarketSearchResult};
+use crate::application::models::market::{
+    HistoricalPricesResponse, MarketDetails, MarketSearchResult,
+};
 use crate::error::AppError;
 use crate::session::interface::IgSession;
+use async_trait::async_trait;
 
 /// Interface for the market service
 #[async_trait]

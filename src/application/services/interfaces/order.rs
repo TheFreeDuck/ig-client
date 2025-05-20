@@ -1,7 +1,10 @@
-use async_trait::async_trait;
-use crate::application::models::order::{ClosePositionRequest, ClosePositionResponse, CreateOrderRequest, CreateOrderResponse, OrderConfirmation, UpdatePositionRequest};
+use crate::application::models::order::{
+    ClosePositionRequest, ClosePositionResponse, CreateOrderRequest, CreateOrderResponse,
+    OrderConfirmation, UpdatePositionRequest,
+};
 use crate::error::AppError;
 use crate::session::interface::IgSession;
+use async_trait::async_trait;
 
 #[async_trait]
 pub trait OrderService: Send + Sync {

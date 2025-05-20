@@ -1,12 +1,11 @@
-use std::sync::Arc;
-use tracing::info;
 use ig_client::application::services::AccountService;
 use ig_client::{
     application::services::account_service::AccountServiceImpl, config::Config,
     session::auth::IgAuth, session::interface::IgAuthenticator,
-    transport::http_client::IgHttpClientImpl,
-    utils::logger::setup_logger,
+    transport::http_client::IgHttpClientImpl, utils::logger::setup_logger,
 };
+use std::sync::Arc;
+use tracing::info;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

@@ -1,7 +1,7 @@
-use std::str::FromStr;
-use chrono::{DateTime, Duration, NaiveDate, NaiveDateTime, Utc, Weekday, Datelike};
 use crate::application::models::account::AccountTransaction;
-use crate::utils::parsing::{parse_instrument_name, InstrumentInfo};
+use crate::utils::parsing::{InstrumentInfo, parse_instrument_name};
+use chrono::{DateTime, Datelike, Duration, NaiveDate, NaiveDateTime, Utc, Weekday};
+use std::str::FromStr;
 
 /// Represents a processed transaction from IG Markets with parsed fields
 #[derive(Debug)]
@@ -72,7 +72,9 @@ impl From<AccountTransaction> for StoreTransaction {
                 };
 
                 // Calculate how many days to go back to find the last Wednesday
-                let days_back = (last_day_of_prev_month.weekday().num_days_from_monday() + 7 - Weekday::Wed.num_days_from_monday()) % 7;
+                let days_back = (last_day_of_prev_month.weekday().num_days_from_monday() + 7
+                    - Weekday::Wed.num_days_from_monday())
+                    % 7;
 
                 // Get the last Wednesday
                 return Some(last_day_of_prev_month - Duration::days(days_back as i64));
@@ -80,7 +82,7 @@ impl From<AccountTransaction> for StoreTransaction {
 
             None
         }
-        
+
         let instrument_info: InstrumentInfo = parse_instrument_name(&raw.instrument_name).unwrap();
         let underlying = instrument_info.underlying;
         let strike = instrument_info.strike;
@@ -93,7 +95,7 @@ impl From<AccountTransaction> for StoreTransaction {
             .trim_start_matches('E')
             .parse::<f64>()
             .unwrap_or(0.0);
-        
+
         let expiry = parse_period(&raw.period);
 
         let is_fee = raw.transaction_type == "WITH" && pnl_eur.abs() < 1.0;
@@ -115,7 +117,7 @@ impl From<AccountTransaction> for StoreTransaction {
 
 impl From<&AccountTransaction> for StoreTransaction {
     fn from(raw: &AccountTransaction) -> Self {
-        StoreTransaction::from(raw.clone())       
+        StoreTransaction::from(raw.clone())
     }
 }
 
@@ -130,9 +132,9 @@ impl AsRef<[StoreTransaction]> for TransactionList {
 impl From<&Vec<AccountTransaction>> for TransactionList {
     fn from(raw: &Vec<AccountTransaction>) -> Self {
         TransactionList(
-            raw.iter()                                 // Usa iter() en lugar de into_iter() para referencias
-                .map(|tx| StoreTransaction::from(tx))  // Esto asume que hay un impl From<&AccountTransaction> for StoreTransaction
-                .collect()
+            raw.iter() // Usa iter() en lugar de into_iter() para referencias
+                .map(StoreTransaction::from) // Esto asume que hay un impl From<&AccountTransaction> for StoreTransaction
+                .collect(),
         )
     }
 }
