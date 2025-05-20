@@ -27,7 +27,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! ig-client = "0.1.3"
+//! ig-client = "0.1.4"
 //! tokio = { version = "1", features = ["full"] }  # For async runtime
 //! dotenv = "0.15"                                 # For environment variable loading
 //! tracing = "0.1"                                # For logging
@@ -447,3 +447,11 @@ pub mod storage;
 
 /// Utility functions and helpers
 pub mod utils;
+
+/// Library version
+pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+/// Returns the library version
+pub fn version() -> &'static str {
+    VERSION
+}
