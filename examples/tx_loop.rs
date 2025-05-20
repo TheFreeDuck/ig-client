@@ -13,7 +13,6 @@ use ig_client::{
     application::services::AccountService,
     application::services::account_service::AccountServiceImpl,
     config::Config,
-    constants::DAYS_TO_BACK_LOOK,
     session::auth::IgAuth,
     session::interface::IgAuthenticator,
     storage::utils::store_transactions,
@@ -22,17 +21,10 @@ use ig_client::{
 };
 use std::{env, sync::Arc, time::Duration as StdDuration};
 use tokio::{signal, time};
-use tracing::{debug, error, info, warn};
-use ig_client::constants::{DEFAULT_PAGE_SIZE, DEFAULT_SLEEP_TIME, ERROR_COOLDOWN_SECONDS, MAX_CONSECUTIVE_ERRORS};
+use tracing::{debug, error, info};
+use ig_client::constants::MAX_CONSECUTIVE_ERRORS;
 use ig_client::utils::tools::apply_backoff;
 
-/// Read an environment variable with a default fallback value
-// fn get_env_or_default<T: std::str::FromStr>(key: &str, default: T) -> T {
-//     match env::var(key) {
-//         Ok(val) => val.parse::<T>().unwrap_or(default),
-//         Err(_) => default,
-//     }
-// }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

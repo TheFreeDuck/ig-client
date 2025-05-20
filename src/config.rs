@@ -3,7 +3,6 @@ use dotenv::dotenv;
 use serde::{Deserialize, Serialize};
 use sqlx::postgres::PgPoolOptions;
 use std::env;
-use std::fmt;
 use std::fmt::Debug;
 use std::str::FromStr;
 use tracing::{error, info, warn};
