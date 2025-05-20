@@ -1,14 +1,16 @@
 use crate::storage::config::DatabaseConfig;
 use dotenv::dotenv;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sqlx::postgres::PgPoolOptions;
 use std::env;
 use std::fmt;
 use std::fmt::Debug;
 use std::str::FromStr;
 use tracing::{error, info, warn};
+use crate::constants::{DAYS_TO_BACK_LOOK, DEFAULT_PAGE_SIZE, DEFAULT_SLEEP_TIME};
+use crate::impl_json_display;
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 /// Authentication credentials for the IG Markets API
 pub struct Credentials {
     /// Username for the IG Markets account
@@ -25,7 +27,9 @@ pub struct Credentials {
     pub account_token: Option<String>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+impl_json_display!(Credentials);
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 /// Main configuration for the IG Markets API client
 pub struct Config {
     /// Authentication credentials
@@ -36,9 +40,15 @@ pub struct Config {
     pub websocket: WebSocketConfig,
     /// Database configuration for data persistence
     pub database: DatabaseConfig,
+    
+    pub sleep_hours: u64,
+    pub page_size: u32,
+    pub days_to_look_back: i64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+impl_json_display!(Config);
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 /// Configuration for the REST API
 pub struct RestApiConfig {
     /// Base URL for the IG Markets REST API
@@ -47,7 +57,10 @@ pub struct RestApiConfig {
     pub timeout: u64,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+impl_json_display!(RestApiConfig);
+
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 /// Configuration for the WebSocket API
 pub struct WebSocketConfig {
     /// URL for the IG Markets WebSocket API
@@ -56,51 +69,8 @@ pub struct WebSocketConfig {
     pub reconnect_interval: u64,
 }
 
-impl fmt::Display for Credentials {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{\"username\":\"{}\",\"password\":\"[REDACTED]\",\"account_id\":\"[REDACTED]\",\"api_key\":\"[REDACTED]\",\"client_token\":{},\"account_token\":{}}}",
-            self.username,
-            self.client_token
-                .as_ref()
-                .map_or("null".to_string(), |_| "\"[REDACTED]\"".to_string()),
-            self.account_token
-                .as_ref()
-                .map_or("null".to_string(), |_| "\"[REDACTED]\"".to_string())
-        )
-    }
-}
+impl_json_display!(WebSocketConfig);
 
-impl fmt::Display for Config {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{\"credentials\":{},\"rest_api\":{},\"websocket\":{},\"database\":{}}}",
-            self.credentials, self.rest_api, self.websocket, self.database
-        )
-    }
-}
-
-impl fmt::Display for RestApiConfig {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{\"base_url\":\"{}\",\"timeout\":{}}}",
-            self.base_url, self.timeout
-        )
-    }
-}
-
-impl fmt::Display for WebSocketConfig {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{\"url\":\"{}\",\"reconnect_interval\":{}}}",
-            self.url, self.reconnect_interval
-        )
-    }
-}
 
 /// Gets an environment variable or returns a default value if not found or cannot be parsed
 ///
@@ -151,6 +121,11 @@ impl Config {
         let username = get_env_or_default("IG_USERNAME", String::from("default_username"));
         let password = get_env_or_default("IG_PASSWORD", String::from("default_password"));
         let api_key = get_env_or_default("IG_API_KEY", String::from("default_api_key"));
+
+        let sleep_hours = get_env_or_default("TX_LOOP_INTERVAL_HOURS", DEFAULT_SLEEP_TIME);
+        let page_size = get_env_or_default("TX_PAGE_SIZE", DEFAULT_PAGE_SIZE);
+        let days_to_look_back = get_env_or_default("TX_DAYS_LOOKBACK", DAYS_TO_BACK_LOOK);
+        
 
         // Check if we are using default values
         if username == "default_username" {
@@ -220,6 +195,9 @@ impl Config {
                 ),
                 max_connections: get_env_or_default("DATABASE_MAX_CONNECTIONS", 5),
             },
+            sleep_hours,
+            page_size,
+            days_to_look_back,
         }
     }
 
@@ -330,16 +308,19 @@ mod tests_display {
                 url: "postgres://user:pass@localhost/ig_db".to_string(),
                 max_connections: 5,
             },
+            sleep_hours: 0,
+            page_size: 0,
+            days_to_look_back: 0,
         };
 
         let display_output = config.to_string();
         let expected_json = json!({
             "credentials": {
                 "username": "user123",
-                "password": "[REDACTED]",
-                "account_id": "[REDACTED]",
-                "api_key": "[REDACTED]",
-                "client_token": "[REDACTED]",
+                "password": "pass123",
+                "account_id": "acc456",
+                "api_key": "key789",
+                "client_token": "ctoken",
                 "account_token": null
             },
             "rest_api": {
@@ -353,7 +334,10 @@ mod tests_display {
             "database": {
                 "url": "postgres://user:pass@localhost/ig_db",
                 "max_connections": 5
-            }
+            },
+            "sleep_hours": 0,
+            "page_size": 0,
+            "days_to_look_back": 0
         });
 
         assert_json_eq!(

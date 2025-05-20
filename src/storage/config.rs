@@ -1,8 +1,8 @@
-use serde::Deserialize;
-use std::fmt;
+use serde::{Deserialize, Serialize};
+use crate::impl_json_display;
 
 /// Configuration for database connections
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct DatabaseConfig {
     /// Database connection URL
     pub url: String,
@@ -10,12 +10,4 @@ pub struct DatabaseConfig {
     pub max_connections: u32,
 }
 
-impl fmt::Display for DatabaseConfig {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{\"url\":\"{}\",\"max_connections\":{}}}",
-            self.url, self.max_connections
-        )
-    }
-}
+impl_json_display!(DatabaseConfig);
