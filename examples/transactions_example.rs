@@ -4,8 +4,7 @@ use ig_client::application::services::AccountService;
 use ig_client::{
     application::services::account_service::AccountServiceImpl, config::Config,
     session::auth::IgAuth, session::interface::IgAuthenticator,
-    transport::http_client::IgHttpClientImpl, utils::finance::calculate_pnl,
-    utils::logger::setup_logger,
+    transport::http_client::IgHttpClientImpl, utils::logger::setup_logger,
 };
 
 #[tokio::main]
@@ -30,51 +29,34 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let session = authenticator.login().await?;
     info!("Session started successfully");
 
-    // No need for delay anymore
-
     // Create account service
     let account_service = AccountServiceImpl::new(Arc::clone(&config), Arc::clone(&http_client));
     info!("Account service created");
 
     // Get open positions
     info!("Fetching open positions...");
-    let mut positions = account_service.get_positions(&session).await?;
+    let mut transactions = account_service
+        .get_transactions(
+            &session,
+            "2025-03-01T00:00:00Z",
+            "2025-04-01T00:00:00Z",
+            100,
+            1,
+        )
+        .await?;
 
-    if positions.positions.is_empty() {
+    if transactions.transactions.is_empty() {
         info!("No open positions currently");
     } else {
-        info!("Open positions: {}", positions.positions.len());
+        info!("Open positions: {}", transactions.transactions.len());
 
         // Display positions
-        for (i, position) in positions.positions.iter_mut().enumerate() {
-            // Calculate P&L using the utility function
-            position.pnl = calculate_pnl(position);
-
+        for (i, position) in transactions.transactions.iter_mut().enumerate() {
             // Log the position as pretty JSON
             info!(
-                "Position #{}: {}",
+                "Transactions #{}: {}",
                 i + 1,
                 serde_json::to_string_pretty(&serde_json::to_value(position).unwrap()).unwrap()
-            );
-        }
-    }
-
-    // Get working orders
-    info!("Fetching working orders...");
-    let working_orders = account_service.get_working_orders(&session).await?;
-
-    if working_orders.working_orders.is_empty() {
-        info!("No working orders currently");
-    } else {
-        info!("Working orders: {}", working_orders.working_orders.len());
-
-        // Display details of each working order as JSON
-        for (i, order) in working_orders.working_orders.iter().enumerate() {
-            // Log the working order as pretty JSON
-            info!(
-                "Working Order #{}: {}",
-                i + 1,
-                serde_json::to_string_pretty(&serde_json::to_value(order).unwrap()).unwrap()
             );
         }
     }

@@ -10,6 +10,10 @@ pub mod market_service;
 pub mod order_service;
 /// Module containing common types used by services
 mod types;
+mod interfaces;
 
 pub use listener::Listener;
 pub use types::ListenerResult;
+pub use interfaces::account::AccountService;
+pub use interfaces::market::MarketService;
+pub use interfaces::order::OrderService;

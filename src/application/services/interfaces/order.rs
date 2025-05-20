@@ -1,0 +1,36 @@
+use async_trait::async_trait;
+use crate::application::models::order::{ClosePositionRequest, ClosePositionResponse, CreateOrderRequest, CreateOrderResponse, OrderConfirmation, UpdatePositionRequest};
+use crate::error::AppError;
+use crate::session::interface::IgSession;
+
+#[async_trait]
+pub trait OrderService: Send + Sync {
+    /// Creates a new order
+    async fn create_order(
+        &self,
+        session: &IgSession,
+        order: &CreateOrderRequest,
+    ) -> Result<CreateOrderResponse, AppError>;
+
+    /// Gets the confirmation of an order
+    async fn get_order_confirmation(
+        &self,
+        session: &IgSession,
+        deal_reference: &str,
+    ) -> Result<OrderConfirmation, AppError>;
+
+    /// Updates an existing position
+    async fn update_position(
+        &self,
+        session: &IgSession,
+        deal_id: &str,
+        update: &UpdatePositionRequest,
+    ) -> Result<(), AppError>;
+
+    /// Closes an existing position
+    async fn close_position(
+        &self,
+        session: &IgSession,
+        close_request: &ClosePositionRequest,
+    ) -> Result<ClosePositionResponse, AppError>;
+}
