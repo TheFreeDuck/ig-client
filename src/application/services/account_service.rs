@@ -1,8 +1,4 @@
-use async_trait::async_trait;
-use reqwest::Method;
-use std::sync::Arc;
-use tracing::{debug, info};
-
+use crate::application::services::AccountService;
 use crate::{
     application::models::account::{
         AccountActivity, AccountInfo, Positions, TransactionHistory, WorkingOrders,
@@ -12,37 +8,10 @@ use crate::{
     session::interface::IgSession,
     transport::http_client::IgHttpClient,
 };
-
-/// Interface for the account service
-#[async_trait]
-pub trait AccountService: Send + Sync {
-    /// Gets information about all user accounts
-    async fn get_accounts(&self, session: &IgSession) -> Result<AccountInfo, AppError>;
-
-    /// Gets open positions
-    async fn get_positions(&self, session: &IgSession) -> Result<Positions, AppError>;
-
-    /// Gets working orders
-    async fn get_working_orders(&self, session: &IgSession) -> Result<WorkingOrders, AppError>;
-
-    /// Gets account activity
-    async fn get_activity(
-        &self,
-        session: &IgSession,
-        from: &str,
-        to: &str,
-    ) -> Result<AccountActivity, AppError>;
-
-    /// Gets transaction history
-    async fn get_transactions(
-        &self,
-        session: &IgSession,
-        from: &str,
-        to: &str,
-        page_size: u32,
-        page_number: u32,
-    ) -> Result<TransactionHistory, AppError>;
-}
+use async_trait::async_trait;
+use reqwest::Method;
+use std::sync::Arc;
+use tracing::{debug, info};
 
 /// Implementation of the account service
 pub struct AccountServiceImpl<T: IgHttpClient> {
@@ -123,7 +92,7 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
         from: &str,
         to: &str,
     ) -> Result<AccountActivity, AppError> {
-        let path = format!("history/activity?from={}&to={}", from, to);
+        let path = format!("history/activity?from={}&to={}&pageSize=500", from, to);
         info!("Getting account activity");
 
         let result = self
@@ -133,6 +102,30 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
 
         debug!(
             "Account activity obtained: {} activities",
+            result.activities.len()
+        );
+        Ok(result)
+    }
+
+    async fn get_activity_with_details(
+        &self,
+        session: &IgSession,
+        from: &str,
+        to: &str,
+    ) -> Result<AccountActivity, AppError> {
+        let path = format!(
+            "history/activity?from={}&to={}&detailed=true&pageSize=500",
+            from, to
+        );
+        info!("Getting detailed account activity");
+
+        let result = self
+            .client
+            .request::<(), AccountActivity>(Method::GET, &path, session, None, "3")
+            .await?;
+
+        debug!(
+            "Detailed account activity obtained: {} activities",
             result.activities.len()
         );
         Ok(result)

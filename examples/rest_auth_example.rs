@@ -25,8 +25,8 @@ async fn main() {
     match auth.login().await {
         Ok(sess) => {
             info!("✅ Auth ok. Account: {}", sess.account_id);
-            println!("CST  = {}", sess.cst);
-            println!("X-ST = {}", sess.token);
+            info!("CST  = {}", sess.cst);
+            info!("X-ST = {}", sess.token);
         }
         Err(e) => {
             error!("Auth failed: {e:?}");

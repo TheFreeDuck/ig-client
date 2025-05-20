@@ -3,6 +3,7 @@
    Email: jb@taunais.com
    Date: 13/5/25
 ******************************************************************************/
+use crate::impl_json_display;
 use serde::{Deserialize, Serialize};
 
 /// Order direction (buy or sell)
@@ -15,6 +16,8 @@ pub enum Direction {
     /// Sell direction (short position)
     Sell,
 }
+
+impl_json_display!(Direction);
 
 /// Order type
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]

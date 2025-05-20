@@ -6,21 +6,22 @@ use std::fmt;
 
 /// Represents the current state of a market
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
+#[serde(rename_all = "UPPERCASE")]
 pub enum MarketState {
-    #[serde(rename = "closed")]
+    /// Market is closed for trading
     Closed,
-    #[serde(rename = "offline")]
+    /// Market is offline and not available
     #[default]
     Offline,
-    #[serde(rename = "tradeable")]
+    /// Market is open and available for trading
     Tradeable,
-    #[serde(rename = "edit")]
+    /// Market is in edit mode
     Edit,
-    #[serde(rename = "auction")]
+    /// Market is in auction phase
     Auction,
-    #[serde(rename = "auction_no_edit")]
+    /// Market is in auction phase but editing is not allowed
     AuctionNoEdit,
-    #[serde(rename = "suspended")]
+    /// Market is temporarily suspended
     Suspended,
 }
 

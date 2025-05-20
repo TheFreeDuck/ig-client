@@ -58,6 +58,7 @@ fn test_account_activity_structure() {
     // Test the AccountActivity structure
     let activity = AccountActivity {
         activities: Vec::new(),
+        metadata: None,
     };
 
     assert!(activity.activities.is_empty());

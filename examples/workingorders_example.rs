@@ -2,8 +2,7 @@ use ig_client::application::services::AccountService;
 use ig_client::{
     application::services::account_service::AccountServiceImpl, config::Config,
     session::auth::IgAuth, session::interface::IgAuthenticator,
-    transport::http_client::IgHttpClientImpl, utils::finance::calculate_pnl,
-    utils::logger::setup_logger,
+    transport::http_client::IgHttpClientImpl, utils::logger::setup_logger,
 };
 use std::sync::Arc;
 use tracing::info;
@@ -35,29 +34,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Create account service
     let account_service = AccountServiceImpl::new(Arc::clone(&config), Arc::clone(&http_client));
     info!("Account service created");
-
-    // Get open positions
-    info!("Fetching open positions...");
-    let mut positions = account_service.get_positions(&session).await?;
-
-    if positions.positions.is_empty() {
-        info!("No open positions currently");
-    } else {
-        info!("Open positions: {}", positions.positions.len());
-
-        // Display positions
-        for (i, position) in positions.positions.iter_mut().enumerate() {
-            // Calculate P&L using the utility function
-            position.pnl = calculate_pnl(position);
-
-            // Log the position as pretty JSON
-            info!(
-                "Position #{}: {}",
-                i + 1,
-                serde_json::to_string_pretty(&serde_json::to_value(position).unwrap()).unwrap()
-            );
-        }
-    }
 
     // Get working orders
     info!("Fetching working orders...");

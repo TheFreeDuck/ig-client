@@ -134,7 +134,7 @@ impl IgHttpClient for IgHttpClientImpl {
         T: Serialize + Send + Sync + 'static,
     {
         let url = self.build_url(path);
-        info!("Making {} request to {}", method, url);
+        debug!("Making {} request to {}", method, url);
 
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);

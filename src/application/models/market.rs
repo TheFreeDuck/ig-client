@@ -1,34 +1,6 @@
-/******************************************************************************
-   Author: Joaquín Béjar García
-   Email: jb@taunais.com
-   Date: 13/5/25
-******************************************************************************/
+pub(crate) use crate::presentation::InstrumentType;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
-
-/// Instrument type
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
-pub enum InstrumentType {
-    /// Stocks and shares
-    Shares,
-    /// Foreign exchange currency pairs
-    Currencies,
-    /// Market indices
-    Indices,
-    /// Short-term binary bets
-    SprintMarket,
-    /// Raw materials and natural resources
-    Commodities,
-    /// Option contracts
-    Options,
-    /// Binary options
-    #[serde(rename = "BINARY")]
-    Binary,
-    /// Unknown instrument type
-    #[serde(other)]
-    Unknown,
-}
 
 /// Model for a market instrument
 #[derive(Debug, Clone, Deserialize)]

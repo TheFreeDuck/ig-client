@@ -3,9 +3,11 @@
    Email: jb@taunais.com
    Date: 13/5/25
 ******************************************************************************/
+use super::order::{Direction, OrderType, Status, TimeInForce};
+use crate::application::models::market::InstrumentType;
+use crate::impl_json_display;
+use crate::presentation::MarketState;
 use serde::{Deserialize, Serialize};
-
-use super::order::Direction;
 
 /// Account information
 #[derive(Debug, Clone, Deserialize)]
@@ -55,6 +57,41 @@ pub struct AccountBalance {
 pub struct AccountActivity {
     /// List of activities on the account
     pub activities: Vec<Activity>,
+    /// Metadata about pagination
+    pub metadata: Option<ActivityMetadata>,
+}
+
+/// Metadata for activity pagination
+#[derive(Debug, Clone, Deserialize)]
+pub struct ActivityMetadata {
+    /// Paging information
+    pub paging: Option<ActivityPaging>,
+}
+
+/// Paging information for activities
+#[derive(Debug, Clone, Deserialize)]
+pub struct ActivityPaging {
+    /// Number of items per page
+    pub size: Option<i32>,
+    /// URL for the next page of results
+    pub next: Option<String>,
+}
+
+#[derive(Debug, Copy, Clone, Deserialize, Serialize)]
+/// Type of account activity
+pub enum ActivityType {
+    /// Activity related to editing stop and limit orders
+    #[serde(rename = "EDIT_STOP_AND_LIMIT")]
+    EditStopAndLimit,
+    /// Activity related to positions
+    #[serde(rename = "POSITION")]
+    Position,
+    /// System-generated activity
+    #[serde(rename = "SYSTEM")]
+    System,
+    /// Activity related to working orders
+    #[serde(rename = "WORKING_ORDER")]
+    WorkingOrder,
 }
 
 /// Individual activity record
@@ -63,24 +100,159 @@ pub struct Activity {
     /// Date and time of the activity
     pub date: String,
     /// Unique identifier for the deal
-    #[serde(rename = "dealId")]
-    pub deal_id: String,
+    #[serde(rename = "dealId", default)]
+    pub deal_id: Option<String>,
     /// Instrument EPIC identifier
-    pub epic: String,
+    #[serde(default)]
+    pub epic: Option<String>,
     /// Time period of the activity
-    pub period: String,
+    #[serde(default)]
+    pub period: Option<String>,
     /// Client-generated reference for the deal
-    #[serde(rename = "dealReference")]
-    pub deal_reference: String,
+    #[serde(rename = "dealReference", default)]
+    pub deal_reference: Option<String>,
     /// Type of activity
-    #[serde(rename = "activityType")]
-    pub activity_type: String,
+    #[serde(rename = "type")]
+    pub activity_type: ActivityType,
     /// Status of the activity
-    pub status: String,
+    #[serde(default)]
+    pub status: Option<Status>,
     /// Description of the activity
-    pub description: String,
+    #[serde(default)]
+    pub description: Option<String>,
     /// Additional details about the activity
-    pub details: Option<String>,
+    /// This is a string when detailed=false, and an object when detailed=true
+    #[serde(default)]
+    pub details: Option<ActivityDetails>,
+    /// Channel the activity occurred on (e.g., "WEB" or "Mobile")
+    #[serde(default)]
+    pub channel: Option<String>,
+    /// The currency, e.g., a pound symbol
+    #[serde(default)]
+    pub currency: Option<String>,
+    /// Price level
+    #[serde(default)]
+    pub level: Option<String>,
+}
+
+/// Detailed information about an activity
+/// Only available when using the detailed=true parameter
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ActivityDetails {
+    /// Client-generated reference for the deal
+    #[serde(rename = "dealReference", default)]
+    pub deal_reference: Option<String>,
+    /// List of actions associated with this activity
+    #[serde(default)]
+    pub actions: Vec<ActivityAction>,
+    /// Name of the market
+    #[serde(rename = "marketName", default)]
+    pub market_name: Option<String>,
+    /// Date until which the order is valid
+    #[serde(rename = "goodTillDate", default)]
+    pub good_till_date: Option<String>,
+    /// Currency of the transaction
+    #[serde(default)]
+    pub currency: Option<String>,
+    /// Size/quantity of the transaction
+    #[serde(default)]
+    pub size: Option<f64>,
+    /// Direction of the transaction (BUY or SELL)
+    #[serde(default)]
+    pub direction: Option<Direction>,
+    /// Price level
+    #[serde(default)]
+    pub level: Option<f64>,
+    /// Stop level price
+    #[serde(rename = "stopLevel", default)]
+    pub stop_level: Option<f64>,
+    /// Distance for the stop
+    #[serde(rename = "stopDistance", default)]
+    pub stop_distance: Option<f64>,
+    /// Whether the stop is guaranteed
+    #[serde(rename = "guaranteedStop", default)]
+    pub guaranteed_stop: Option<bool>,
+    /// Distance for the trailing stop
+    #[serde(rename = "trailingStopDistance", default)]
+    pub trailing_stop_distance: Option<f64>,
+    /// Step size for the trailing stop
+    #[serde(rename = "trailingStep", default)]
+    pub trailing_step: Option<f64>,
+    /// Limit level price
+    #[serde(rename = "limitLevel", default)]
+    pub limit_level: Option<f64>,
+    /// Distance for the limit
+    #[serde(rename = "limitDistance", default)]
+    pub limit_distance: Option<f64>,
+}
+
+/// Types of actions that can be performed on an activity
+#[derive(Debug, Copy, Clone, Deserialize, Serialize)]
+pub enum ActionType {
+    /// A limit order was deleted
+    #[serde(rename = "LIMIT_ORDER_DELETED")]
+    LimitOrderDeleted,
+    /// A limit order was filled
+    #[serde(rename = "LIMIT_ORDER_FILLED")]
+    LimitOrderFilled,
+    /// A limit order was opened
+    #[serde(rename = "LIMIT_ORDER_OPENED")]
+    LimitOrderOpened,
+    /// A limit order was rolled
+    #[serde(rename = "LIMIT_ORDER_ROLLED")]
+    LimitOrderRolled,
+    /// A position was closed
+    #[serde(rename = "POSITION_CLOSED")]
+    PositionClosed,
+    /// A position was deleted
+    #[serde(rename = "POSITION_DELETED")]
+    PositionDeleted,
+    /// A position was opened
+    #[serde(rename = "POSITION_OPENED")]
+    PositionOpened,
+    /// A position was partially closed
+    #[serde(rename = "POSITION_PARTIALLY_CLOSED")]
+    PositionPartiallyClosed,
+    /// A position was rolled
+    #[serde(rename = "POSITION_ROLLED")]
+    PositionRolled,
+    /// A stop/limit was amended
+    #[serde(rename = "STOP_LIMIT_AMENDED")]
+    StopLimitAmended,
+    /// A stop order was amended
+    #[serde(rename = "STOP_ORDER_AMENDED")]
+    StopOrderAmended,
+    /// A stop order was deleted
+    #[serde(rename = "STOP_ORDER_DELETED")]
+    StopOrderDeleted,
+    /// A stop order was filled
+    #[serde(rename = "STOP_ORDER_FILLED")]
+    StopOrderFilled,
+    /// A stop order was opened
+    #[serde(rename = "STOP_ORDER_OPENED")]
+    StopOrderOpened,
+    /// A stop order was rolled
+    #[serde(rename = "STOP_ORDER_ROLLED")]
+    StopOrderRolled,
+    /// Unknown action type
+    #[serde(rename = "UNKNOWN")]
+    Unknown,
+    /// A working order was deleted
+    #[serde(rename = "WORKING_ORDER_DELETED")]
+    WorkingOrderDeleted,
+}
+
+impl_json_display!(ActionType);
+
+/// Action associated with an activity
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ActivityAction {
+    /// Type of action
+    #[serde(rename = "actionType")]
+    pub action_type: ActionType,
+    /// Deal ID affected by this action
+    #[serde(rename = "affectedDealId", default)]
+    pub affected_deal_id: Option<String>,
 }
 
 /// Open positions
@@ -201,6 +373,7 @@ pub struct PositionMarket {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct WorkingOrders {
     /// List of pending working orders
+    #[serde(rename = "workingOrders")]
     pub working_orders: Vec<WorkingOrder>,
 }
 
@@ -233,7 +406,7 @@ pub struct WorkingOrderData {
     pub order_level: f64,
     /// Time in force for the order
     #[serde(rename = "timeInForce")]
-    pub time_in_force: String,
+    pub time_in_force: TimeInForce,
     /// Expiry date for GTD orders
     #[serde(rename = "goodTillDate")]
     pub good_till_date: Option<String>,
@@ -251,7 +424,7 @@ pub struct WorkingOrderData {
     pub guaranteed_stop: bool,
     /// Type of the order
     #[serde(rename = "orderType")]
-    pub order_type: String,
+    pub order_type: OrderType,
     /// Distance for stop loss
     #[serde(rename = "stopDistance")]
     pub stop_distance: Option<f64>,
@@ -290,12 +463,12 @@ pub struct MarketData {
     pub expiry: String,
     /// Current status of the market
     #[serde(rename = "marketStatus")]
-    pub market_status: String,
+    pub market_status: MarketState,
     /// Unique identifier for the market
     pub epic: String,
     /// Type of the instrument
     #[serde(rename = "instrumentType")]
-    pub instrument_type: String,
+    pub instrument_type: InstrumentType,
     /// Size of one lot
     #[serde(rename = "lotSize")]
     pub lot_size: f64,
@@ -371,6 +544,9 @@ pub struct AccountTransaction {
     /// UTC date and time of the transaction
     #[serde(rename = "dateUtc")]
     pub date_utc: String,
+    /// Represents the date and time in UTC when an event or entity was opened or initiated.
+    #[serde(rename = "openDateUtc")]
+    pub open_date_utc: String,
     /// Name of the instrument
     #[serde(rename = "instrumentName")]
     pub instrument_name: String,
@@ -398,3 +574,5 @@ pub struct AccountTransaction {
     #[serde(rename = "cashTransaction")]
     pub cash_transaction: bool,
 }
+
+impl_json_display!(AccountTransaction);

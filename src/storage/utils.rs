@@ -1,4 +1,4 @@
-use crate::application::models::transaction::Transaction;
+use crate::application::models::transaction::StoreTransaction;
 use crate::error::AppError;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
@@ -15,7 +15,7 @@ use sqlx::Executor;
 /// * `Result<usize, AppError>` - Number of transactions inserted or an error
 pub async fn store_transactions(
     pool: &sqlx::PgPool,
-    txs: &[Transaction],
+    txs: &[StoreTransaction],
 ) -> Result<usize, AppError> {
     let mut tx = pool.begin().await?;
     let mut inserted = 0;

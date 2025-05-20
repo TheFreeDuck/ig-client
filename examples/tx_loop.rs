@@ -1,27 +1,49 @@
-use ig_client::config::Config;
-use ig_client::utils::logger::setup_logger;
-use ig_client::utils::transactions::fetch_and_store_transactions;
-use std::time::Duration as StdDuration;
-use tokio::signal;
-use tokio::time;
-use tracing::{debug, error, info, warn};
+//! Transaction Loop Example
+//!
+//! This example demonstrates how to periodically fetch and store transactions
+//! from the IG Markets API. It runs in a continuous loop, fetching transactions
+//! at regular intervals and storing them in a PostgreSQL database.
+//!
+//! The example uses environment variables for configuration and implements
+//! error handling with exponential backoff.
 
-// Maximum number of consecutive errors before forcing a cooldown
-const MAX_CONSECUTIVE_ERRORS: u32 = 3;
-// Cooldown time in seconds when hitting max errors
-const ERROR_COOLDOWN_SECONDS: u64 = 300; // 5 minutes
-
-const SLEEP_TIME: u64 = 24; // Sleep time in hours
+use chrono::{Duration, Utc};
+use ig_client::constants::MAX_CONSECUTIVE_ERRORS;
+use ig_client::utils::tools::apply_backoff;
+use ig_client::{
+    application::models::transaction::TransactionList, application::services::AccountService,
+    application::services::account_service::AccountServiceImpl, config::Config,
+    session::auth::IgAuth, session::interface::IgAuthenticator, storage::utils::store_transactions,
+    transport::http_client::IgHttpClientImpl, utils::logger::setup_logger,
+};
+use std::{sync::Arc, time::Duration as StdDuration};
+use tokio::{signal, time};
+use tracing::{debug, error, info};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     setup_logger();
-    let cfg = Config::new();
-    debug!("Loaded config: database={}", cfg.database);
+
+    info!("Starting transaction loop service");
+
+    let config = Arc::new(Config::new());
+    info!(
+        "Configuration: interval={} hours, page_size={}, lookback={} days",
+        config.sleep_hours, config.page_size, config.days_to_look_back
+    );
+    debug!("Loaded config: database={}", config.database);
 
     // Build the Postgres pool once at startup
-    let pool = cfg.pg_pool().await?;
-    info!("Postgres pool established");
+    let pool = match config.pg_pool().await {
+        Ok(pool) => {
+            info!("Postgres pool established");
+            pool
+        }
+        Err(e) => {
+            error!("Failed to establish database connection: {}", e);
+            return Err(Box::<dyn std::error::Error>::from(e));
+        }
+    };
 
     // Initialize error counter
     let mut consecutive_errors = 0;
@@ -30,10 +52,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ctrl_c = signal::ctrl_c();
     tokio::pin!(ctrl_c);
 
-    let hour_interval = time::interval(StdDuration::from_secs(SLEEP_TIME * 3600));
+    let hour_interval = time::interval(StdDuration::from_secs(config.sleep_hours * 3600));
     tokio::pin!(hour_interval);
 
-    info!("Service started, will fetch transactions hourly");
+    info!(
+        "Service started, will fetch transactions every {} hours",
+        config.sleep_hours
+    );
 
     // Immediately run once, then continue with the hourly interval
     loop {
@@ -46,24 +71,128 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 // If this is the first run, the interval will tick immediately
                 info!("Starting scheduled transaction fetch");
 
-                match fetch_and_store_transactions(&cfg, &pool, None).await {
-                    Ok(inserted) => {
-                        info!("Successfully processed {} transactions", inserted);
-                        consecutive_errors = 0; // Reset error counter on success
+                // Create HTTP client and authenticator
+                let http_client = Arc::new(IgHttpClientImpl::new(Arc::clone(&config)));
+                let authenticator = IgAuth::new(&config);
+
+                // Attempt to login
+                let session = match authenticator.login().await {
+                    Ok(session) => {
+                        info!("Session started successfully");
+                        session
                     }
                     Err(e) => {
-                        error!("Error processing transactions: {}", e);
+                        error!("Failed to login: {}", e);
                         consecutive_errors += 1;
 
                         if consecutive_errors >= MAX_CONSECUTIVE_ERRORS {
-                            warn!("Hit maximum consecutive errors ({}). Entering cooldown period of {} seconds",
-                                  MAX_CONSECUTIVE_ERRORS, ERROR_COOLDOWN_SECONDS);
+                            apply_backoff(&mut consecutive_errors).await;
+                        }
+                        continue; // Skip this iteration and try again
+                    }
+                };
 
-                            // Pause for cooldown period
-                            time::sleep(StdDuration::from_secs(ERROR_COOLDOWN_SECONDS)).await;
-                            consecutive_errors = 0; // Reset after cooldown
+                // Create account service
+                let account_service = AccountServiceImpl::new(Arc::clone(&config), Arc::clone(&http_client));
+
+                // Calculate date range
+                let to = Utc::now().format("%Y-%m-%dT%H:%M:%S").to_string();
+                let from = (Utc::now() - Duration::days(config.days_to_look_back))
+                    .format("%Y-%m-%dT%H:%M:%S")
+                    .to_string();
+
+                info!("Fetching transactions from {} to {}", from, to);
+
+                // Fetch first page to get total pages
+                let first_page = match account_service
+                    .get_transactions(
+                        &session,
+                        &from,
+                        &to,
+                        config.page_size,
+                        1, // Start with page 1
+                    )
+                    .await {
+                    Ok(transactions) => transactions,
+                    Err(e) => {
+                        error!("Failed to get transactions: {}", e);
+                        consecutive_errors += 1;
+
+                        if consecutive_errors >= MAX_CONSECUTIVE_ERRORS {
+                            apply_backoff(&mut consecutive_errors).await;
+                        }
+                        continue; // Skip this iteration and try again
+                    }
+                };
+
+                // Calculate total pages
+                let total_pages = first_page.metadata.page_data.total_pages as u32;
+
+                info!("Found {} transactions in page 1 of {}", first_page.transactions.len(), total_pages);
+
+                // Process first page
+                let mut all_transactions = first_page.transactions;
+
+                // Fetch remaining pages if any
+                for page in 2..=total_pages {
+                    info!("Fetching page {} of {}", page, total_pages);
+
+                    // Add a small delay between requests to avoid rate limiting
+                    time::sleep(StdDuration::from_millis(500)).await;
+
+                    match account_service
+                        .get_transactions(
+                            &session,
+                            &from,
+                            &to,
+                            config.page_size,
+                            page,
+                        )
+                        .await {
+                        Ok(page_data) => {
+                            info!("Retrieved {} transactions from page {}", page_data.transactions.len(), page);
+                            all_transactions.extend(page_data.transactions);
+                        }
+                        Err(e) => {
+                            error!("Failed to get page {}: {}", page, e);
+                            // Continue with the transactions we have so far
+                            break;
                         }
                     }
+                }
+
+                info!("Total transactions fetched: {}", all_transactions.len());
+
+                // Log transaction details at debug level
+                for (i, transaction) in all_transactions.iter().enumerate() {
+                    debug!(
+                        "Transaction #{}: {}",
+                        i + 1,
+                        serde_json::to_string_pretty(&serde_json::to_value(transaction).unwrap()).unwrap()
+                    );
+                }
+
+                // Convert and store transactions
+                if !all_transactions.is_empty() {
+                    let tx_list = TransactionList::from(&all_transactions);
+                    let tx_ref = tx_list.as_ref();
+
+                    match store_transactions(&pool, tx_ref).await {
+                        Ok(inserted) => {
+                            info!("Successfully stored {} transactions in database", inserted);
+                            consecutive_errors = 0; // Reset error counter on success
+                        }
+                        Err(e) => {
+                            error!("Error storing transactions: {}", e);
+                            consecutive_errors += 1;
+
+                            if consecutive_errors >= MAX_CONSECUTIVE_ERRORS {
+                                apply_backoff(&mut consecutive_errors).await;
+                            }
+                        }
+                    };
+                } else {
+                    info!("No transactions to store for the specified period");
                 }
             }
         }
