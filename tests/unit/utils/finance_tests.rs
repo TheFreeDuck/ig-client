@@ -7,34 +7,34 @@ fn test_calculate_pnl() {
     // Test profit for long position
     let position = create_test_position(Direction::Buy, 100.0, 1.2000, 1.2100, 1.2050);
     let pnl = calculate_pnl(&position);
-    println!("Test 1 - Long profit - Actual PNL: {}", pnl.unwrap());
+    info!("Test 1 - Long profit - Actual PNL: {}", pnl.unwrap());
     assert_eq!(pnl.unwrap(), 1.0000000000000009);
 
     // Test loss for long position
     let position = create_test_position(Direction::Buy, 100.0, 1.2100, 1.1900, 1.1950);
     let pnl = calculate_pnl(&position);
-    println!("Test 2 - Long loss - Actual PNL: {}", pnl.unwrap());
+    info!("Test 2 - Long loss - Actual PNL: {}", pnl.unwrap());
     let expected = -2.0000000000000018;
     assert_eq!(pnl.unwrap(), expected);
 
     // Test profit for short position
     let position = create_test_position(Direction::Sell, 100.0, 1.2100, 1.1900, 1.1950);
     let pnl = calculate_pnl(&position);
-    println!("Test 3 - Short profit - Actual PNL: {}", pnl.unwrap());
+    info!("Test 3 - Short profit - Actual PNL: {}", pnl.unwrap());
     let expected = 1.4999999999999902;
     assert_eq!(pnl.unwrap(), expected);
 
     // Test loss for short position
     let position = create_test_position(Direction::Sell, 100.0, 1.1900, 1.2100, 1.2050);
     let pnl = calculate_pnl(&position);
-    println!("Test 4 - Short loss - Actual PNL: {}", pnl.unwrap());
+    info!("Test 4 - Short loss - Actual PNL: {}", pnl.unwrap());
     let expected = -1.5000000000000124;
     assert_eq!(pnl.unwrap(), expected);
 
     // Test with zero position size
     let position = create_test_position(Direction::Buy, 0.0, 1.2000, 1.2100, 1.2050);
     let pnl = calculate_pnl(&position);
-    println!("Test 5 - Zero size - Actual PNL: {}", pnl.unwrap());
+    info!("Test 5 - Zero size - Actual PNL: {}", pnl.unwrap());
     assert_eq!(pnl.unwrap(), 0.0);
 }
 
@@ -43,7 +43,7 @@ fn test_calculate_percentage_return() {
     // Test profit percentage for long position
     let position = create_test_position(Direction::Buy, 100.0, 1.2000, 1.2100, 1.2050);
     let percentage = calculate_percentage_return(&position);
-    println!(
+    info!(
         "Test 1 - Long profit - Actual percentage: {}",
         percentage.unwrap()
     );
@@ -53,7 +53,7 @@ fn test_calculate_percentage_return() {
     // Test loss percentage for long position
     let position = create_test_position(Direction::Buy, 100.0, 1.2100, 1.1900, 1.1950);
     let percentage = calculate_percentage_return(&position);
-    println!(
+    info!(
         "Test 2 - Long loss - Actual percentage: {}",
         percentage.unwrap()
     );
@@ -63,7 +63,7 @@ fn test_calculate_percentage_return() {
     // Test profit percentage for short position
     let position = create_test_position(Direction::Sell, 100.0, 1.2100, 1.1900, 1.1950);
     let percentage = calculate_percentage_return(&position);
-    println!(
+    info!(
         "Test 3 - Short profit - Actual percentage: {}",
         percentage.unwrap()
     );
@@ -73,13 +73,13 @@ fn test_calculate_percentage_return() {
     // Test with zero position size
     let position = create_test_position(Direction::Buy, 0.0, 1.2000, 1.2100, 1.2050);
     let percentage = calculate_percentage_return(&position);
-    println!("Test 4 - Zero size - Actual percentage: {:?}", percentage);
+    info!("Test 4 - Zero size - Actual percentage: {:?}", percentage);
     assert_eq!(percentage, None); // Should return None to avoid division by zero
 
     // Test with zero entry price
     let position = create_test_position(Direction::Buy, 100.0, 0.0, 1.2100, 1.2050);
     let percentage = calculate_percentage_return(&position);
-    println!("Test 5 - Zero entry - Actual percentage: {:?}", percentage);
+    info!("Test 5 - Zero entry - Actual percentage: {:?}", percentage);
     assert_eq!(percentage, None); // Should return None to avoid division by zero
 }
 

@@ -85,6 +85,7 @@ impl IgHttpClientImpl {
     {
         let status = response.status();
         let url = response.url().to_string();
+        
 
         match status {
             StatusCode::OK | StatusCode::CREATED | StatusCode::ACCEPTED => {
@@ -130,11 +131,11 @@ impl IgHttpClient for IgHttpClientImpl {
         version: &str,
     ) -> Result<R, AppError>
     where
-        for<'de> R: DeserializeOwned + 'static,
+        for<'de> R: DeserializeOwned + 'static ,
         T: Serialize + Send + Sync + 'static,
     {
         let url = self.build_url(path);
-        info!("Making {} request to {}", method, url);
+        debug!("Making {} request to {}", method, url);
 
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);
@@ -156,7 +157,7 @@ impl IgHttpClient for IgHttpClientImpl {
         version: &str,
     ) -> Result<R, AppError>
     where
-        for<'de> R: DeserializeOwned + 'static,
+        for<'de> R: DeserializeOwned  + 'static,
         T: Serialize + Send + Sync + 'static,
     {
         let url = self.build_url(path);

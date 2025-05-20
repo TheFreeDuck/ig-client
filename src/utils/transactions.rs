@@ -47,7 +47,7 @@ use crate::{
 ///     
 ///     // Fetch transactions from the last 30 days
 ///     let inserted = fetch_and_store_transactions(&cfg, &pool, Some(30)).await?;
-///     println!("Inserted {} transactions", inserted);
+///     info!("Inserted {} transactions", inserted);
 ///     
 ///     Ok(())
 /// }

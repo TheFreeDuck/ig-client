@@ -35,32 +35,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Get open positions
     info!("Fetching open positions...");
-    let mut transactions = match account_service
-        .get_transactions(
+    let mut activity = match account_service
+        .get_activity(
             &session,
             "2025-03-01T00:00:00Z",
             "2025-04-01T00:00:00Z",
-            100,
-            1,
         )
-        .await{
-        Ok(transactions) => transactions,
+        .await {
+        Ok(activity) => activity,
         Err(e) => {
-            error!("Failed to get transactions: {}", e);
+            error!("Failed to get activity: {}", e);
             return Err(Box::<dyn std::error::Error>::from(format!(
-                "Failed to get transactions: {}",
+                "Failed to get activity: {}",
                 e
             )));
         }
-    }; 
+        
+    };
 
-    if transactions.transactions.is_empty() {
+    if activity.activities.is_empty() {
         info!("No open positions currently");
     } else {
-        info!("Open positions: {}", transactions.transactions.len());
+        info!("Open positions: {}", activity.activities.len());
 
         // Display positions
-        for (i, position) in transactions.transactions.iter_mut().enumerate() {
+        for (i, position) in activity.activities.iter_mut().enumerate() {
             // Log the position as pretty JSON
             info!(
                 "Transactions #{}: {}",

@@ -171,7 +171,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Authenticate and get a session
     let session = auth.authenticate().await?;
 
-    println!("Successfully authenticated!");
+    info!("Successfully authenticated!");
     Ok(())
 }
 ```
@@ -187,17 +187,17 @@ let account_service = IgAccountService::new(config.clone());
 
 // Get account information
 let account_info = account_service.get_accounts(&session).await?;
-println!("Accounts: {:?}", account_info);
+info!("Accounts: {:?}", account_info);
 
 // Get positions
 let positions = account_service.get_positions(&session).await?;
-println!("Open positions: {}", positions.positions.len());
+info!("Open positions: {}", positions.positions.len());
 
 // Get transaction history
 let from_date = chrono::Utc::now() - chrono::Duration::days(7);
 let to_date = chrono::Utc::now();
 let transactions = account_service.get_transactions(&session, from_date, to_date).await?;
-println!("Transactions in the last week: {}", transactions.transactions.len());
+info!("Transactions in the last week: {}", transactions.transactions.len());
 ```
 
 #### Market Data
@@ -210,12 +210,12 @@ let market_service = IgMarketService::new(config.clone());
 
 // Search for markets
 let search_result = market_service.search_markets(&session, "Apple").await?;
-println!("Found {} markets matching 'Apple'", search_result.markets.len());
+info!("Found {} markets matching 'Apple'", search_result.markets.len());
 
 // Get market details
 if let Some(market) = search_result.markets.first() {
     let details = market_service.get_market_details(&session, &market.epic).await?;
-    println!("Market details for {}: {}", market.instrument_name, details.instrument.name);
+    info!("Market details for {}: {}", market.instrument_name, details.instrument.name);
 
     // Get historical prices
     let prices = market_service.get_prices(
@@ -224,7 +224,7 @@ if let Some(market) = search_result.markets.first() {
         "DAY",   // Resolution
         30,      // Number of data points
     ).await?;
-    println!("Retrieved {} historical price points", prices.prices.len());
+    info!("Retrieved {} historical price points", prices.prices.len());
 }
 ```
 
@@ -248,7 +248,7 @@ let market_order = CreateOrderRequest::market(
 
 // Place the order
 let result = order_service.create_order(&session, &market_order).await?;
-println!("Market order placed: {:?}", result);
+info!("Market order placed: {:?}", result);
 
 // Create a limit order
 let limit_order = CreateOrderRequest {
@@ -268,7 +268,7 @@ let limit_order = CreateOrderRequest {
 };
 
 let result = order_service.create_order(&session, &limit_order).await?;
-println!("Limit order placed: {:?}", result);
+info!("Limit order placed: {:?}", result);
 
 // Close a position
 let positions = account_service.get_positions(&session).await?;
@@ -279,7 +279,7 @@ if let Some(position) = positions.positions.first() {
         position.position.direction.clone(),
         position.position.size,
     ).await?;
-    println!("Position closed: {:?}", close_request);
+    info!("Position closed: {:?}", close_request);
 }
 ```
 
@@ -314,7 +314,7 @@ listener.subscribe(&epics).await?;
 
 // Process market updates
 while let Some(market_data) = rx.recv().await {
-    println!("Market update for {}: bid={}, offer={}",
+    info!("Market update for {}: bid={}, offer={}",
              market_data.epic, market_data.bid.unwrap_or(0.0), market_data.offer.unwrap_or(0.0));
 }
 ```
