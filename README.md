@@ -44,7 +44,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-ig-client = "0.1.3"
+ig-client = "0.1.4"
 tokio = { version = "1", features = ["full"] }  # For async runtime
 dotenv = "0.15"                                 # For environment variable loading
 tracing = "0.1"                                # For logging
