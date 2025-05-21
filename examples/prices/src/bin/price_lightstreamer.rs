@@ -1,7 +1,7 @@
 use ig_client::application::services::Listener;
 use ig_client::config::Config;
 use ig_client::error::AppError;
-use ig_client::presentation::ChartData;
+use ig_client::presentation::PriceData;
 use ig_client::session::auth::IgAuth;
 use ig_client::session::interface::IgAuthenticator;
 use lightstreamer_rs::client::{LightstreamerClient, Transport};
@@ -10,26 +10,19 @@ use lightstreamer_rs::utils::setup_signal_hook;
 use std::sync::Arc;
 use tokio::sync::{Mutex, Notify};
 use tracing::{Level, error, info, warn};
-use tracing_subscriber::FmtSubscriber;
+use ig_client::utils::logger::setup_logger;
 
 const MAX_CONNECTION_ATTEMPTS: u64 = 3;
 
-fn callback(update: &ChartData) -> Result<(), AppError> {
+fn callback(update: &PriceData) -> Result<(), AppError> {
     let item = serde_json::to_string_pretty(&update)?;
-    info!("ChartData: {}", item);
+    info!("PriceData: {}", item);
     Ok(())
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize tracing
-    let subscriber = FmtSubscriber::builder()
-        .with_max_level(Level::INFO)
-        .finish();
-    tracing::subscriber::set_global_default(subscriber)?;
-
-    // Load configuration from environment
-    dotenv::dotenv().ok();
+    setup_logger();
     let config = Arc::new(Config::new());
     let authenticator = IgAuth::new(&config);
     info!("Authenticator created");
@@ -75,22 +68,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Using XST token of length: {}", token.len());
 
     // Create a subscription for a market
-    let epic = "CHART:OP.D.OTCDAX1.021100P.IP:TICK".to_string();
+    let epic = format!("PRICE:{}:OP.D.OTCDAX1.021100P.IP", session.account_id);
+
     let mut subscription = Subscription::new(
-        SubscriptionMode::Distinct,
+        SubscriptionMode::Merge,
         Some(vec![epic]),
         Some(vec![
-            "BID".to_string(),
-            "OFR".to_string(),
-            "LTP".to_string(),
-            "LTV".to_string(),
-            "TTV".to_string(),
-            "UTM".to_string(),
-            "DAY_OPEN_MID".to_string(),
-            "DAY_NET_CHG_MID".to_string(),
-            "DAY_PERC_CHG_MID".to_string(),
-            "DAY_HIGH".to_string(),
-            "DAY_LOW".to_string(),
+            "HIGH".to_string(),
+            "LOW".to_string(),
+            "BIDSIZE1".to_string(),
+            "ASKSIZE1".to_string(),
+            "DLG_FLAG".to_string(),
         ]),
     )?;
 

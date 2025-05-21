@@ -65,3 +65,16 @@ path = "src/lib.rs"
 name = "benchmarks"
 harness = false
 path = "benches/benchmarks.rs"
+
+
+[workspace]
+members = [
+    "examples/account",
+    "examples/chart",
+    "examples/market",
+    "examples/orders",
+    "examples/trade",
+    "examples/transactions",
+    "examples/positions",
+    "examples/prices",
+]

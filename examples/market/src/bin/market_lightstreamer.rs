@@ -1,7 +1,7 @@
 use ig_client::application::services::Listener;
 use ig_client::config::Config;
 use ig_client::error::AppError;
-use ig_client::presentation::PriceData;
+use ig_client::presentation::MarketData;
 use ig_client::session::auth::IgAuth;
 use ig_client::session::interface::IgAuthenticator;
 use lightstreamer_rs::client::{LightstreamerClient, Transport};
@@ -10,26 +10,19 @@ use lightstreamer_rs::utils::setup_signal_hook;
 use std::sync::Arc;
 use tokio::sync::{Mutex, Notify};
 use tracing::{Level, error, info, warn};
-use tracing_subscriber::FmtSubscriber;
+use ig_client::utils::logger::setup_logger;
 
 const MAX_CONNECTION_ATTEMPTS: u64 = 3;
 
-fn callback(update: &PriceData) -> Result<(), AppError> {
+fn callback(update: &MarketData) -> Result<(), AppError> {
     let item = serde_json::to_string_pretty(&update)?;
-    info!("PriceData: {}", item);
+    info!("MarketData: {}", item);
     Ok(())
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize tracing
-    let subscriber = FmtSubscriber::builder()
-        .with_max_level(Level::INFO)
-        .finish();
-    tracing::subscriber::set_global_default(subscriber)?;
-
-    // Load configuration from environment
-    dotenv::dotenv().ok();
+    setup_logger();
     let config = Arc::new(Config::new());
     let authenticator = IgAuth::new(&config);
     info!("Authenticator created");
@@ -63,7 +56,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "https://apd.marketdatasystems.com/lightstreamer"
     };
 
+    // Determine the adapter set based on environment
+    let adapter_set = if is_demo { "DEMO" } else { "PROD" };
+
     info!("Using Lightstreamer server: {}", server_address);
+    info!("Using adapter set: {}", adapter_set);
     info!("Using account ID: {}", session.account_id.trim());
 
     // Format the password as required by IG's Lightstreamer authentication
@@ -75,17 +72,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Using XST token of length: {}", token.len());
 
     // Create a subscription for a market
-    let epic = format!("PRICE:{}:OP.D.OTCDAX1.021100P.IP", session.account_id);
+    let epic = "MARKET:OP.D.OTCDAX1.021100P.IP"; // DAX 100
 
     let mut subscription = Subscription::new(
         SubscriptionMode::Merge,
-        Some(vec![epic]),
+        Some(vec![epic.to_string()]),
         Some(vec![
+            "BID".to_string(),
+            "OFFER".to_string(),
             "HIGH".to_string(),
             "LOW".to_string(),
-            "BIDSIZE1".to_string(),
-            "ASKSIZE1".to_string(),
-            "DLG_FLAG".to_string(),
+            "MID_OPEN".to_string(),
+            "CHANGE".to_string(),
+            "CHANGE_PCT".to_string(),
+            "MARKET_DELAY".to_string(),
+            "MARKET_STATE".to_string(),
+            "UPDATE_TIME".to_string(),
         ]),
     )?;
 
