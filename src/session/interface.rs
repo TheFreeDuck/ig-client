@@ -18,4 +18,19 @@ pub trait IgAuthenticator: Send + Sync {
     async fn login(&self) -> Result<IgSession, AuthError>;
     /// Refreshes an existing session with the IG Markets API
     async fn refresh(&self, session: &IgSession) -> Result<IgSession, AuthError>;
+    /// Switches the active account for the current session
+    /// 
+    /// # Arguments
+    /// * `session` - The current session
+    /// * `account_id` - The ID of the account to switch to
+    /// * `default_account` - Whether to set this account as the default (optional)
+    /// 
+    /// # Returns
+    /// * A new session with the updated account ID
+    async fn switch_account(
+        &self,
+        session: &IgSession,
+        account_id: &str,
+        default_account: Option<bool>
+    ) -> Result<IgSession, AuthError>;
 }
