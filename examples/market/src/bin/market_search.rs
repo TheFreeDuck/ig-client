@@ -61,21 +61,26 @@ async fn main() -> Result<(), Box<dyn Error>> {
             info!("Found {} markets matching '{}'", result.markets.len(), search_term);
             
             // Display the results in a table format
-            println!("\n{:<40} {:<15} {:<10} {:<10}", "INSTRUMENT NAME", "EPIC", "BID", "OFFER");
-            println!("{:-<40} {:-<15} {:-<10} {:-<10}", "", "", "", "");
+            println!("\n{:<40} {:<15} {:<10} {:<10} {:<15} {:<15} {:<20}", 
+                "INSTRUMENT NAME", "EPIC", "BID", "OFFER", "EXPIRY", "UNDERLYING_PRICE", "UPDATE TIME");
+            println!("{:-<40} {:-<15} {:-<10} {:-<10} {:-<15} {:-<15} {:-<20}", 
+                "", "", "", "", "", "", "");
             
-            // Guardar los resultados en JSON primero
+            // Save the results to JSON first
             let json = serde_json::to_string_pretty(&result.markets)
                 .map_err(|e| Box::new(e) as Box<dyn Error>)?;
                 
-            // Luego mostrar los resultados en la consola
+            // Then display the results in the console
             for market in &result.markets {
                 println!(
-                    "{:<40} {:<15} {:<10} {:<10}",
+                    "{:<40} {:<15} {:<10} {:<10} {:<15} {:<15} {:<20}",
                     truncate(&market.instrument_name, 38),
                     truncate(&market.epic, 13),
                     market.bid.map(|b| b.to_string()).unwrap_or_else(|| "-".to_string()),
-                    market.offer.map(|o| o.to_string()).unwrap_or_else(|| "-".to_string())
+                    market.offer.map(|o| o.to_string()).unwrap_or_else(|| "-".to_string()),
+                    truncate(&market.expiry, 13),
+                    market.net_change.map(|n| n.to_string()).unwrap_or_else(|| "-".to_string()),
+                    market.update_time_utc.as_ref().map(|t| truncate(t, 18)).unwrap_or_else(|| "-".to_string())
                 );
             }
             let filename = format!("Data/market_search_{}.json", search_term.replace(" ", "_"));

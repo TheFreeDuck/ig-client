@@ -181,6 +181,9 @@ pub struct MarketData {
     /// Time of the last price update
     #[serde(rename = "updateTime")]
     pub update_time: Option<String>,
+    /// Time of the last price update in UTC
+    #[serde(rename = "updateTimeUTC")]
+    pub update_time_utc: Option<String>,
     /// Current bid price
     pub bid: Option<f64>,
     /// Current offer/ask price
