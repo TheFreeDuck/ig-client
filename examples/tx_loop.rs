@@ -35,7 +35,6 @@ pub async fn apply_backoff(consecutive_errors: &mut u32) {
     *consecutive_errors = 0; // Reset after cooldown
 }
 
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     setup_logger();
