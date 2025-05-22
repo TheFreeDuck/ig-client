@@ -3,7 +3,6 @@ pub mod account;
 
 /// Market and instrument data models
 pub mod market;
-
 /// Order and position data models
 pub mod order;
 

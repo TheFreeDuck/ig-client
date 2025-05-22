@@ -76,6 +76,37 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
         Ok(result)
     }
 
+    async fn get_multiple_market_details(
+        &self,
+        session: &IgSession,
+        epics: &[String],
+    ) -> Result<Vec<MarketDetails>, AppError> {
+        if epics.is_empty() {
+            return Ok(Vec::new());
+        }
+
+        // Join the EPICs with commas to create a single request
+        let epics_str = epics.join(",");
+        let path = format!("markets?epics={}", epics_str);
+        
+        info!("Getting market details for {} EPICs in a batch: {}", epics.len(), epics_str);
+
+        // The API returns an object with un array de MarketDetails en la propiedad marketDetails
+        #[derive(serde::Deserialize)]
+        struct MarketDetailsResponse {
+            #[serde(rename = "marketDetails")]
+            market_details: Vec<MarketDetails>,
+        }
+
+        let response = self
+            .client
+            .request::<(), MarketDetailsResponse>(Method::GET, &path, session, None, "2")
+            .await?;
+
+        debug!("Market details obtained for {} EPICs", response.market_details.len());
+        Ok(response.market_details)
+    }
+
     async fn get_historical_prices(
         &self,
         session: &IgSession,

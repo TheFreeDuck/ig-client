@@ -21,6 +21,23 @@ pub trait MarketService: Send + Sync {
         session: &IgSession,
         epic: &str,
     ) -> Result<MarketDetails, AppError>;
+    
+    /// Gets details of multiple markets by their EPICs in a single request
+    /// 
+    /// This method accepts a vector of EPICs and returns a vector of market details.
+    /// The EPICs are sent as a comma-separated list in a single API request.
+    /// 
+    /// # Arguments
+    /// * `session` - The active IG session
+    /// * `epics` - A slice of EPICs to get details for
+    /// 
+    /// # Returns
+    /// A vector of market details in the same order as the input EPICs
+    async fn get_multiple_market_details(
+        &self,
+        session: &IgSession,
+        epics: &[String],
+    ) -> Result<Vec<MarketDetails>, AppError>;
 
     /// Gets historical prices for a market
     async fn get_historical_prices(

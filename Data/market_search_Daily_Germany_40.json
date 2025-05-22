@@ -7,12 +7,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 1465.1,
-    "offer": 1467.9
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 1459.6,
+    "offer": 1462.4
   },
   {
     "epic": "DO.D.OTCDDAX.195.IP",
@@ -22,8 +22,8 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
     "updateTime": "17:29:30",
     "updateTimeUTC": "15:29:30",
     "bid": 0.0,
@@ -37,12 +37,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 1365.1,
-    "offer": 1367.9
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 1359.6,
+    "offer": 1362.4
   },
   {
     "epic": "DO.D.OTCDDAX.193.IP",
@@ -52,8 +52,8 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
     "updateTime": "17:29:30",
     "updateTimeUTC": "15:29:30",
     "bid": 0.0,
@@ -67,12 +67,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 1265.1,
-    "offer": 1267.9
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 1259.6,
+    "offer": 1262.4
   },
   {
     "epic": "DO.D.OTCDDAX.191.IP",
@@ -82,8 +82,8 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
     "updateTime": "17:29:30",
     "updateTimeUTC": "15:29:30",
     "bid": 0.0,
@@ -97,12 +97,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 1165.1,
-    "offer": 1167.9
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 1159.6,
+    "offer": 1162.4
   },
   {
     "epic": "DO.D.OTCDDAX.189.IP",
@@ -112,8 +112,8 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
     "updateTime": "17:29:30",
     "updateTimeUTC": "15:29:30",
     "bid": 0.0,
@@ -127,12 +127,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 1065.2,
-    "offer": 1068.0
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 1059.6,
+    "offer": 1062.4
   },
   {
     "epic": "DO.D.OTCDDAX.187.IP",
@@ -142,8 +142,8 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
     "updateTime": "17:29:30",
     "updateTimeUTC": "15:29:30",
     "bid": 0.0,
@@ -157,12 +157,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 965.2,
-    "offer": 968.1
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 959.6,
+    "offer": 962.4
   },
   {
     "epic": "DO.D.OTCDDAX.185.IP",
@@ -172,8 +172,8 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
     "updateTime": "17:29:30",
     "updateTimeUTC": "15:29:30",
     "bid": 0.0,
@@ -187,12 +187,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 865.4,
-    "offer": 868.2
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 859.6,
+    "offer": 862.4
   },
   {
     "epic": "DO.D.OTCDDAX.183.IP",
@@ -202,8 +202,8 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
     "updateTime": "19:32:11",
     "updateTimeUTC": "17:32:11",
     "bid": 0.0,
@@ -217,12 +217,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 765.6,
-    "offer": 768.5
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 759.6,
+    "offer": 762.4
   },
   {
     "epic": "DO.D.OTCDDAX.181.IP",
@@ -232,12 +232,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:24:59",
-    "updateTimeUTC": "17:24:59",
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "20:16:30",
+    "updateTimeUTC": "18:16:30",
     "bid": 0.0,
-    "offer": 5.1
+    "offer": 5.0
   },
   {
     "epic": "DO.D.OTCDDAX.180.IP",
@@ -247,12 +247,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 666.2,
-    "offer": 669.2
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 659.7,
+    "offer": 662.5
   },
   {
     "epic": "DO.D.OTCDDAX.179.IP",
@@ -262,12 +262,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:53:33",
-    "updateTimeUTC": "17:53:33",
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "22:15:21",
+    "updateTimeUTC": "20:15:21",
     "bid": 0.0,
-    "offer": 5.1
+    "offer": 5.0
   },
   {
     "epic": "DO.D.OTCDDAX.178.IP",
@@ -277,12 +277,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 641.4,
-    "offer": 644.5
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 634.8,
+    "offer": 637.6
   },
   {
     "epic": "DO.D.OTCDDAX.177.IP",
@@ -292,12 +292,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:52:14",
-    "updateTimeUTC": "17:52:14",
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "22:17:20",
+    "updateTimeUTC": "20:17:20",
     "bid": 0.0,
-    "offer": 5.2
+    "offer": 5.0
   },
   {
     "epic": "DO.D.OTCDDAX.176.IP",
@@ -307,12 +307,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 616.6,
-    "offer": 619.7
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 609.8,
+    "offer": 612.6
   },
   {
     "epic": "DO.D.OTCDDAX.175.IP",
@@ -322,12 +322,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:32:11",
-    "updateTimeUTC": "17:32:11",
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "00:20:38",
+    "updateTimeUTC": "22:20:38",
     "bid": 0.0,
-    "offer": 5.2
+    "offer": 5.0
   },
   {
     "epic": "DO.D.OTCDDAX.174.IP",
@@ -337,12 +337,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 591.9,
-    "offer": 595.1
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 584.9,
+    "offer": 587.7
   },
   {
     "epic": "DO.D.OTCDDAX.173.IP",
@@ -352,12 +352,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:36:44",
-    "updateTimeUTC": "17:36:44",
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "02:52:58",
+    "updateTimeUTC": "00:52:58",
     "bid": 0.0,
-    "offer": 5.2
+    "offer": 5.0
   },
   {
     "epic": "DO.D.OTCDDAX.172.IP",
@@ -367,12 +367,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 567.3,
-    "offer": 570.5
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 560.0,
+    "offer": 562.8
   },
   {
     "epic": "DO.D.OTCDDAX.171.IP",
@@ -382,12 +382,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:45",
-    "updateTimeUTC": "17:55:45",
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "03:11:46",
+    "updateTimeUTC": "01:11:46",
     "bid": 0.0,
-    "offer": 5.2
+    "offer": 5.0
   },
   {
     "epic": "DO.D.OTCDDAX.170.IP",
@@ -397,12 +397,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 542.7,
-    "offer": 546.0
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 535.1,
+    "offer": 538.0
   },
   {
     "epic": "DO.D.OTCDDAX.169.IP",
@@ -412,12 +412,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:43",
-    "updateTimeUTC": "17:55:43",
-    "bid": 0.2,
-    "offer": 5.5
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "05:00:41",
+    "updateTimeUTC": "03:00:41",
+    "bid": 0.0,
+    "offer": 5.0
   },
   {
     "epic": "DO.D.OTCDDAX.168.IP",
@@ -427,12 +427,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 518.2,
-    "offer": 521.6
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 510.2,
+    "offer": 513.2
   },
   {
     "epic": "DO.D.OTCDDAX.167.IP",
@@ -442,12 +442,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 0.7,
-    "offer": 6.0
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "07:26:06",
+    "updateTimeUTC": "05:26:06",
+    "bid": 0.0,
+    "offer": 5.0
   },
   {
     "epic": "DO.D.OTCDDAX.166.IP",
@@ -457,12 +457,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 493.8,
-    "offer": 497.3
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 485.4,
+    "offer": 488.4
   },
   {
     "epic": "DO.D.OTCDDAX.165.IP",
@@ -472,12 +472,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:45",
-    "updateTimeUTC": "17:55:45",
-    "bid": 1.3,
-    "offer": 6.7
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:09:48",
+    "updateTimeUTC": "06:09:48",
+    "bid": 0.0,
+    "offer": 5.0
   },
   {
     "epic": "DO.D.OTCDDAX.164.IP",
@@ -487,12 +487,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 469.5,
-    "offer": 473.1
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 460.7,
+    "offer": 463.7
   },
   {
     "epic": "DO.D.OTCDDAX.163.IP",
@@ -502,12 +502,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 2.0,
-    "offer": 7.5
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "03:19:04",
+    "updateTimeUTC": "01:19:04",
+    "bid": 0.0,
+    "offer": 5.1
   },
   {
     "epic": "DO.D.OTCDDAX.162.IP",
@@ -517,12 +517,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 445.3,
-    "offer": 449.0
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 436.0,
+    "offer": 439.1
   },
   {
     "epic": "DO.D.OTCDDAX.161.IP",
@@ -532,12 +532,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 2.9,
-    "offer": 8.4
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "05:03:26",
+    "updateTimeUTC": "03:03:26",
+    "bid": 0.0,
+    "offer": 5.1
   },
   {
     "epic": "DO.D.OTCDDAX.160.IP",
@@ -547,12 +547,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 421.3,
-    "offer": 425.2
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 411.5,
+    "offer": 414.6
   },
   {
     "epic": "DO.D.OTCDDAX.159.IP",
@@ -562,12 +562,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 3.9,
-    "offer": 9.5
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "07:27:28",
+    "updateTimeUTC": "05:27:28",
+    "bid": 0.0,
+    "offer": 5.1
   },
   {
     "epic": "DO.D.OTCDDAX.158.IP",
@@ -577,12 +577,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 397.4,
-    "offer": 401.5
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 387.0,
+    "offer": 390.2
   },
   {
     "epic": "DO.D.OTCDDAX.157.IP",
@@ -592,12 +592,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:45",
-    "updateTimeUTC": "17:55:45",
-    "bid": 5.1,
-    "offer": 10.8
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:12",
+    "updateTimeUTC": "06:11:12",
+    "bid": 0.1,
+    "offer": 5.2
   },
   {
     "epic": "DO.D.OTCDDAX.156.IP",
@@ -607,12 +607,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 373.8,
-    "offer": 378.0
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 362.8,
+    "offer": 366.1
   },
   {
     "epic": "DO.D.OTCDDAX.155.IP",
@@ -622,12 +622,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 6.5,
-    "offer": 12.3
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 0.8,
+    "offer": 6.0
   },
   {
     "epic": "DO.D.OTCDDAX.153.IP",
@@ -637,12 +637,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 8.1,
-    "offer": 14.0
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 1.7,
+    "offer": 6.9
   },
   {
     "epic": "DO.D.OTCDDAX.154.IP",
@@ -652,12 +652,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 350.4,
-    "offer": 354.9
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 338.7,
+    "offer": 342.1
   },
   {
     "epic": "DO.D.OTCDDAX.152.IP",
@@ -667,12 +667,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 327.3,
-    "offer": 332.0
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 314.8,
+    "offer": 318.4
   },
   {
     "epic": "DO.D.OTCDDAX.151.IP",
@@ -682,12 +682,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 10.1,
-    "offer": 16.1
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:19",
+    "updateTimeUTC": "06:11:19",
+    "bid": 3.0,
+    "offer": 8.2
   },
   {
     "epic": "DO.D.OTCDDAX.150.IP",
@@ -697,12 +697,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 304.5,
-    "offer": 309.4
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 291.2,
+    "offer": 294.9
   },
   {
     "epic": "DO.D.OTCDDAX.149.IP",
@@ -712,12 +712,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 12.3,
-    "offer": 18.6
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:33",
+    "updateTimeUTC": "06:11:33",
+    "bid": 4.4,
+    "offer": 9.7
   },
   {
     "epic": "DO.D.OTCDDAX.148.IP",
@@ -727,12 +727,12 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 282.1,
-    "offer": 287.3
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 268.0,
+    "offer": 271.9
   },
   {
     "epic": "DO.D.OTCDDAX.147.IP",
@@ -742,11 +742,11 @@
     "highLimitPrice": null,
     "lowLimitPrice": null,
     "marketStatus": "TRADEABLE",
-    "netChange": 23966.0,
-    "percentageChange": -0.64,
-    "updateTime": "19:55:46",
-    "updateTimeUTC": "17:55:46",
-    "bid": 15.0,
-    "offer": 21.3
+    "netChange": 23961.0,
+    "percentageChange": -0.67,
+    "updateTime": "08:11:30",
+    "updateTimeUTC": "06:11:30",
+    "bid": 6.3,
+    "offer": 11.6
   }
 ]

@@ -61,10 +61,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
             info!("Found {} markets matching '{}'", result.markets.len(), search_term);
             
             // Display the results in a table format
-            println!("\n{:<40} {:<15} {:<10} {:<10} {:<15} {:<15} {:<20}", 
-                "INSTRUMENT NAME", "EPIC", "BID", "OFFER", "EXPIRY", "UNDERLYING_PRICE", "UPDATE TIME");
-            println!("{:-<40} {:-<15} {:-<10} {:-<10} {:-<15} {:-<15} {:-<20}", 
-                "", "", "", "", "", "", "");
+            println!("\n{:<40} {:<15} {:<10} {:<10} {:<10} {:<10} {:<15} {:<15} {:<20}", 
+                "INSTRUMENT NAME", "EPIC", "BID", "OFFER", "MID", "SPREAD", "EXPIRY", "UNDERLYING_PRICE", "UPDATE TIME");
+            println!("{:-<40} {:-<15} {:-<10} {:-<10} {:-<10} {:-<10} {:-<15} {:-<15} {:-<20}", 
+                "", "", "", "", "", "", "", "", "");
             
             // Save the results to JSON first
             let json = serde_json::to_string_pretty(&result.markets)
@@ -72,12 +72,25 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 
             // Then display the results in the console
             for market in &result.markets {
+                // Calculate MID and SPREAD values
+                let mid = match (market.bid, market.offer) {
+                    (Some(bid), Some(offer)) => Some((bid + offer) / 2.0),
+                    _ => None
+                };
+                
+                let spread = match (market.bid, market.offer) {
+                    (Some(bid), Some(offer)) => Some(offer - bid),
+                    _ => None
+                };
+                
                 println!(
-                    "{:<40} {:<15} {:<10} {:<10} {:<15} {:<15} {:<20}",
+                    "{:<40} {:<15} {:<10} {:<10} {:<10} {:<10} {:<15} {:<15} {:<20}",
                     truncate(&market.instrument_name, 38),
                     truncate(&market.epic, 13),
                     market.bid.map(|b| b.to_string()).unwrap_or_else(|| "-".to_string()),
                     market.offer.map(|o| o.to_string()).unwrap_or_else(|| "-".to_string()),
+                    mid.map(|m| format!("{:.2}", m)).unwrap_or_else(|| "-".to_string()),
+                    spread.map(|s| format!("{:.2}", s)).unwrap_or_else(|| "-".to_string()),
                     truncate(&market.expiry, 13),
                     market.net_change.map(|n| n.to_string()).unwrap_or_else(|| "-".to_string()),
                     market.update_time_utc.as_ref().map(|t| truncate(t, 18)).unwrap_or_else(|| "-".to_string())
