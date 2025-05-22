@@ -3,6 +3,7 @@ mod chart;
 mod instrument;
 mod market;
 mod price;
+/// Module containing serialization and deserialization utilities for working with the IG Markets API
 pub mod serialization;
 /// Trade-related presentation module containing data structures for trade updates.
 pub mod trade;
