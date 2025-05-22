@@ -1,6 +1,8 @@
 use crate::application::services::MarketService;
 use crate::{
-    application::models::market::{HistoricalPricesResponse, MarketDetails, MarketSearchResult},
+    application::models::market::{
+        HistoricalPricesResponse, MarketDetails, MarketNavigationResponse, MarketSearchResult,
+    },
     config::Config,
     error::AppError,
     session::interface::IgSession,
@@ -76,6 +78,44 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
         Ok(result)
     }
 
+    async fn get_multiple_market_details(
+        &self,
+        session: &IgSession,
+        epics: &[String],
+    ) -> Result<Vec<MarketDetails>, AppError> {
+        if epics.is_empty() {
+            return Ok(Vec::new());
+        }
+
+        // Join the EPICs with commas to create a single request
+        let epics_str = epics.join(",");
+        let path = format!("markets?epics={}", epics_str);
+
+        info!(
+            "Getting market details for {} EPICs in a batch: {}",
+            epics.len(),
+            epics_str
+        );
+
+        // The API returns an object with un array de MarketDetails en la propiedad marketDetails
+        #[derive(serde::Deserialize)]
+        struct MarketDetailsResponse {
+            #[serde(rename = "marketDetails")]
+            market_details: Vec<MarketDetails>,
+        }
+
+        let response = self
+            .client
+            .request::<(), MarketDetailsResponse>(Method::GET, &path, session, None, "2")
+            .await?;
+
+        debug!(
+            "Market details obtained for {} EPICs",
+            response.market_details.len()
+        );
+        Ok(response.market_details)
+    }
+
     async fn get_historical_prices(
         &self,
         session: &IgSession,
@@ -84,7 +124,10 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
         from: &str,
         to: &str,
     ) -> Result<HistoricalPricesResponse, AppError> {
-        let path = format!("prices/{}/{}?from={}&to={}", epic, resolution, from, to);
+        let path = format!(
+            "prices/{}?resolution={}&from={}&to={}",
+            epic, resolution, from, to
+        );
         info!("Getting historical prices for: {}", epic);
 
         let result = self
@@ -93,6 +136,41 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
             .await?;
 
         debug!("Historical prices obtained for: {}", epic);
+        Ok(result)
+    }
+
+    async fn get_market_navigation(
+        &self,
+        session: &IgSession,
+    ) -> Result<MarketNavigationResponse, AppError> {
+        let path = "marketnavigation";
+        info!("Getting top-level market navigation nodes");
+
+        let result = self
+            .client
+            .request::<(), MarketNavigationResponse>(Method::GET, path, session, None, "1")
+            .await?;
+
+        debug!("{} navigation nodes found", result.nodes.len());
+        debug!("{} markets found at root level", result.markets.len());
+        Ok(result)
+    }
+
+    async fn get_market_navigation_node(
+        &self,
+        session: &IgSession,
+        node_id: &str,
+    ) -> Result<MarketNavigationResponse, AppError> {
+        let path = format!("marketnavigation/{}", node_id);
+        info!("Getting market navigation node: {}", node_id);
+
+        let result = self
+            .client
+            .request::<(), MarketNavigationResponse>(Method::GET, &path, session, None, "1")
+            .await?;
+
+        debug!("{} child nodes found", result.nodes.len());
+        debug!("{} markets found in node {}", result.markets.len(), node_id);
         Ok(result)
     }
 }

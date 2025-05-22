@@ -222,7 +222,7 @@
 //!
 //! // Create a market order
 //! let market_order = CreateOrderRequest::market(
-//!     "CS.D.EURUSD.CFD.IP".to_string(),  // EPIC
+//!     "OP.D.OTCDAX1.021100P.IP".to_string(),  // EPIC
 //!     Direction::Buy,                     // Direction
 //!     1.0,                               // Size
 //!     None,                              // Limit level
@@ -235,7 +235,7 @@
 //!
 //! // Create a limit order
 //! let limit_order = CreateOrderRequest {
-//!     epic: "CS.D.EURUSD.CFD.IP".to_string(),
+//!     epic: "OP.D.OTCDAX1.021100P.IP".to_string(),
 //!     direction: Direction::Buy,
 //!     size: 1.0,
 //!     order_type: OrderType::Limit,
@@ -292,7 +292,7 @@
 //! listener.connect(&session).await?;
 //!
 //! // Subscribe to market updates
-//! let epics = vec!["CS.D.EURUSD.CFD.IP", "CS.D.USDJPY.CFD.IP"];
+//! let epics = vec!["OP.D.OTCDAX1.021100P.IP", "CS.D.USDJPY.CFD.IP"];
 //! listener.subscribe(&epics).await?;
 //!
 //! // Process market updates

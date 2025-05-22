@@ -48,14 +48,19 @@ async-trait = "0.1.88"
 regex = "1.11.1"
 dotenv = "0.15.0"
 lightstreamer-rs = "0.1.3"
+once_cell = "1.21.3"
 
 [dev-dependencies]
 assert-json-diff = "2.0.2"
 once_cell = "1.21.3"
 
 [[test]]
-name = "tests"
+name = "unit_tests"
 path = "tests/unit/mod.rs"
+
+[[test]]
+name = "integration_tests"
+path = "tests/integration/main.rs"
 
 [lib]
 name = "ig_client"
@@ -65,3 +70,16 @@ path = "src/lib.rs"
 name = "benchmarks"
 harness = false
 path = "benches/benchmarks.rs"
+
+
+[workspace]
+members = [
+    "examples/account",
+    "examples/chart",
+    "examples/market",
+    "examples/orders",
+    "examples/trade",
+    "examples/transactions",
+    "examples/positions",
+    "examples/prices",
+]

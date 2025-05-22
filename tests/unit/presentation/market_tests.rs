@@ -68,18 +68,19 @@ mod tests {
     #[test]
     fn test_instrument_deserialization() {
         let json_str = r#"{
-            "epic": "CS.D.EURUSD.CFD.IP",
+            "epic": "OP.D.OTCDAX1.021100P.IP",
             "name": "EUR/USD",
             "instrumentType": "CURRENCIES",
             "expiry": "DFB",
-            "contractSize": 100000.0,
+            "contractSize": "100000.0",
+            "valueOfOnePip": "10.0",
             "lotSize": 1000.0,
             "highLimitPrice": 1.5,
             "lowLimitPrice": 0.5,
             "marginFactor": 3.33,
             "marginFactorUnit": "PERCENTAGE",
-            "slippageFactor": 0.5,
-            "limitedRiskPremium": 0.1,
+            "slippageFactor": { "unit": "POINTS", "value": 0.5 },
+            "limitedRiskPremium": { "unit": "POINTS", "value": 0.1 },
             "newsCode": "eurusd",
             "chartCode": "EURUSD",
             "currencies": [
@@ -95,11 +96,12 @@ mod tests {
 
         let instrument: Instrument = serde_json::from_str(json_str).unwrap();
 
-        assert_eq!(instrument.epic, "CS.D.EURUSD.CFD.IP");
+        assert_eq!(instrument.epic, "OP.D.OTCDAX1.021100P.IP");
         assert_eq!(instrument.name, "EUR/USD");
-        assert_eq!(instrument.instrument_type, InstrumentType::Currencies);
+        assert_eq!(instrument.instrument_type, Some(InstrumentType::Currencies));
         assert_eq!(instrument.expiry, "DFB");
-        assert_eq!(instrument.contract_size, Some(100000.0));
+        assert_eq!(instrument.contract_size, "100000.0");
+        assert_eq!(instrument.value_of_one_pip, "10.0");
         assert_eq!(instrument.lot_size, Some(1000.0));
         assert_eq!(instrument.high_limit_price, Some(1.5));
         assert_eq!(instrument.low_limit_price, Some(0.5));
@@ -108,8 +110,14 @@ mod tests {
             instrument.margin_factor_unit,
             Some("PERCENTAGE".to_string())
         );
-        assert_eq!(instrument.slippage_factor, Some(0.5));
-        assert_eq!(instrument.limited_risk_premium, Some(0.1));
+        assert_eq!(
+            instrument.slippage_factor.as_ref().unwrap().value,
+            Some(0.5)
+        );
+        assert_eq!(
+            instrument.limited_risk_premium.as_ref().unwrap().value,
+            Some(0.1)
+        );
         assert_eq!(instrument.news_code, Some("eurusd".to_string()));
         assert_eq!(instrument.chart_code, Some("EURUSD".to_string()));
 
@@ -148,13 +156,14 @@ mod tests {
                 "name": "FTSE 100",
                 "instrumentType": "INDICES",
                 "expiry": "DFB",
-                "contractSize": 1.0,
+                "contractSize": "1.0",
+                "valueOfOnePip": "10.0",
                 "lotSize": 1.0,
                 "highLimitPrice": 8000.0,
                 "lowLimitPrice": 6000.0,
                 "marginFactor": 5.0,
                 "marginFactorUnit": "PERCENTAGE",
-                "slippageFactor": 1.0,
+                "slippageFactor": { "unit": "POINTS", "value": 1.0 },
                 "limitedRiskPremium": null,
                 "newsCode": "FTSE100",
                 "chartCode": "UKX",
@@ -174,6 +183,17 @@ mod tests {
                 "decimalPlacesFactor": 1,
                 "scalingFactor": 1,
                 "controlledRiskExtraSpread": 0.5
+            },
+            "dealingRules": {
+                "minStepDistance": { "unit": "POINTS", "value": 0.1 },
+                "minDealSize": { "unit": "POINTS", "value": 0.1 },
+                "maxDealSize": 1000.0,
+                "minControlledRiskStopDistance": { "unit": "POINTS", "value": 5.0 },
+                "minNormalStopOrLimitDistance": { "unit": "POINTS", "value": 2.0 },
+                "maxStopOrLimitDistance": { "unit": "POINTS", "value": 2000.0 },
+                "controlledRiskSpacing": { "unit": "POINTS", "value": 10.0 },
+                "marketOrderPreference": "AVAILABLE_DEFAULT_ON",
+                "trailingStopsPreference": "AVAILABLE"
             }
         }"#;
 
@@ -183,34 +203,51 @@ mod tests {
         assert_eq!(market_details.instrument.name, "FTSE 100");
         assert_eq!(
             market_details.instrument.instrument_type,
-            InstrumentType::Indices
+            Some(InstrumentType::Indices)
         );
 
         assert_eq!(market_details.snapshot.market_status, "OPEN");
         assert_eq!(market_details.snapshot.net_change, Some(15.5));
         assert_eq!(market_details.snapshot.bid, Some(7501.5));
         assert_eq!(market_details.snapshot.offer, Some(7502.5));
+
+        assert_eq!(
+            market_details.dealing_rules.market_order_preference,
+            "AVAILABLE_DEFAULT_ON"
+        );
+        assert_eq!(
+            market_details.dealing_rules.trailing_stops_preference,
+            "AVAILABLE"
+        );
     }
 
     #[test]
     fn test_dealing_rules_deserialization() {
         let json_str = r#"{
-            "minDealSize": 0.1,
+            "minStepDistance": { "unit": "POINTS", "value": 0.1 },
+            "minDealSize": { "unit": "POINTS", "value": 0.1 },
             "maxDealSize": 1000.0,
-            "minControlledRiskStopDistance": 5.0,
-            "minNormalStopOrLimitDistance": 2.0,
-            "maxStopOrLimitDistance": 2000.0,
+            "minControlledRiskStopDistance": { "unit": "POINTS", "value": 5.0 },
+            "minNormalStopOrLimitDistance": { "unit": "POINTS", "value": 2.0 },
+            "maxStopOrLimitDistance": { "unit": "POINTS", "value": 2000.0 },
+            "controlledRiskSpacing": { "unit": "POINTS", "value": 10.0 },
             "marketOrderPreference": "AVAILABLE_DEFAULT_ON",
             "trailingStopsPreference": "AVAILABLE"
         }"#;
 
         let dealing_rules: DealingRules = serde_json::from_str(json_str).unwrap();
 
-        assert_eq!(dealing_rules.min_deal_size, Some(0.1));
+        assert_eq!(dealing_rules.min_deal_size.value, Some(0.1));
         assert_eq!(dealing_rules.max_deal_size, Some(1000.0));
-        assert_eq!(dealing_rules.min_controlled_risk_stop_distance, Some(5.0));
-        assert_eq!(dealing_rules.min_normal_stop_or_limit_distance, Some(2.0));
-        assert_eq!(dealing_rules.max_stop_or_limit_distance, Some(2000.0));
+        assert_eq!(
+            dealing_rules.min_controlled_risk_stop_distance.value,
+            Some(5.0)
+        );
+        assert_eq!(
+            dealing_rules.min_normal_stop_or_limit_distance.value,
+            Some(2.0)
+        );
+        assert_eq!(dealing_rules.max_stop_or_limit_distance.value, Some(2000.0));
         assert_eq!(
             dealing_rules.market_order_preference,
             "AVAILABLE_DEFAULT_ON"
@@ -223,7 +260,7 @@ mod tests {
         let json_str = r#"{
             "markets": [
                 {
-                    "epic": "CS.D.EURUSD.CFD.IP",
+                    "epic": "OP.D.OTCDAX1.021100P.IP",
                     "instrumentName": "EUR/USD",
                     "instrumentType": "CURRENCIES",
                     "expiry": "DFB",
@@ -256,7 +293,7 @@ mod tests {
         let search_result: MarketSearchResult = serde_json::from_str(json_str).unwrap();
 
         assert_eq!(search_result.markets.len(), 2);
-        assert_eq!(search_result.markets[0].epic, "CS.D.EURUSD.CFD.IP");
+        assert_eq!(search_result.markets[0].epic, "OP.D.OTCDAX1.021100P.IP");
         assert_eq!(search_result.markets[0].instrument_name, "EUR/USD");
         assert_eq!(
             search_result.markets[0].instrument_type,
@@ -272,7 +309,7 @@ mod tests {
     #[test]
     fn test_market_data_display() {
         let market_data = MarketData {
-            epic: "CS.D.EURUSD.CFD.IP".to_string(),
+            epic: "OP.D.OTCDAX1.021100P.IP".to_string(),
             instrument_name: "EUR/USD".to_string(),
             instrument_type: InstrumentType::Currencies,
             expiry: "DFB".to_string(),
@@ -282,6 +319,7 @@ mod tests {
             net_change: Some(0.0012),
             percentage_change: Some(0.1),
             update_time: Some("2023-05-13T10:15:30".to_string()),
+            update_time_utc: None,
             bid: Some(1.0876),
             offer: Some(1.0878),
         };
@@ -290,7 +328,7 @@ mod tests {
         let parsed_json: serde_json::Value = serde_json::from_str(&display_str).unwrap();
 
         let expected_json = json!({
-            "epic": "CS.D.EURUSD.CFD.IP",
+            "epic": "OP.D.OTCDAX1.021100P.IP",
             "instrumentName": "EUR/USD",
             "instrumentType": "CURRENCIES",
             "expiry": "DFB",
@@ -300,6 +338,7 @@ mod tests {
             "netChange": 0.0012,
             "percentageChange": 0.1,
             "updateTime": "2023-05-13T10:15:30",
+            "updateTimeUTC": null,
             "bid": 1.0876,
             "offer": 1.0878
         });
@@ -359,10 +398,10 @@ mod tests {
             Some(1.0871)
         );
         assert_eq!(prices_response.prices[0].last_traded_volume, Some(25000));
-
-        assert_eq!(prices_response.allowance.remaining_allowance, 9995);
-        assert_eq!(prices_response.allowance.total_allowance, 10000);
-        assert_eq!(prices_response.allowance.allowance_expiry, 3600);
+        let allowance = &prices_response.allowance.unwrap();
+        assert_eq!(allowance.remaining_allowance, 9995);
+        assert_eq!(allowance.total_allowance, 10000);
+        assert_eq!(allowance.allowance_expiry, 3600);
     }
 
     #[test]

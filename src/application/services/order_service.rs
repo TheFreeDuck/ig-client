@@ -2,7 +2,7 @@ use crate::application::services::OrderService;
 use crate::{
     application::models::order::{
         ClosePositionRequest, ClosePositionResponse, CreateOrderRequest, CreateOrderResponse,
-        OrderConfirmation, UpdatePositionRequest,
+        OrderConfirmation, UpdatePositionRequest, UpdatePositionResponse,
     },
     config::Config,
     error::AppError,
@@ -89,16 +89,26 @@ impl<T: IgHttpClient + 'static> OrderService for OrderServiceImpl<T> {
         session: &IgSession,
         deal_id: &str,
         update: &UpdatePositionRequest,
-    ) -> Result<(), AppError> {
+    ) -> Result<UpdatePositionResponse, AppError> {
         let path = format!("positions/otc/{}", deal_id);
         info!("Updating position: {}", deal_id);
 
-        self.client
-            .request::<UpdatePositionRequest, ()>(Method::PUT, &path, session, Some(update), "2")
+        let result = self
+            .client
+            .request::<UpdatePositionRequest, UpdatePositionResponse>(
+                Method::PUT,
+                &path,
+                session,
+                Some(update),
+                "2",
+            )
             .await?;
 
-        debug!("Position updated: {}", deal_id);
-        Ok(())
+        debug!(
+            "Position updated: {} with deal reference: {}",
+            deal_id, result.deal_reference
+        );
+        Ok(result)
     }
 
     async fn close_position(

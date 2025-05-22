@@ -136,6 +136,9 @@ pub struct CreateOrderRequest {
     /// Whether to force open a new position
     #[serde(rename = "forceOpen", skip_serializing_if = "Option::is_none")]
     pub force_open: Option<bool>,
+    /// Currency code for the order (e.g., "USD", "EUR")
+    #[serde(rename = "currencyCode", skip_serializing_if = "Option::is_none")]
+    pub currency_code: Option<String>,
 }
 
 impl CreateOrderRequest {
@@ -156,6 +159,7 @@ impl CreateOrderRequest {
             expiry: None,
             deal_reference: None,
             force_open: Some(true),
+            currency_code: None,
         }
     }
 
@@ -176,6 +180,7 @@ impl CreateOrderRequest {
             expiry: None,
             deal_reference: None,
             force_open: Some(true),
+            currency_code: None,
         }
     }
 
@@ -295,11 +300,25 @@ pub struct ClosePositionRequest {
     /// Price level for limit close orders
     #[serde(rename = "level", skip_serializing_if = "Option::is_none")]
     pub level: Option<f64>,
+    /// Whether to force open a new position
+    #[serde(rename = "forceOpen")]
+    pub force_open: bool,
+    /// Expiry date for the order
+    #[serde(rename = "expiry")]
+    pub expiry: String,
+    /// Instrument EPIC identifier
+    pub epic: String,
+    /// Currency code for the order (e.g., "USD", "EUR")
+    #[serde(rename = "currencyCode")]
+    pub currency_code: String,
+    /// Whether to use a guaranteed stop
+    #[serde(rename = "guaranteedStop")]
+    pub guaranteed_stop: bool,
 }
 
 impl ClosePositionRequest {
     /// Creates a request to close a position at market price
-    pub fn market(deal_id: String, direction: Direction, size: f64) -> Self {
+    pub fn market(deal_id: String, direction: Direction, size: f64, epic: String) -> Self {
         Self {
             deal_id,
             direction,
@@ -307,6 +326,36 @@ impl ClosePositionRequest {
             order_type: OrderType::Market,
             time_in_force: TimeInForce::FillOrKill,
             level: None,
+            force_open: false,
+            expiry: "JUL-25".to_string(), // Use the same expiry as the position we're closing
+            epic,
+            currency_code: "EUR".to_string(), // Use EUR as the default currency code
+            guaranteed_stop: false,           // Do not use a guaranteed stop by default
+        }
+    }
+
+    /// Creates a request to close a position at a specific price level
+    ///
+    /// This is useful for instruments that don't support market orders
+    pub fn limit(
+        deal_id: String,
+        direction: Direction,
+        size: f64,
+        epic: String,
+        level: f64,
+    ) -> Self {
+        Self {
+            deal_id,
+            direction,
+            size,
+            order_type: OrderType::Limit,
+            time_in_force: TimeInForce::FillOrKill,
+            level: Some(level),
+            force_open: false,
+            expiry: "JUL-25".to_string(), // Use the same expiry as the position we're closing
+            epic,
+            currency_code: "EUR".to_string(), // Use EUR as the default currency code
+            guaranteed_stop: false,           // Do not use a guaranteed stop by default
         }
     }
 }
@@ -315,6 +364,14 @@ impl ClosePositionRequest {
 #[derive(Debug, Clone, Deserialize)]
 pub struct ClosePositionResponse {
     /// Client-generated reference for the closing deal
+    #[serde(rename = "dealReference")]
+    pub deal_reference: String,
+}
+
+/// Response to updating a position
+#[derive(Debug, Clone, Deserialize)]
+pub struct UpdatePositionResponse {
+    /// Client-generated reference for the update deal
     #[serde(rename = "dealReference")]
     pub deal_reference: String,
 }

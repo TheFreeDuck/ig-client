@@ -12,7 +12,7 @@
 [![Coverage](https://img.shields.io/codecov/c/github/joaquinbejar/ig-client)](https://codecov.io/gh/joaquinbejar/ig-client)
 [![Dependencies](https://img.shields.io/librariesio/github/joaquinbejar/ig-client)](https://libraries.io/github/joaquinbejar/ig-client)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://docs.rs/ig-client)
-[![Wiki](https://img.shields.io/badge/docs-latest-blue.svg)](https://deepwiki.com/joaquinbejar/ig-client)
+[![Wiki](https://img.shields.io/badge/wiki-latest-blue.svg)](https://deepwiki.com/joaquinbejar/ig-client)
 
 
 ## IG Markets API Client for Rust
@@ -239,7 +239,7 @@ let order_service = IgOrderService::new(config.clone());
 
 // Create a market order
 let market_order = CreateOrderRequest::market(
-    "CS.D.EURUSD.CFD.IP".to_string(),  // EPIC
+    "OP.D.OTCDAX1.021100P.IP".to_string(),  // EPIC
     Direction::Buy,                     // Direction
     1.0,                               // Size
     None,                              // Limit level
@@ -252,7 +252,7 @@ info!("Market order placed: {:?}", result);
 
 // Create a limit order
 let limit_order = CreateOrderRequest {
-    epic: "CS.D.EURUSD.CFD.IP".to_string(),
+    epic: "OP.D.OTCDAX1.021100P.IP".to_string(),
     direction: Direction::Buy,
     size: 1.0,
     order_type: OrderType::Limit,
@@ -309,7 +309,7 @@ let listener = MarketListener::new(callback);
 listener.connect(&session).await?;
 
 // Subscribe to market updates
-let epics = vec!["CS.D.EURUSD.CFD.IP", "CS.D.USDJPY.CFD.IP"];
+let epics = vec!["OP.D.OTCDAX1.021100P.IP", "CS.D.USDJPY.CFD.IP"];
 listener.subscribe(&epics).await?;
 
 // Process market updates

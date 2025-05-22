@@ -128,6 +128,8 @@ pub enum AppError {
     SerializationError(String),
     /// WebSocket communication error
     WebSocketError(String),
+    /// Deserialization error with details
+    Deserialization(String),
 }
 
 impl Display for AppError {
@@ -143,6 +145,7 @@ impl Display for AppError {
             AppError::RateLimitExceeded => write!(f, "rate limit exceeded"),
             AppError::SerializationError(s) => write!(f, "serialization error: {s}"),
             AppError::WebSocketError(s) => write!(f, "websocket error: {s}"),
+            AppError::Deserialization(s) => write!(f, "deserialization error: {s}"),
         }
     }
 }

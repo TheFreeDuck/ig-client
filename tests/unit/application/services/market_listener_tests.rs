@@ -28,7 +28,7 @@ fn test_market_listener_new() {
     fields.insert("MARKET_STATE".to_string(), Some("tradeable".to_string()));
 
     let item_update = ItemUpdate {
-        item_name: Some("CS.D.EURUSD.CFD.IP".to_string()),
+        item_name: Some("OP.D.OTCDAX1.021100P.IP".to_string()),
         item_pos: 1,
         is_snapshot: true,
         fields,
@@ -61,7 +61,7 @@ fn test_market_listener_mock() {
     fields.insert("MARKET_STATE".to_string(), Some("tradeable".to_string()));
 
     let item_update = ItemUpdate {
-        item_name: Some("CS.D.EURUSD.CFD.IP".to_string()),
+        item_name: Some("OP.D.OTCDAX1.021100P.IP".to_string()),
         item_pos: 1,
         is_snapshot: true,
         fields,
