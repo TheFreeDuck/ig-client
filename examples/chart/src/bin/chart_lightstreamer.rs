@@ -4,14 +4,13 @@ use ig_client::error::AppError;
 use ig_client::presentation::ChartData;
 use ig_client::session::auth::IgAuth;
 use ig_client::session::interface::IgAuthenticator;
+use ig_client::utils::logger::setup_logger;
 use lightstreamer_rs::client::{LightstreamerClient, Transport};
 use lightstreamer_rs::subscription::{Snapshot, Subscription, SubscriptionMode};
 use lightstreamer_rs::utils::setup_signal_hook;
 use std::sync::Arc;
 use tokio::sync::{Mutex, Notify};
 use tracing::{Level, error, info, warn};
-use ig_client::utils::logger::setup_logger;
-
 
 const MAX_CONNECTION_ATTEMPTS: u64 = 3;
 

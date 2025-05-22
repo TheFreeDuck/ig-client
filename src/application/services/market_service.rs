@@ -1,6 +1,8 @@
 use crate::application::services::MarketService;
 use crate::{
-    application::models::market::{HistoricalPricesResponse, MarketDetails, MarketNavigationResponse, MarketSearchResult},
+    application::models::market::{
+        HistoricalPricesResponse, MarketDetails, MarketNavigationResponse, MarketSearchResult,
+    },
     config::Config,
     error::AppError,
     session::interface::IgSession,
@@ -88,8 +90,12 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
         // Join the EPICs with commas to create a single request
         let epics_str = epics.join(",");
         let path = format!("markets?epics={}", epics_str);
-        
-        info!("Getting market details for {} EPICs in a batch: {}", epics.len(), epics_str);
+
+        info!(
+            "Getting market details for {} EPICs in a batch: {}",
+            epics.len(),
+            epics_str
+        );
 
         // The API returns an object with un array de MarketDetails en la propiedad marketDetails
         #[derive(serde::Deserialize)]
@@ -103,7 +109,10 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
             .request::<(), MarketDetailsResponse>(Method::GET, &path, session, None, "2")
             .await?;
 
-        debug!("Market details obtained for {} EPICs", response.market_details.len());
+        debug!(
+            "Market details obtained for {} EPICs",
+            response.market_details.len()
+        );
         Ok(response.market_details)
     }
 
@@ -115,7 +124,10 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
         from: &str,
         to: &str,
     ) -> Result<HistoricalPricesResponse, AppError> {
-        let path = format!("prices/{}/{}?from={}&to={}", epic, resolution, from, to);
+        let path = format!(
+            "prices/{}?resolution={}&from={}&to={}",
+            epic, resolution, from, to
+        );
         info!("Getting historical prices for: {}", epic);
 
         let result = self

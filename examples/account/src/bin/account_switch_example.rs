@@ -37,9 +37,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let account_id = cfg.credentials.account_id.trim().to_string();
 
     if !account_id.is_empty() {
-        // Verificar si ya estamos en la cuenta deseada
+        // Check if we are already on the desired account
         if session.account_id == account_id {
-            info!("Already authenticated on the requested account: {}", account_id);
+            info!(
+                "Already authenticated on the requested account: {}",
+                account_id
+            );
             info!("Account switch skipped");
             return Ok(());
         }
@@ -61,7 +64,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 error!("Account switch failed: {e:?}");
                 // Si el error es por límite de API, mostramos un mensaje más claro
                 if let Some(_err_msg) = e.to_string().find("exceeded-api-key-allowance") {
-                    error!("API rate limit exceeded. Please wait a few minutes before trying again.");
+                    error!(
+                        "API rate limit exceeded. Please wait a few minutes before trying again."
+                    );
                 }
                 return Err(Box::new(e) as Box<dyn Error>);
             }

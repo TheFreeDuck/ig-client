@@ -12,7 +12,7 @@ pub struct Instrument {
     /// Expiry date of the instrument
     pub expiry: String,
     /// Size of one contract
-    #[serde(rename = "contractSize",)]
+    #[serde(rename = "contractSize")]
     pub contract_size: String,
     /// Size of one lot
     #[serde(rename = "lotSize")]
@@ -32,24 +32,29 @@ pub struct Instrument {
     /// Available currencies for trading this instrument
     pub currencies: Option<Vec<Currency>>,
     #[serde(rename = "valueOfOnePip")]
+    /// Value of one pip for this instrument
     pub value_of_one_pip: String,
 
     /// Type of the instrument
     #[serde(rename = "instrumentType")]
     pub instrument_type: Option<InstrumentType>,
-    
+
     /// Expiry details including last dealing date
     #[serde(rename = "expiryDetails")]
     pub expiry_details: Option<ExpiryDetails>,
-    
+
     #[serde(rename = "slippageFactor")]
+    /// Slippage factor for the instrument
     pub slippage_factor: Option<StepDistance>,
-    
+
     #[serde(rename = "limitedRiskPremium")]
+    /// Premium for limited risk trades
     pub limited_risk_premium: Option<StepDistance>,
     #[serde(rename = "newsCode")]
+    /// Code used for news related to this instrument
     pub news_code: Option<String>,
     #[serde(rename = "chartCode")]
+    /// Code used for charting this instrument
     pub chart_code: Option<String>,
 }
 
@@ -119,7 +124,8 @@ pub struct DealingRules {
     pub trailing_stops_preference: String,
 
     #[serde(rename = "maxDealSize")]
-    pub max_deal_size: Option<f64>
+    /// Maximum deal size allowed
+    pub max_deal_size: Option<f64>,
 }
 
 /// Market snapshot with enhanced deserialization
@@ -130,7 +136,7 @@ pub struct MarketSnapshot {
     pub market_status: String,
 
     /// Net change in price since previous close
-    #[serde( rename = "netChange")]
+    #[serde(rename = "netChange")]
     pub net_change: Option<f64>,
 
     /// Percentage change in price since previous close
@@ -237,8 +243,8 @@ pub struct HistoricalPricesResponse {
     #[serde(rename = "instrumentType")]
     pub instrument_type: InstrumentType,
     /// API usage allowance information
-    #[serde(rename = "allowance")]
-    pub allowance: PriceAllowance,
+    #[serde(rename = "allowance", skip_serializing_if = "Option::is_none", default)]
+    pub allowance: Option<PriceAllowance>,
 }
 
 /// Historical price data point
@@ -307,26 +313,32 @@ pub struct ExpiryDetails {
     /// The last dealing date and time for the instrument
     #[serde(rename = "lastDealingDate")]
     pub last_dealing_date: String,
-    
+
     /// Information about settlement
     #[serde(rename = "settlementInfo")]
     pub settlement_info: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+/// Unit for step distances in trading rules
 pub enum StepUnit {
     #[serde(rename = "POINTS")]
+    /// Points (price movement units)
     Points,
     #[serde(rename = "PERCENTAGE")]
+    /// Percentage value
     Percentage,
     #[serde(rename = "pct")]
+    /// Alternative representation for percentage
     Pct,
 }
 
 /// A struct to handle the minStepDistance value which can be a complex object
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 pub struct StepDistance {
+    /// Unit type for the distance
     pub unit: Option<StepUnit>,
+    /// Numeric value of the distance
     pub value: Option<f64>,
 }
 
@@ -340,8 +352,6 @@ where
     let opt = Option::deserialize(deserializer)?;
     Ok(opt.unwrap_or_default())
 }
-
-
 
 /// Node in the market navigation hierarchy
 #[derive(Debug, Clone, Deserialize, Serialize)]

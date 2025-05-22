@@ -132,7 +132,7 @@ mod tests {
             "dealReference": "REF123",
             "dealId": "DEAL123",
             "direction": "BUY",
-            "epic": "CS.D.EURUSD.CFD.IP",
+            "epic": "OP.D.OTCDAX1.021100P.IP",
             "status": "OPENED",
             "dealStatus": "ACCEPTED",
             "level": "1.1234",
@@ -165,7 +165,7 @@ mod tests {
         assert_eq!(opu.deal_reference, Some("REF123".to_string()));
         assert_eq!(opu.deal_id, Some("DEAL123".to_string()));
         assert_eq!(opu.direction, Some(Direction::Buy));
-        assert_eq!(opu.epic, Some("CS.D.EURUSD.CFD.IP".to_string()));
+        assert_eq!(opu.epic, Some("OP.D.OTCDAX1.021100P.IP".to_string()));
         assert_eq!(opu.status, Some(Status::Opened));
         assert_eq!(opu.deal_status, Some(Status::Accepted));
         assert_eq!(opu.level, Some(1.1234));
@@ -244,7 +244,7 @@ mod tests {
             "dealReference": "REF123",
             "dealId": "DEAL123",
             "direction": "BUY",
-            "epic": "CS.D.EURUSD.CFD.IP",
+            "epic": "OP.D.OTCDAX1.021100P.IP",
             "level": "1.1234",
             "size": "1.5"
         }"#;

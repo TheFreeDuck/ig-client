@@ -281,19 +281,19 @@ impl IgAuthenticator for IgAuth<'_> {
         &self,
         session: &IgSession,
         account_id: &str,
-        default_account: Option<bool>
+        default_account: Option<bool>,
     ) -> Result<IgSession, AuthError> {
-        // Verificar si la cuenta a la que se quiere cambiar es la misma que la actual
+        // Check if the account to switch to is the same as the current one
         if session.account_id == account_id {
             tracing::info!("Already on account ID: {}. No need to switch.", account_id);
-            // Devolver una copia de la sesión actual
+            // Return a copy of the current session
             return Ok(IgSession {
                 cst: session.cst.clone(),
                 token: session.token.clone(),
                 account_id: session.account_id.clone(),
             });
         }
-        
+
         let url = self.rest_url("session");
 
         // Ensure the API key is trimmed and has no whitespace
@@ -361,13 +361,16 @@ impl IgAuthenticator for IgAuth<'_> {
                     .await
                     .unwrap_or_else(|_| "Could not read response body".to_string());
                 tracing::error!("Response body: {}", body);
-                
+
                 // Si el error es 401 Unauthorized, podría ser que el ID de cuenta no sea válido
                 // o no pertenezca al usuario autenticado
                 if other == StatusCode::UNAUTHORIZED {
-                    tracing::warn!("Cannot switch to account ID: {}. The account might not exist or you don't have permission.", account_id);
+                    tracing::warn!(
+                        "Cannot switch to account ID: {}. The account might not exist or you don't have permission.",
+                        account_id
+                    );
                 }
-                
+
                 Err(AuthError::Unexpected(other))
             }
         }

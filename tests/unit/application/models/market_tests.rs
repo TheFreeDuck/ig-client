@@ -1,8 +1,11 @@
 #[cfg(test)]
 mod tests {
-    use ig_client::application::models::market::{Currency, DealingRules, MarketDetails, MarketSnapshot, StepDistance, StepUnit};
+    use ig_client::application::models::market::{
+        Currency, DealingRules, MarketDetails, MarketSnapshot, StepDistance, StepUnit,
+    };
+    use serde::Deserialize;
 
-    /// Test the complete MarketDetailsV3 deserialization with the provided JSON
+    /// Test the complete MarketDetails deserialization with the provided JSON
     #[test]
     fn test_deserialize_complete_market_details() {
         let json_data = r#"
@@ -130,7 +133,11 @@ mod tests {
         "#;
 
         let result: Result<MarketDetails, _> = serde_json::from_str(json_data);
-        assert!(result.is_ok(), "Failed to deserialize MarketDetailsV3: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to deserialize MarketDetails: {:?}",
+            result.err()
+        );
 
         let market_details = result.unwrap();
 
@@ -142,7 +149,10 @@ mod tests {
         assert_eq!(instrument.contract_size, "1");
         assert_eq!(instrument.lot_size, Some(1.0));
         assert_eq!(instrument.margin_factor, Some(5.0));
-        assert_eq!(instrument.margin_factor_unit, Some("PERCENTAGE".to_string()));
+        assert_eq!(
+            instrument.margin_factor_unit,
+            Some("PERCENTAGE".to_string())
+        );
 
         // Verify currency information
         let currencies = instrument.currencies.expect("Currencies should be present");
@@ -158,8 +168,14 @@ mod tests {
         let dealing_rules = &market_details.dealing_rules;
         assert_eq!(dealing_rules.min_step_distance.value, Some(1.0e10));
         assert_eq!(dealing_rules.min_deal_size.value, Some(0.1));
-        assert_eq!(dealing_rules.min_controlled_risk_stop_distance.value, Some(1.0));
-        assert_eq!(dealing_rules.min_normal_stop_or_limit_distance.value, Some(1.0));
+        assert_eq!(
+            dealing_rules.min_controlled_risk_stop_distance.value,
+            Some(1.0)
+        );
+        assert_eq!(
+            dealing_rules.min_normal_stop_or_limit_distance.value,
+            Some(1.0)
+        );
         assert_eq!(dealing_rules.max_stop_or_limit_distance.value, Some(1111.0));
         assert_eq!(dealing_rules.controlled_risk_spacing.value, Some(0.0));
         assert_eq!(dealing_rules.market_order_preference, "NOT_AVAILABLE");
@@ -433,11 +449,27 @@ mod tests {
         }
         "#;
 
-        let result: Result<Vec<MarketDetails>, _> = serde_json::from_str(json_data);
-        assert!(result.is_ok(), "Failed to deserialize MarketDetailsV3: {:?}", result.err());
+        #[derive(Deserialize)]
+        struct MarketDetailsResponse {
+            #[serde(rename = "marketDetails")]
+            market_details: Vec<MarketDetails>,
+        }
 
-        let market_details = result.unwrap();
-        
+        let result: Result<MarketDetailsResponse, _> = serde_json::from_str(json_data);
+        assert!(
+            result.is_ok(),
+            "Failed to deserialize MarketDetailsResponse: {:?}",
+            result.err()
+        );
+
+        let response = result.unwrap();
+        let market_details = response.market_details;
+
+        assert!(
+            !market_details.is_empty(),
+            "Market details should not be empty"
+        );
+        assert_eq!(market_details[0].instrument.epic, "DO.D.OTCDDAX.1.IP");
     }
 
     /// Test StepDistance deserialization with different value types
@@ -540,6 +572,13 @@ mod tests {
         // Test with minimal valid JSON
         let minimal_json = r#"
         {
+            "instrument": {
+                "epic": "TEST.EPIC",
+                "name": "Test Instrument",
+                "expiry": "DFB",
+                "contractSize": "1.0",
+                "valueOfOnePip": "10.0"
+            },
             "snapshot": {
                 "marketStatus": "CLOSED"
             },
@@ -583,10 +622,8 @@ mod tests {
         let result: Currency = serde_json::from_str(json).unwrap();
         assert_eq!(result.code, "USD");
         assert_eq!(result.symbol, None);
-        assert_eq!(result.base_exchange_rate, Some(1.25)); 
+        assert_eq!(result.base_exchange_rate, Some(1.25));
         assert_eq!(result.exchange_rate, Some(1.0));
         assert_eq!(result.is_default, Some(false));
     }
-
-
 }

@@ -113,7 +113,7 @@ fn create_test_position(
         market: PositionMarket {
             bid,
             delay_time: 0,
-            epic: "CS.D.EURUSD.CFD.IP".to_string(),
+            epic: "OP.D.OTCDAX1.021100P.IP".to_string(),
             expiry: "-".to_string(),
             high: 0.0,
             instrument_name: "EUR/USD".to_string(),

@@ -3,12 +3,12 @@ use ig_client::application::models::transaction::{StoreTransaction, TransactionL
 
 // Sample JSON for a simple transaction
 fn sample_raw_transaction_json() -> &'static str {
-    "{\"date\":\"2023-01-01T10:00:00\",\"dateUtc\":\"2023-01-01T09:00:00\",\"openDateUtc\":\"2023-01-01T08:00:00\",\"instrumentName\":\"CS.D.EURUSD.CFD.IP\",\"period\":\"DFB\",\"profitAndLoss\":\"10.50\",\"transactionType\":\"DEAL\",\"reference\":\"REF123\",\"openLevel\":\"1.1000\",\"closeLevel\":\"1.1010\",\"size\":\"1.0\",\"currency\":\"EUR\",\"cashTransaction\":false}"
+    "{\"date\":\"2023-01-01T10:00:00\",\"dateUtc\":\"2023-01-01T09:00:00\",\"openDateUtc\":\"2023-01-01T08:00:00\",\"instrumentName\":\"OP.D.OTCDAX1.021100P.IP\",\"period\":\"DFB\",\"profitAndLoss\":\"10.50\",\"transactionType\":\"DEAL\",\"reference\":\"REF123\",\"openLevel\":\"1.1000\",\"closeLevel\":\"1.1010\",\"size\":\"1.0\",\"currency\":\"EUR\",\"cashTransaction\":false}"
 }
 
 // Sample JSON with matching dateUtc equal to date
 fn sample_raw_transaction_json2() -> &'static str {
-    "{\"date\":\"2023-01-01T10:00:00\",\"dateUtc\":\"2023-01-01T10:00:00\",\"openDateUtc\":\"2023-01-01T09:00:00\",\"instrumentName\":\"CS.D.EURUSD.CFD.IP\",\"period\":\"DFB\",\"profitAndLoss\":\"10.50\",\"transactionType\":\"DEAL\",\"reference\":\"REF123\",\"openLevel\":\"1.1000\",\"closeLevel\":\"1.1010\",\"size\":\"1.0\",\"currency\":\"EUR\",\"cashTransaction\":false}"
+    "{\"date\":\"2023-01-01T10:00:00\",\"dateUtc\":\"2023-01-01T10:00:00\",\"openDateUtc\":\"2023-01-01T09:00:00\",\"instrumentName\":\"OP.D.OTCDAX1.021100P.IP\",\"period\":\"DFB\",\"profitAndLoss\":\"10.50\",\"transactionType\":\"DEAL\",\"reference\":\"REF123\",\"openLevel\":\"1.1000\",\"closeLevel\":\"1.1010\",\"size\":\"1.0\",\"currency\":\"EUR\",\"cashTransaction\":false}"
 }
 
 // Sample JSON with negative P&L and different instrument
@@ -23,7 +23,7 @@ fn test_raw_transaction_display_and_serialization() {
     let raw_tx: AccountTransaction = serde_json::from_str(json).expect("Failed to parse JSON");
     // Display implementation should produce valid JSON
     let display_str = raw_tx.to_string();
-    assert!(display_str.contains("\"instrumentName\":\"CS.D.EURUSD.CFD.IP\""));
+    assert!(display_str.contains("\"instrumentName\":\"OP.D.OTCDAX1.021100P.IP\""));
     assert!(display_str.contains("\"transactionType\":\"DEAL\""));
     // Round-trip serialization
     let serialized = serde_json::to_string(&raw_tx).expect("Failed to serialize RawTransaction");
@@ -41,7 +41,7 @@ fn test_transaction_creation() {
     let raw_tx: AccountTransaction = serde_json::from_str(json).expect("Failed to parse JSON");
     // Test the display implementation
     let display_str = raw_tx.to_string();
-    assert!(display_str.contains("\"instrumentName\":\"CS.D.EURUSD.CFD.IP\""));
+    assert!(display_str.contains("\"instrumentName\":\"OP.D.OTCDAX1.021100P.IP\""));
     assert!(display_str.contains("\"transactionType\":\"DEAL\""));
     assert!(display_str.contains("\"reference\":\"REF123\""));
 }

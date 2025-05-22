@@ -8,3 +8,6 @@ pub mod logger;
 pub mod parsing;
 /// Module containing general utility functions and tools for error handling and backoff strategies
 pub mod tools;
+
+/// Module containing rate limiting functionality to manage API request frequency
+pub mod rate_limiter;

@@ -1,6 +1,6 @@
 use crate::application::models::order::{
     ClosePositionRequest, ClosePositionResponse, CreateOrderRequest, CreateOrderResponse,
-    OrderConfirmation, UpdatePositionRequest,
+    OrderConfirmation, UpdatePositionRequest, UpdatePositionResponse,
 };
 use crate::error::AppError;
 use crate::session::interface::IgSession;
@@ -33,7 +33,7 @@ pub trait OrderService: Send + Sync {
         session: &IgSession,
         deal_id: &str,
         update: &UpdatePositionRequest,
-    ) -> Result<(), AppError>;
+    ) -> Result<UpdatePositionResponse, AppError>;
 
     /// Closes an existing position
     async fn close_position(

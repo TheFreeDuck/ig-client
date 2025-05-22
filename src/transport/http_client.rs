@@ -92,17 +92,20 @@ impl IgHttpClientImpl {
                 let response_bytes = response.bytes().await?;
                 let response_text = String::from_utf8_lossy(&response_bytes);
                 debug!("Raw response from {}: {}", url, response_text);
-                
+
                 // Try to deserialize the response
                 match serde_json::from_slice::<R>(&response_bytes) {
                     Ok(json) => {
                         debug!("Request to {} successfully deserialized", url);
                         Ok(json)
-                    },
+                    }
                     Err(e) => {
                         error!("Failed to deserialize response from {}: {}", url, e);
                         error!("Response body: {}", response_text);
-                        Err(AppError::Deserialization(format!("Failed to deserialize response: {}", e)))
+                        Err(AppError::Deserialization(format!(
+                            "Failed to deserialize response: {}",
+                            e
+                        )))
                     }
                 }
             }
