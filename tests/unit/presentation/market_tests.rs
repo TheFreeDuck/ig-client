@@ -282,6 +282,7 @@ mod tests {
             net_change: Some(0.0012),
             percentage_change: Some(0.1),
             update_time: Some("2023-05-13T10:15:30".to_string()),
+            update_time_utc: None,
             bid: Some(1.0876),
             offer: Some(1.0878),
         };
