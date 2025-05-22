@@ -1,6 +1,10 @@
+use crate::application::models::account::WorkingOrders;
 use crate::application::models::order::{
     ClosePositionRequest, ClosePositionResponse, CreateOrderRequest, CreateOrderResponse,
     OrderConfirmation, UpdatePositionRequest, UpdatePositionResponse,
+};
+use crate::application::models::working_order::{
+    CreateWorkingOrderRequest, CreateWorkingOrderResponse,
 };
 use crate::error::AppError;
 use crate::session::interface::IgSession;
@@ -41,4 +45,14 @@ pub trait OrderService: Send + Sync {
         session: &IgSession,
         close_request: &ClosePositionRequest,
     ) -> Result<ClosePositionResponse, AppError>;
+
+    /// Gets all working orders
+    async fn get_working_orders(&self, session: &IgSession) -> Result<WorkingOrders, AppError>;
+
+    /// Creates a new working order
+    async fn create_working_order(
+        &self,
+        session: &IgSession,
+        order: &CreateWorkingOrderRequest,
+    ) -> Result<CreateWorkingOrderResponse, AppError>;
 }

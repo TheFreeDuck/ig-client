@@ -1,14 +1,16 @@
-use crate::application::services::OrderService;
-use crate::{
-    application::models::order::{
-        ClosePositionRequest, ClosePositionResponse, CreateOrderRequest, CreateOrderResponse,
-        OrderConfirmation, UpdatePositionRequest, UpdatePositionResponse,
-    },
-    config::Config,
-    error::AppError,
-    session::interface::IgSession,
-    transport::http_client::IgHttpClient,
+use crate::application::models::account::WorkingOrders;
+use crate::application::models::order::{
+    ClosePositionRequest, ClosePositionResponse, CreateOrderRequest, CreateOrderResponse,
+    OrderConfirmation, UpdatePositionRequest, UpdatePositionResponse,
 };
+use crate::application::models::working_order::{
+    CreateWorkingOrderRequest, CreateWorkingOrderResponse,
+};
+use crate::application::services::interfaces::order::OrderService;
+use crate::config::Config;
+use crate::error::AppError;
+use crate::session::interface::IgSession;
+use crate::transport::http_client::IgHttpClient;
 use async_trait::async_trait;
 use reqwest::Method;
 use std::sync::Arc;
@@ -130,6 +132,43 @@ impl<T: IgHttpClient + 'static> OrderService for OrderServiceImpl<T> {
             .await?;
 
         debug!("Position closed with reference: {}", result.deal_reference);
+        Ok(result)
+    }
+
+    async fn get_working_orders(&self, session: &IgSession) -> Result<WorkingOrders, AppError> {
+        info!("Getting all working orders");
+
+        let result = self
+            .client
+            .request::<(), WorkingOrders>(Method::GET, "workingorders", session, None, "2")
+            .await?;
+
+        debug!("Retrieved {} working orders", result.working_orders.len());
+        Ok(result)
+    }
+
+    async fn create_working_order(
+        &self,
+        session: &IgSession,
+        order: &CreateWorkingOrderRequest,
+    ) -> Result<CreateWorkingOrderResponse, AppError> {
+        info!("Creating working order for: {}", order.epic);
+
+        let result = self
+            .client
+            .request::<CreateWorkingOrderRequest, CreateWorkingOrderResponse>(
+                Method::POST,
+                "workingorders/otc",
+                session,
+                Some(order),
+                "2",
+            )
+            .await?;
+
+        debug!(
+            "Working order created with reference: {}",
+            result.deal_reference
+        );
         Ok(result)
     }
 }
