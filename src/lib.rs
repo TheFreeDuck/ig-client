@@ -8,18 +8,22 @@
 //!
 //! ## Features
 //!
-//! - **Authentication**: Secure authentication with the IG Markets API using OAuth2
+//! - **Authentication**: Secure authentication with the IG Markets API including session refresh and account switching
 //! - **Account Management**: Access account information, balances, and activity history
 //! - **Market Data**: Retrieve market data, prices, instrument details, and historical prices
 //! - **Order Management**: Create, modify, and close positions and orders with various order types
+//! - **Working Orders**: Create and manage working orders with support for limit and stop orders
 //! - **Transaction History**: Access detailed transaction and activity history
 //! - **WebSocket Support**: Real-time market data streaming via WebSocket connections
+//! - **Rate Limiting**: Built-in rate limiting to comply with API usage restrictions
 //! - **Fully Documented**: Comprehensive documentation for all components and methods
 //! - **Error Handling**: Robust error handling and reporting with detailed error types
 //! - **Type Safety**: Strong type checking for API requests and responses
 //! - **Async Support**: Built with async/await for efficient non-blocking operations
 //! - **Configurable**: Flexible configuration options for different environments (demo/live)
 //! - **Persistence**: Optional database integration for storing historical data
+//! - **Database Support**: Integration with SQLx for storing and retrieving transaction data
+//! - **Serialization Utilities**: Custom serialization helpers for handling IG Markets API responses
 //!
 //! ## Installation
 //!
@@ -31,6 +35,7 @@
 //! tokio = { version = "1", features = ["full"] }  # For async runtime
 //! dotenv = "0.15"                                 # For environment variable loading
 //! tracing = "0.1"                                # For logging
+//! sqlx = { version = "0.8", features = ["runtime-tokio", "postgres"] }  # Optional for database support
 //! ```
 //!
 //! ### Requirements
@@ -38,19 +43,26 @@
 //! - Rust 1.56 or later (for async/await support)
 //! - An IG Markets account (demo or live)
 //! - API credentials from IG Markets
+//! - PostgreSQL database (optional, for data persistence)
 //!
 //! ## Configuration
 //!
 //! Create a `.env` file in your project root with the following variables:
 //!
-//! ```,ignore
+//! ```text
 //! IG_USERNAME=your_username
 //! IG_PASSWORD=your_password
 //! IG_API_KEY=your_api_key
 //! IG_ACCOUNT_ID=your_account_id
 //! IG_BASE_URL=https://demo-api.ig.com/gateway/deal  # Use demo or live as needed
-//! IG_WEBSOCKET_URL=wss://demo-apd.marketdatasystems.com
+//! IG_TIMEOUT=30  # HTTP request timeout in seconds
+//! IG_WS_URL=wss://demo-apd.marketdatasystems.com  # WebSocket URL
+//! IG_WS_RECONNECT=5  # WebSocket reconnect interval in seconds
 //! DATABASE_URL=postgres://user:password@localhost/ig_db  # Optional for data persistence
+//! IG_DB_MAX_CONN=5  # Maximum database connections
+//! TX_LOOP_INTERVAL_HOURS=1  # Transaction loop interval in hours
+//! TX_PAGE_SIZE=20  # Transaction page size
+//! TX_DAYS_BACK=7  # Number of days to look back for transactions
 //! ```
 //!
 //! ## Usage Examples
@@ -65,7 +77,7 @@
 //! use ig_client::application::services::order_service::{IgOrderService, OrderService};
 //! use ig_client::application::models::order::{CreateOrderRequest, Direction};
 //! use ig_client::config::Config;
-//! use ig_client::session::auth::IgAuth;
+//! use ig_client::session::auth::{IgAuth, IgAuthenticator};
 //! use std::sync::Arc;
 //! use dotenv::dotenv;
 //! use tracing::{info, error, Level};
@@ -88,41 +100,56 @@
 //!     info!("Configuration created");
 //!     
 //!     // Authenticate
-//!     let auth = IgAuth::new(config.clone());
-//!     let session = auth.authenticate().await?;
+//!     let auth = IgAuth::new(&config);
+//!     let session = auth.login().await?;
 //!     info!("Authentication successful");
 //!     
 //!     // Create services
 //!     let account_service = IgAccountService::new(config.clone());
 //!     let market_service = IgMarketService::new(config.clone());
-//!     let order_service = IgOrderService::new(config.clone());
-//!     
 //!     // Get account information
 //!     let account_info = account_service.get_accounts(&session).await?;
 //!     info!("Account information retrieved: {} accounts", account_info.accounts.len());
 //!     
-//!     // Search for a market
-//!     let search_result = market_service.search_markets(&session, "EUR/USD").await?;
-//!     info!("Found {} markets matching search", search_result.markets.len());
+//!     // Switch to a different account if needed
+//!     if account_info.accounts.len() > 1 {
+//!         let target_account = &account_info.accounts[1];
+//!         let updated_session = auth.switch_account(&session, &target_account.account_id, Some(true)).await?;
+//!         info!("Switched to account: {}", updated_session.account_id);
+//!     }
 //!     
-//!     if let Some(market) = search_result.markets.first() {
-//!         info!("Selected market: {} ({})", market.instrument_name, market.epic);
+//!     // Search for a market
+//!     let search_term = "US 500";
+//!     let search_results = market_service.search_markets(&session, search_term).await?;
+//!     info!("Found {} markets matching '{}'", search_results.markets.len(), search_term);
+//!     
+//!     // Get market details for the first result
+//!     if let Some(market) = search_results.markets.first() {
+//!         let epic = &market.epic;
+//!         let market_details = market_service.get_market_details(&session, epic).await?;
+//!         info!("Market details for {}: {}", epic, market_details.instrument.name);
 //!         
-//!         // Get market details
-//!         let market_details = market_service.get_market_details(&session, &market.epic).await?;
-//!         info!("Market details retrieved: {}", market_details.instrument.name);
+//!         // Get historical prices
+//!         let prices = market_service.get_prices_by_date(
+//!             &session,
+//!             epic,
+//!             "MINUTE",
+//!             "1",
+//!             "2023-01-01T00:00:00",
+//!             "2023-01-02T00:00:00"
+//!         ).await?;
+//!         info!("Retrieved {} price points", prices.prices.len());
 //!         
-//!         // Create and place a demo order (if this is a demo account)
-//!         if session.account_type == "DEMO" {
-//!             let order = CreateOrderRequest::market(
-//!                 market.epic.clone(),
+//!         // Check if the market is tradable
+//!         if market_details.snapshot.market_status == "TRADEABLE" {
+//!             // Create a market order
+//!             let order_request = CreateOrderRequest::market(
+//!                 epic.clone(),
 //!                 Direction::Buy,
-//!                 0.1,  // Small size for demo
-//!                 None,
-//!                 None,
+//!                 1.0, // Size
 //!             );
 //!             
-//!             let order_result = order_service.create_order(&session, &order).await?;
+//!             let order_result = order_service.create_order(&session, &order_request).await?;
 //!             info!("Order placed: deal reference = {}", order_result.deal_reference);
 //!             
 //!             // Get positions
@@ -390,21 +417,40 @@
 //! │   │   │   ├── account.rs # Account-related models
 //! │   │   │   ├── market.rs  # Market data models
 //! │   │   │   ├── order.rs   # Order models
-//! │   │   │   └── transaction.rs # Transaction models
+//! │   │   │   ├── transaction.rs # Transaction models
+//! │   │   │   └── working_order.rs # Working order models
 //! │   │   └── services/      # Service implementations
 //! │   │       ├── account_service.rs
+//! │   │       ├── interfaces/ # Service interfaces
+//! │   │       ├── listener.rs # Price listener service
 //! │   │       ├── market_service.rs
 //! │   │       └── order_service.rs
 //! │   ├── config.rs          # Configuration handling
+//! │   ├── constants.rs       # Global constants
 //! │   ├── error.rs           # Error types
+//! │   ├── presentation/      # Presentation layer
+//! │   │   ├── account.rs     # Account presentation
+//! │   │   ├── market.rs      # Market presentation
+//! │   │   ├── serialization.rs # Serialization utilities
+//! │   │   └── trade.rs       # Trade presentation
 //! │   ├── session/           # Authentication and session
-//! │   │   └── auth.rs        # Authentication handler
+//! │   │   ├── auth.rs        # Authentication handler
+//! │   │   └── interface.rs   # Session interface
+//! │   ├── storage/           # Data persistence
+//! │   │   ├── config.rs      # Database configuration
+//! │   │   └── utils.rs       # Storage utilities
 //! │   ├── transport/         # API communication
-//! │   │   ├── http.rs        # HTTP client
-//! │   │   └── websocket.rs   # WebSocket client
+//! │   │   └── http_client.rs # HTTP client
 //! │   └── utils/             # Utility functions
+//! │       ├── display.rs     # Display utilities
+//! │       ├── finance.rs     # Financial calculations
+//! │       ├── logger.rs      # Logging utilities
+//! │       ├── parsing.rs     # Parsing utilities
+//! │       └── rate_limiter.rs # Rate limiting
 //! ├── examples/              # Example applications
-//! ├── tests/                 # Integration tests
+//! ├── tests/                 # Tests
+//! │   ├── integration/       # Integration tests
+//! │   └── unit/              # Unit tests
 //! └── Makefile              # Development commands
 //! ```
 //!
