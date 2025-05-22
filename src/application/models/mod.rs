@@ -11,3 +11,6 @@ pub mod transaction;
 
 /// Working order data models
 pub mod working_order;
+
+#[cfg(test)]
+mod working_order_tests;

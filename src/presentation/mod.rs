@@ -3,7 +3,7 @@ mod chart;
 mod instrument;
 mod market;
 mod price;
-pub(crate) mod serialization;
+pub mod serialization;
 /// Trade-related presentation module containing data structures for trade updates.
 pub mod trade;
 
