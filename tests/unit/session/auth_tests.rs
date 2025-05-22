@@ -4,43 +4,8 @@ use ig_client::session::auth::IgAuth;
 use ig_client::session::interface::{IgAuthenticator, IgSession};
 use ig_client::storage::config::DatabaseConfig;
 use mockito::{self, Server};
-use once_cell::sync::Lazy;
-use std::env;
-use std::sync::Mutex;
 use tokio_test::block_on;
 
-static ENV_MUTEX: Lazy<Mutex<()>> = Lazy::new(|| Mutex::new(()));
-
-fn with_env_vars<F>(vars: Vec<(&str, &str)>, test: F)
-where
-    F: FnOnce(),
-{
-    let _lock = ENV_MUTEX.lock().unwrap();
-
-    // Save the current environment variables
-    let old_vars: Vec<(String, Option<String>)> = vars
-        .iter()
-        .map(|(name, _)| (name.to_string(), env::var(name).ok()))
-        .collect();
-
-    // Set the environment variables for the test
-    for (name, value) in vars {
-        unsafe {
-            env::set_var(name, value);
-        }
-    }
-
-    // Run the test
-    test();
-
-    // Restore the original environment variables
-    for (name, value) in old_vars {
-        match value {
-            Some(v) => unsafe { env::set_var(name, v) },
-            None => unsafe { env::remove_var(name) },
-        }
-    }
-}
 
 // Helper function to create a test config with mock server URL
 fn create_test_config(server_url: &str) -> Config {
