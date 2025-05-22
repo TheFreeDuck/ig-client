@@ -1,9 +1,10 @@
 mod application;
-mod config;
-mod constants;
-mod error;
 mod presentation;
 mod session;
 mod storage;
 mod transport;
 mod utils;
+
+// Direct test modules
+mod config_tests;
+mod error_tests;

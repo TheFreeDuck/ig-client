@@ -1,8 +1,19 @@
-// Custom serializer/deserializer for optional string to float conversion
+/// Module for handling the conversion between string and optional float values
+///
+/// This module provides serialization and deserialization functions for converting
+/// between `Option<f64>` and string representations used in the IG Markets API.
 pub mod string_as_float_opt {
     use serde::{self, Deserialize, Deserializer, Serializer};
     use serde_json::Value;
 
+    /// Serializes an optional float value to its string representation
+    ///
+    /// # Arguments
+    /// * `value` - The optional float value to serialize
+    /// * `serializer` - The serializer to use
+    ///
+    /// # Returns
+    /// A Result containing the serialized value or an error
     pub fn serialize<S>(value: &Option<f64>, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -13,6 +24,13 @@ pub mod string_as_float_opt {
         }
     }
 
+    /// Deserializes a string representation to an optional float value
+    ///
+    /// # Arguments
+    /// * `deserializer` - The deserializer to use
+    ///
+    /// # Returns
+    /// A Result containing the deserialized optional float value or an error
     pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<f64>, D::Error>
     where
         D: Deserializer<'de>,
@@ -41,10 +59,23 @@ pub mod string_as_float_opt {
     }
 }
 
-// Custom serializer/deserializer for optional string to bool conversion
+/// Module for handling the conversion between string and optional boolean values
+///
+/// This module provides serialization and deserialization functions for converting
+/// between `Option<bool>` and string representations ("0" and "1") used in the IG Markets API.
 pub mod string_as_bool_opt {
     use serde::{self, Deserialize, Deserializer, Serializer};
 
+    /// Serializes an optional boolean value to its string representation
+    ///
+    /// Converts true to "1" and false to "0"
+    ///
+    /// # Arguments
+    /// * `value` - The optional boolean value to serialize
+    /// * `serializer` - The serializer to use
+    ///
+    /// # Returns
+    /// A Result containing the serialized value or an error
     pub fn serialize<S>(value: &Option<bool>, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -58,6 +89,15 @@ pub mod string_as_bool_opt {
         }
     }
 
+    /// Deserializes a string representation to an optional boolean value
+    ///
+    /// Converts "1" to true and "0" to false
+    ///
+    /// # Arguments
+    /// * `deserializer` - The deserializer to use
+    ///
+    /// # Returns
+    /// A Result containing the deserialized optional boolean value or an error
     pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<bool>, D::Error>
     where
         D: Deserializer<'de>,
@@ -83,9 +123,21 @@ pub mod string_as_bool_opt {
     }
 }
 
+/// Module for handling empty strings as None in `Option<String>` fields
+///
+/// This module provides serialization and deserialization functions for converting
+/// between empty strings and None values in `Option<String>` fields.
 pub mod option_string_empty_as_none {
     use serde::{self, Deserialize, Deserializer, Serialize, Serializer};
 
+    /// Serializes an optional string value, treating empty strings as None
+    ///
+    /// # Arguments
+    /// * `value` - The optional string value to serialize
+    /// * `serializer` - The serializer to use
+    ///
+    /// # Returns
+    /// A Result containing the serialized value or an error
     pub fn serialize<S>(value: &Option<String>, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -96,6 +148,13 @@ pub mod option_string_empty_as_none {
         }
     }
 
+    /// Deserializes a value to an optional string, treating empty strings as None
+    ///
+    /// # Arguments
+    /// * `deserializer` - The deserializer to use
+    ///
+    /// # Returns
+    /// A Result containing the deserialized optional string value or an error
     pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
     where
         D: Deserializer<'de>,

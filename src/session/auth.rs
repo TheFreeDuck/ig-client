@@ -12,7 +12,7 @@ use crate::{
 
 /// Authentication handler for IG Markets API
 pub struct IgAuth<'a> {
-    cfg: &'a Config,
+    pub(crate) cfg: &'a Config,
     http: Client,
 }
 

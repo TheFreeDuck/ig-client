@@ -8,8 +8,7 @@
 //! error handling with exponential backoff.
 
 use chrono::{Duration, Utc};
-use ig_client::constants::MAX_CONSECUTIVE_ERRORS;
-use ig_client::utils::tools::apply_backoff;
+use ig_client::constants::{ERROR_COOLDOWN_SECONDS, MAX_CONSECUTIVE_ERRORS};
 use ig_client::{
     application::models::transaction::TransactionList, application::services::AccountService,
     application::services::account_service::AccountServiceImpl, config::Config,
@@ -18,7 +17,23 @@ use ig_client::{
 };
 use std::{sync::Arc, time::Duration as StdDuration};
 use tokio::{signal, time};
-use tracing::{debug, error, info};
+use tracing::{debug, error, info, warn};
+
+/// Apply exponential backoff when too many errors occur
+pub async fn apply_backoff(consecutive_errors: &mut u32) {
+    let backoff_time =
+        ERROR_COOLDOWN_SECONDS * (2_u64.pow(*consecutive_errors - MAX_CONSECUTIVE_ERRORS));
+    let capped_backoff = backoff_time.min(3600); // Cap at 1 hour max
+
+    warn!(
+        "Hit maximum consecutive errors ({}). Entering cooldown period of {} seconds",
+        MAX_CONSECUTIVE_ERRORS, capped_backoff
+    );
+
+    // Pause for cooldown period
+    time::sleep(std::time::Duration::from_secs(capped_backoff)).await;
+    *consecutive_errors = 0; // Reset after cooldown
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
