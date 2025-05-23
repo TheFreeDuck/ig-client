@@ -31,38 +31,54 @@ pub fn create_test_auth(config: &Config) -> IgAuth {
 pub fn login_with_account_switch() -> IgSession {
     setup_logger();
     let config = create_test_config();
-    let auth = create_test_auth(&config);
+    let _auth = create_test_auth(&config);
 
     // Create a runtime for the async operations
     let rt = Runtime::new().expect("Failed to create runtime");
 
     // Login and get a session
     rt.block_on(async {
-        let session = auth.login().await.expect("Failed to login");
-
-        // Check if we need to switch accounts
-        if !config.credentials.account_id.is_empty()
-            && session.account_id != config.credentials.account_id
-        {
-            info!("Switching to account: {}", config.credentials.account_id);
-            match auth
-                .switch_account(&session, &config.credentials.account_id, Some(true))
-                .await
-            {
-                Ok(new_session) => {
-                    info!("Switched to account: {}", new_session.account_id);
-                    new_session
-                }
-                Err(e) => {
-                    info!(
-                        "Could not switch to account {}: {:?}. Continuing with current account.",
-                        config.credentials.account_id, e
-                    );
-                    session
-                }
-            }
-        } else {
-            session
-        }
+        login_with_account_switch_async().await.expect("Failed to login")
     })
+}
+
+/// Async version of login_with_account_switch for use in async tests
+/// Returns a Result with the session or an error message
+pub async fn login_with_account_switch_async() -> Result<IgSession, String> {
+    setup_logger();
+    let config = create_test_config();
+    let auth = create_test_auth(&config);
+
+    // Login and get a session
+    let session = match auth.login().await {
+        Ok(session) => session,
+        Err(e) => {
+            return Err(format!("Failed to login: {:?}", e));
+        }
+    };
+
+    // Check if we need to switch accounts
+    if !config.credentials.account_id.is_empty()
+        && session.account_id != config.credentials.account_id
+    {
+        info!("Switching to account: {}", config.credentials.account_id);
+        match auth
+            .switch_account(&session, &config.credentials.account_id, Some(true))
+            .await
+        {
+            Ok(new_session) => {
+                info!("Switched to account: {}", new_session.account_id);
+                Ok(new_session)
+            }
+            Err(e) => {
+                info!(
+                    "Could not switch to account {}: {:?}. Continuing with current account.",
+                    config.credentials.account_id, e
+                );
+                Ok(session)
+            }
+        }
+    } else {
+        Ok(session)
+    }
 }

@@ -41,6 +41,7 @@ impl RateLimitType {
 }
 
 /// Singleton rate limiter for API calls
+#[derive(Debug)]
 pub struct RateLimiter {
     last_call: AtomicU64,
     limit_type: RateLimitType,
@@ -53,6 +54,11 @@ impl RateLimiter {
             last_call: AtomicU64::new(0),
             limit_type,
         }
+    }
+    
+    /// Returns the rate limit type for this limiter
+    pub fn limit_type(&self) -> RateLimitType {
+        self.limit_type
     }
 
     /// Waits if necessary to respect the rate limit

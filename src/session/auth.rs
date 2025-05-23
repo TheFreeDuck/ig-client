@@ -2,12 +2,13 @@
 
 use async_trait::async_trait;
 use reqwest::{Client, StatusCode};
-
+use tracing::error;
 use crate::{
     config::Config,
     error::AuthError,
     session::interface::{IgAuthenticator, IgSession},
     session::response::{AccountSwitchRequest, AccountSwitchResponse, SessionResp},
+    utils::rate_limiter::RateLimitType,
 };
 
 /// Authentication handler for IG Markets API
@@ -123,7 +124,7 @@ impl IgAuthenticator for IgAuth<'_> {
                         cst_str.to_owned()
                     }
                     None => {
-                        tracing::error!("CST header not found in response");
+                        error!("CST header not found in response");
                         return Err(AuthError::Unexpected(StatusCode::OK));
                     }
                 };
@@ -140,46 +141,52 @@ impl IgAuthenticator for IgAuth<'_> {
                         token_str.to_owned()
                     }
                     None => {
-                        tracing::error!("X-SECURITY-TOKEN header not found in response");
+                        error!("X-SECURITY-TOKEN header not found in response");
                         return Err(AuthError::Unexpected(StatusCode::OK));
                     }
                 };
 
-                // Parse the response body to get the account ID
+                // Extract account ID from the response
                 let json: SessionResp = resp.json().await?;
-                tracing::info!("Account ID: {}", json.account_id);
+                let account_id = json.account_id.clone();
 
-                Ok(IgSession {
+                // Create a session with a rate limiter for non-trading account requests
+                Ok(IgSession::with_rate_limiter(
                     cst,
                     token,
-                    account_id: json.account_id,
-                })
+                    account_id,
+                    RateLimitType::NonTradingAccount,
+                ))
             }
             StatusCode::UNAUTHORIZED => {
-                tracing::error!("Authentication failed with UNAUTHORIZED");
+                error!("Authentication failed with UNAUTHORIZED");
                 let body = resp
                     .text()
                     .await
                     .unwrap_or_else(|_| "Could not read response body".to_string());
-                tracing::error!("Response body: {}", body);
+                error!("Response body: {}", body);
                 Err(AuthError::BadCredentials)
             }
             StatusCode::FORBIDDEN => {
-                tracing::error!("Authentication failed with FORBIDDEN");
+                error!("Authentication failed with FORBIDDEN");
                 let body = resp
                     .text()
                     .await
                     .unwrap_or_else(|_| "Could not read response body".to_string());
-                tracing::error!("Response body: {}", body);
+                if body.contains("exceeded-api-key-allowance") {
+                    error!("Rate Limit Exceeded: {}", &body);
+                    return Err(AuthError::RateLimitExceeded);
+                }
+                error!("Response body: {}", body);
                 Err(AuthError::BadCredentials)
             }
             other => {
-                tracing::error!("Authentication failed with unexpected status: {}", other);
+                error!("Authentication failed with unexpected status: {}", other);
                 let body = resp
                     .text()
                     .await
                     .unwrap_or_else(|_| "Could not read response body".to_string());
-                tracing::error!("Response body: {}", body);
+                error!("Response body: {}", body);
                 Err(AuthError::Unexpected(other))
             }
         }
@@ -233,7 +240,7 @@ impl IgAuthenticator for IgAuth<'_> {
                         cst_str.to_owned()
                     }
                     None => {
-                        tracing::error!("CST header not found in refresh response");
+                        error!("CST header not found in refresh response");
                         return Err(AuthError::Unexpected(StatusCode::OK));
                     }
                 };
@@ -250,7 +257,7 @@ impl IgAuthenticator for IgAuth<'_> {
                         token_str.to_owned()
                     }
                     None => {
-                        tracing::error!("X-SECURITY-TOKEN header not found in refresh response");
+                        error!("X-SECURITY-TOKEN header not found in refresh response");
                         return Err(AuthError::Unexpected(StatusCode::OK));
                     }
                 };
@@ -259,19 +266,21 @@ impl IgAuthenticator for IgAuth<'_> {
                 let json: SessionResp = resp.json().await?;
                 tracing::info!("Refreshed session for Account ID: {}", json.account_id);
 
-                Ok(IgSession {
+                // Return a new session with the updated tokens
+                Ok(IgSession::with_rate_limiter(
                     cst,
                     token,
-                    account_id: json.account_id,
-                })
+                    json.account_id,
+                    sess.rate_limiter.as_ref().map(|rl| rl.limit_type()).unwrap_or(crate::utils::rate_limiter::RateLimitType::NonTradingAccount)
+                ))
             }
             other => {
-                tracing::error!("Session refresh failed with status: {}", other);
+                error!("Session refresh failed with status: {}", other);
                 let body = resp
                     .text()
                     .await
                     .unwrap_or_else(|_| "Could not read response body".to_string());
-                tracing::error!("Response body: {}", body);
+                error!("Response body: {}", body);
                 Err(AuthError::Unexpected(other))
             }
         }
@@ -286,12 +295,17 @@ impl IgAuthenticator for IgAuth<'_> {
         // Check if the account to switch to is the same as the current one
         if session.account_id == account_id {
             tracing::info!("Already on account ID: {}. No need to switch.", account_id);
-            // Return a copy of the current session
-            return Ok(IgSession {
-                cst: session.cst.clone(),
-                token: session.token.clone(),
-                account_id: session.account_id.clone(),
-            });
+            // Return a copy of the current session with the same rate limiter
+            let rate_limiter_type = session.rate_limiter.as_ref()
+                .map(|rl| rl.limit_type())
+                .unwrap_or(RateLimitType::NonTradingAccount);
+            
+            return Ok(IgSession::with_rate_limiter(
+                session.cst.clone(),
+                session.token.clone(),
+                session.account_id.clone(),
+                rate_limiter_type,
+            ));
         }
 
         let url = self.rest_url("session");
@@ -346,21 +360,26 @@ impl IgAuthenticator for IgAuth<'_> {
                 tracing::info!("Account switch successful");
                 tracing::debug!("Account switch response: {:?}", switch_response);
 
-                // Return a new session with the updated account ID
+                // Return a new session with the updated account ID and the same rate limiter type
                 // The CST and token remain the same
-                Ok(IgSession {
-                    cst: session.cst.clone(),
-                    token: session.token.clone(),
-                    account_id: account_id.to_string(),
-                })
+                let rate_limiter_type = session.rate_limiter.as_ref()
+                    .map(|rl| rl.limit_type())
+                    .unwrap_or(RateLimitType::NonTradingAccount);
+                
+                Ok(IgSession::with_rate_limiter(
+                    session.cst.clone(),
+                    session.token.clone(),
+                    account_id.to_string(),
+                    rate_limiter_type,
+                ))
             }
             other => {
-                tracing::error!("Account switch failed with status: {}", other);
+                error!("Account switch failed with status: {}", other);
                 let body = resp
                     .text()
                     .await
                     .unwrap_or_else(|_| "Could not read response body".to_string());
-                tracing::error!("Response body: {}", body);
+                error!("Response body: {}", body);
 
                 // Si el error es 401 Unauthorized, podría ser que el ID de cuenta no sea válido
                 // o no pertenezca al usuario autenticado

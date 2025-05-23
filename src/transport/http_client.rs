@@ -2,7 +2,9 @@ use async_trait::async_trait;
 use reqwest::{Client, Method, RequestBuilder, Response, StatusCode};
 use serde::{Serialize, de::DeserializeOwned};
 use std::sync::Arc;
-use tracing::{debug, error, info};
+use tracing::{debug, error, info, warn};
+
+use crate::utils::rate_limiter::app_non_trading_limiter;
 
 use crate::{config::Config, error::AppError, session::interface::IgSession};
 
@@ -121,6 +123,18 @@ impl IgHttpClientImpl {
                 error!("Rate limit exceeded for {}", url);
                 Err(AppError::RateLimitExceeded)
             }
+            StatusCode::FORBIDDEN => {
+                let error_text = response
+                    .text()
+                    .await
+                    .unwrap_or_else(|_| "Unknown error".to_string());
+                if error_text.contains("exceeded-api-key-allowance") {
+                    error!("Rate Limit Exceeded to {}: {}", url, error_text);
+                    return Err(AppError::RateLimitExceeded);
+                }
+                error!("Forbidden request to {}: {}", url, error_text);
+                Err(AppError::Unauthorized)
+            }
             _ => {
                 let error_text = response
                     .text()
@@ -151,7 +165,11 @@ impl IgHttpClient for IgHttpClientImpl {
         T: Serialize + Send + Sync + 'static,
     {
         let url = self.build_url(path);
-        debug!("Making {} request to {}", method, url);
+        let method_str = method.as_str().to_string(); // Store method as string for logging
+        debug!("Making {} request to {}", method_str, url);
+
+        // Respect rate limits before making the request
+        session.respect_rate_limit().await?;
 
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);
@@ -162,7 +180,18 @@ impl IgHttpClient for IgHttpClientImpl {
         }
 
         let response = builder.send().await?;
-        self.process_response::<R>(response).await
+        let result = self.process_response::<R>(response).await;
+        
+        // If we get a rate limit error, we'll return it directly
+        // The caller can implement retry logic if needed
+        match &result {
+            Err(AppError::RateLimitExceeded) => {
+                error!("Rate limit exceeded for {} request to {}", method_str, url);
+            },
+            _ => {}
+        }
+        
+        result
     }
 
     async fn request_no_auth<T, R>(
@@ -177,7 +206,12 @@ impl IgHttpClient for IgHttpClientImpl {
         T: Serialize + Send + Sync + 'static,
     {
         let url = self.build_url(path);
-        info!("Making unauthenticated {} request to {}", method, url);
+        let method_str = method.as_str().to_string(); // Store method as string for logging
+        info!("Making unauthenticated {} request to {}", method_str, url);
+
+        // Use the global app rate limiter for unauthenticated requests
+        let limiter = app_non_trading_limiter();
+        limiter.wait().await;
 
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);
@@ -187,6 +221,17 @@ impl IgHttpClient for IgHttpClientImpl {
         }
 
         let response = builder.send().await?;
-        self.process_response::<R>(response).await
+        let result = self.process_response::<R>(response).await;
+        
+        // If we get a rate limit error, we'll return it directly
+        // The caller can implement retry logic if needed
+        match &result {
+            Err(AppError::RateLimitExceeded) => {
+                warn!("Rate limit exceeded for unauthenticated {} request to {}", method_str, url);
+            },
+            _ => {}
+        }
+        
+        result
     }
 }

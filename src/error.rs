@@ -57,6 +57,8 @@ pub enum AuthError {
     BadCredentials,
     /// Unexpected HTTP status code
     Unexpected(StatusCode),
+    /// Rate limit exceeded error
+    RateLimitExceeded
 }
 
 impl Display for AuthError {
@@ -68,6 +70,7 @@ impl Display for AuthError {
             AuthError::Other(msg) => write!(f, "other error: {msg}"),
             AuthError::BadCredentials => write!(f, "bad credentials"),
             AuthError::Unexpected(s) => write!(f, "unexpected http status: {s}"),
+            AuthError::RateLimitExceeded => write!(f, "rate limit exceeded"),
         }
     }
 }

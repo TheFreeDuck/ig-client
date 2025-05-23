@@ -38,11 +38,11 @@ fn create_test_config(base_url: &str) -> Arc<Config> {
 }
 
 fn create_test_session() -> IgSession {
-    IgSession {
-        cst: "test_cst".to_string(),
-        token: "test_xst".to_string(),
-        account_id: "test_account".to_string(),
-    }
+    IgSession::new(
+        "test_cst".to_string(),
+        "test_xst".to_string(),
+        "test_account".to_string()
+    )
 }
 
 #[derive(Debug, Serialize, Deserialize)]

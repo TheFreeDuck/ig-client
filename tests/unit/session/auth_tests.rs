@@ -44,11 +44,11 @@ fn test_ig_auth_new() {
 
 #[test]
 fn test_ig_session_new() {
-    let session = IgSession {
-        cst: "CST123".to_string(),
-        token: "XST456".to_string(),
-        account_id: "ACC789".to_string(),
-    };
+    let session = IgSession::new(
+        "CST123".to_string(),
+        "XST456".to_string(),
+        "ACC789".to_string()
+    );
 
     assert_eq!(session.cst, "CST123");
     assert_eq!(session.token, "XST456");
@@ -119,11 +119,11 @@ fn test_switch_account_success() {
     let mut server = Server::new();
 
     // Create a test session
-    let session = IgSession {
-        cst: "test_cst".to_string(),
-        token: "test_token".to_string(),
-        account_id: "A12345".to_string(),
-    };
+    let session = IgSession::new(
+        "test_cst".to_string(),
+        "test_token".to_string(),
+        "A12345".to_string()
+    );
 
     // Mock the switch account endpoint
     let mock = server.mock("PUT", "/session")
@@ -151,11 +151,11 @@ fn test_refresh_success() {
     let mut server = Server::new();
 
     // Create a test session
-    let session = IgSession {
-        cst: "test_cst".to_string(),
-        token: "test_token".to_string(),
-        account_id: "A12345".to_string(),
-    };
+    let session = IgSession::new(
+        "test_cst".to_string(),
+        "test_token".to_string(),
+        "A12345".to_string()
+    );
 
     // Mock the refresh endpoint
     let mock = server

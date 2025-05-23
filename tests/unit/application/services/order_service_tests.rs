@@ -113,11 +113,11 @@ fn test_update_position_request() {
 #[test]
 fn test_order_service_config() {
     // Create a mock session
-    let session = IgSession {
-        cst: "CST123".to_string(),
-        token: "XST123".to_string(),
-        account_id: "ACC123".to_string(),
-    };
+    let session = IgSession::new(
+        "CST123".to_string(),
+        "XST123".to_string(),
+        "ACC123".to_string()
+    );
 
     // Verify session was created successfully
     assert_eq!(session.cst, "CST123");

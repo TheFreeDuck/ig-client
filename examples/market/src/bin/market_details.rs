@@ -186,13 +186,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                         })
                     })
                     .collect::<Vec<_>>();
-
-                // let json = serde_json::to_string_pretty(&json_data)
-                //     .map_err(|e| Box::new(e) as Box<dyn Error>)?;
-                // let filename = format!("Data/market_details_batch_{}.json", processed_count / BATCH_SIZE);
-                // std::fs::write(&filename, &json)
-                //     .map_err(|e| Box::new(e) as Box<dyn Error>)?;
-                // info!("Intermediate results saved to '{}'", filename);
+                
             }
         }
     }

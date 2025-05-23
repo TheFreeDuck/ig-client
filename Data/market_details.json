@@ -1,14 +1,14 @@
 [
   {
-    "bid": 1525.3,
-    "epic": "DO.D.OTCDDAX.179.IP",
+    "bid": 1451.8,
+    "epic": "DO.D.OTCDDAX.177.IP",
     "expiry": "22-MAY-25",
     "high": 1536.2,
     "instrument_name": "Daily Germany 40 22500 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 1424.5,
-    "offer": 1526.7,
-    "update_time": "07:06:34"
+    "low": 1338.3,
+    "offer": 1453.2,
+    "update_time": "14:27:00"
   },
   {
     "bid": 0.0,
@@ -22,19 +22,19 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 1425.3,
+    "bid": 1351.8,
     "epic": "DO.D.OTCDDAX.184.IP",
     "expiry": "22-MAY-25",
     "high": 1436.2,
     "instrument_name": "Daily Germany 40 22600 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 1324.5,
-    "offer": 1426.7,
-    "update_time": "07:06:34"
+    "low": 1238.3,
+    "offer": 1353.2,
+    "update_time": "14:27:00"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.191.IP",
+    "epic": "DO.D.OTCDDAX.192.IP",
     "expiry": "22-MAY-25",
     "high": 5.0,
     "instrument_name": "Daily Germany 40 22600 PUT",
@@ -44,15 +44,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 1325.3,
+    "bid": 1251.8,
     "epic": "DO.D.OTCDDAX.196.IP",
     "expiry": "22-MAY-25",
     "high": 1336.2,
     "instrument_name": "Daily Germany 40 22700 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 1224.5,
-    "offer": 1326.7,
-    "update_time": "07:06:34"
+    "low": 1138.3,
+    "offer": 1253.2,
+    "update_time": "14:27:00"
   },
   {
     "bid": 0.0,
@@ -66,15 +66,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 1225.3,
-    "epic": "DO.D.OTCDDAX.192.IP",
+    "bid": 1151.8,
+    "epic": "DO.D.OTCDDAX.191.IP",
     "expiry": "22-MAY-25",
     "high": 1236.2,
     "instrument_name": "Daily Germany 40 22800 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 1124.5,
-    "offer": 1226.7,
-    "update_time": "07:06:34"
+    "low": 1038.3,
+    "offer": 1153.2,
+    "update_time": "14:27:00"
   },
   {
     "bid": 0.0,
@@ -88,15 +88,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 1125.3,
+    "bid": 1051.8,
     "epic": "DO.D.OTCDDAX.186.IP",
     "expiry": "22-MAY-25",
     "high": 1136.2,
     "instrument_name": "Daily Germany 40 22900 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 1024.5,
-    "offer": 1126.7,
-    "update_time": "07:06:34"
+    "low": 938.3,
+    "offer": 1053.2,
+    "update_time": "14:27:00"
   },
   {
     "bid": 0.0,
@@ -110,15 +110,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 1025.3,
+    "bid": 951.8,
     "epic": "DO.D.OTCDDAX.190.IP",
     "expiry": "22-MAY-25",
     "high": 1036.2,
     "instrument_name": "Daily Germany 40 23000 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 924.5,
-    "offer": 1026.7,
-    "update_time": "07:06:34"
+    "low": 838.3,
+    "offer": 953.2,
+    "update_time": "14:27:00"
   },
   {
     "bid": 0.0,
@@ -132,15 +132,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 925.3,
+    "bid": 851.8,
     "epic": "DO.D.OTCDDAX.195.IP",
     "expiry": "22-MAY-25",
     "high": 936.2,
     "instrument_name": "Daily Germany 40 23100 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 824.5,
-    "offer": 926.7,
-    "update_time": "07:06:34"
+    "low": 738.3,
+    "offer": 853.2,
+    "update_time": "14:27:00"
   },
   {
     "bid": 0.0,
@@ -154,19 +154,19 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 825.3,
+    "bid": 751.8,
     "epic": "DO.D.OTCDDAX.183.IP",
     "expiry": "22-MAY-25",
     "high": 836.2,
     "instrument_name": "Daily Germany 40 23200 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 724.6,
-    "offer": 826.7,
-    "update_time": "07:06:34"
+    "low": 638.3,
+    "offer": 753.2,
+    "update_time": "14:27:00"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.181.IP",
+    "epic": "DO.D.OTCDDAX.182.IP",
     "expiry": "22-MAY-25",
     "high": 5.0,
     "instrument_name": "Daily Germany 40 23200 PUT",
@@ -176,19 +176,19 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 725.3,
-    "epic": "DO.D.OTCDDAX.180.IP",
+    "bid": 651.8,
+    "epic": "DO.D.OTCDDAX.178.IP",
     "expiry": "22-MAY-25",
     "high": 736.3,
     "instrument_name": "Daily Germany 40 23300 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 624.7,
-    "offer": 726.8,
-    "update_time": "07:06:34"
+    "low": 538.3,
+    "offer": 653.2,
+    "update_time": "14:27:00"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.177.IP",
+    "epic": "DO.D.OTCDDAX.180.IP",
     "expiry": "22-MAY-25",
     "high": 5.0,
     "instrument_name": "Daily Germany 40 23300 PUT",
@@ -198,19 +198,19 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 700.4,
-    "epic": "DO.D.OTCDDAX.178.IP",
+    "bid": 626.8,
+    "epic": "DO.D.OTCDDAX.179.IP",
     "expiry": "22-MAY-25",
     "high": 711.3,
     "instrument_name": "Daily Germany 40 23325 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 599.8,
-    "offer": 701.8,
-    "update_time": "07:06:34"
+    "low": 513.3,
+    "offer": 628.2,
+    "update_time": "14:27:00"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.182.IP",
+    "epic": "DO.D.OTCDDAX.181.IP",
     "expiry": "22-MAY-25",
     "high": 5.0,
     "instrument_name": "Daily Germany 40 23325 PUT",
@@ -220,15 +220,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 675.4,
+    "bid": 601.8,
     "epic": "DO.D.OTCDDAX.176.IP",
     "expiry": "22-MAY-25",
     "high": 686.3,
     "instrument_name": "Daily Germany 40 23350 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 574.9,
-    "offer": 676.8,
-    "update_time": "07:06:34"
+    "low": 488.3,
+    "offer": 603.2,
+    "update_time": "14:27:00"
   },
   {
     "bid": 0.0,
@@ -242,15 +242,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 651.9,
+    "bid": 576.8,
     "epic": "DO.D.OTCDDAX.155.IP",
     "expiry": "22-MAY-25",
     "high": 661.3,
     "instrument_name": "Daily Germany 40 23375 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 550.0,
-    "offer": 653.3,
-    "update_time": "07:06:30"
+    "low": 463.3,
+    "offer": 578.2,
+    "update_time": "14:26:57"
   },
   {
     "bid": 0.0,
@@ -264,15 +264,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 626.9,
+    "bid": 551.8,
     "epic": "DO.D.OTCDDAX.153.IP",
     "expiry": "22-MAY-25",
     "high": 636.4,
     "instrument_name": "Daily Germany 40 23400 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 525.1,
-    "offer": 628.4,
-    "update_time": "07:06:30"
+    "low": 438.3,
+    "offer": 553.2,
+    "update_time": "14:26:57"
   },
   {
     "bid": 0.0,
@@ -286,15 +286,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 602.0,
+    "bid": 526.8,
     "epic": "DO.D.OTCDDAX.161.IP",
     "expiry": "22-MAY-25",
     "high": 611.4,
     "instrument_name": "Daily Germany 40 23425 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 500.3,
-    "offer": 603.4,
-    "update_time": "07:06:30"
+    "low": 413.3,
+    "offer": 528.2,
+    "update_time": "14:26:57"
   },
   {
     "bid": 0.0,
@@ -305,40 +305,40 @@
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
     "offer": 4.0,
-    "update_time": "07:00:01"
+    "update_time": "08:14:51"
   },
   {
-    "bid": 577.1,
+    "bid": 501.8,
     "epic": "DO.D.OTCDDAX.172.IP",
     "expiry": "22-MAY-25",
     "high": 586.5,
     "instrument_name": "Daily Germany 40 23450 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 475.5,
-    "offer": 578.5,
-    "update_time": "07:06:30"
+    "low": 388.4,
+    "offer": 503.2,
+    "update_time": "14:26:57"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.160.IP",
+    "epic": "DO.D.OTCDDAX.159.IP",
     "expiry": "22-MAY-25",
     "high": 5.1,
     "instrument_name": "Daily Germany 40 23450 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
     "offer": 4.0,
-    "update_time": "07:00:47"
+    "update_time": "08:15:48"
   },
   {
-    "bid": 552.1,
-    "epic": "DO.D.OTCDDAX.174.IP",
+    "bid": 476.8,
+    "epic": "DO.D.OTCDDAX.173.IP",
     "expiry": "22-MAY-25",
     "high": 561.6,
     "instrument_name": "Daily Germany 40 23475 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 450.8,
-    "offer": 553.6,
-    "update_time": "07:06:30"
+    "low": 363.4,
+    "offer": 478.2,
+    "update_time": "14:26:57"
   },
   {
     "bid": 0.0,
@@ -349,18 +349,18 @@
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
     "offer": 4.0,
-    "update_time": "07:03:07"
+    "update_time": "08:22:08"
   },
   {
-    "bid": 527.3,
+    "bid": 451.8,
     "epic": "DO.D.OTCDDAX.170.IP",
     "expiry": "22-MAY-25",
     "high": 536.7,
     "instrument_name": "Daily Germany 40 23500 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 426.2,
-    "offer": 528.8,
-    "update_time": "07:06:30"
+    "low": 338.5,
+    "offer": 453.2,
+    "update_time": "14:26:57"
   },
   {
     "bid": 0.0,
@@ -370,19 +370,19 @@
     "instrument_name": "Daily Germany 40 23500 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
-    "offer": 4.1,
-    "update_time": "07:00:01"
+    "offer": 4.0,
+    "update_time": "10:10:47"
   },
   {
-    "bid": 502.4,
+    "bid": 426.8,
     "epic": "DO.D.OTCDDAX.171.IP",
     "expiry": "22-MAY-25",
     "high": 511.9,
     "instrument_name": "Daily Germany 40 23525 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 401.7,
-    "offer": 504.0,
-    "update_time": "07:06:30"
+    "low": 313.6,
+    "offer": 428.2,
+    "update_time": "14:26:57"
   },
   {
     "bid": 0.0,
@@ -392,41 +392,41 @@
     "instrument_name": "Daily Germany 40 23525 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
-    "offer": 4.1,
-    "update_time": "07:00:01"
+    "offer": 4.0,
+    "update_time": "12:18:32"
   },
   {
-    "bid": 477.6,
+    "bid": 401.8,
     "epic": "DO.D.OTCDDAX.169.IP",
     "expiry": "22-MAY-25",
     "high": 487.1,
     "instrument_name": "Daily Germany 40 23550 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 377.4,
-    "offer": 479.2,
-    "update_time": "07:06:30"
+    "low": 288.8,
+    "offer": 403.2,
+    "update_time": "14:26:57"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.159.IP",
+    "epic": "DO.D.OTCDDAX.160.IP",
     "expiry": "22-MAY-25",
     "high": 6.0,
     "instrument_name": "Daily Germany 40 23550 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
-    "offer": 4.1,
-    "update_time": "07:00:01"
+    "offer": 4.0,
+    "update_time": "12:32:33"
   },
   {
-    "bid": 452.9,
-    "epic": "DO.D.OTCDDAX.173.IP",
+    "bid": 376.8,
+    "epic": "DO.D.OTCDDAX.174.IP",
     "expiry": "22-MAY-25",
     "high": 462.4,
     "instrument_name": "Daily Germany 40 23575 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 353.2,
-    "offer": 454.6,
-    "update_time": "07:06:30"
+    "low": 264.1,
+    "offer": 378.2,
+    "update_time": "14:26:57"
   },
   {
     "bid": 0.0,
@@ -436,19 +436,19 @@
     "instrument_name": "Daily Germany 40 23575 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
-    "offer": 4.1,
-    "update_time": "07:02:55"
+    "offer": 4.0,
+    "update_time": "12:37:22"
   },
   {
-    "bid": 428.2,
+    "bid": 351.8,
     "epic": "DO.D.OTCDDAX.167.IP",
     "expiry": "22-MAY-25",
     "high": 437.8,
     "instrument_name": "Daily Germany 40 23600 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 329.2,
-    "offer": 430.0,
-    "update_time": "07:06:30"
+    "low": 239.5,
+    "offer": 353.2,
+    "update_time": "14:26:57"
   },
   {
     "bid": 0.0,
@@ -458,8 +458,8 @@
     "instrument_name": "Daily Germany 40 23600 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
-    "offer": 4.2,
-    "update_time": "07:06:22"
+    "offer": 4.0,
+    "update_time": "12:46:39"
   },
   {
     "bid": 0.0,
@@ -469,1163 +469,1163 @@
     "instrument_name": "Daily Germany 40 23624 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
-    "offer": 4.2,
-    "update_time": "07:05:00"
+    "offer": 4.0,
+    "update_time": "12:50:46"
   },
   {
-    "bid": 403.6,
+    "bid": 326.8,
     "epic": "DO.D.OTCDDAX.166.IP",
     "expiry": "22-MAY-25",
     "high": 413.3,
     "instrument_name": "Daily Germany 40 23625 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 305.5,
-    "offer": 405.5,
-    "update_time": "07:06:30"
+    "low": 215.3,
+    "offer": 328.2,
+    "update_time": "14:26:57"
   },
   {
-    "bid": 379.2,
+    "bid": 301.8,
     "epic": "DO.D.OTCDDAX.164.IP",
     "expiry": "22-MAY-25",
     "high": 389.0,
     "instrument_name": "Daily Germany 40 23650 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 282.1,
-    "offer": 381.2,
-    "update_time": "07:06:30"
+    "low": 191.3,
+    "offer": 303.2,
+    "update_time": "14:26:57"
   },
   {
-    "bid": 0.6,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.152.IP",
     "expiry": "22-MAY-25",
-    "high": 10.9,
+    "high": 10.8,
     "instrument_name": "Daily Germany 40 23650 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 0.4,
-    "offer": 4.8,
-    "update_time": "07:06:30"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "13:51:58"
   },
   {
-    "bid": 354.4,
+    "bid": 276.8,
     "epic": "DO.D.OTCDDAX.140.IP",
     "expiry": "22-MAY-25",
     "high": 364.8,
     "instrument_name": "Daily Germany 40 23675 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 259.1,
-    "offer": 356.6,
-    "update_time": "07:06:28"
+    "low": 167.9,
+    "offer": 278.2,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 1.4,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.129.IP",
     "expiry": "22-MAY-25",
-    "high": 13.0,
+    "high": 12.9,
     "instrument_name": "Daily Germany 40 23675 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 1.1,
-    "offer": 5.7,
-    "update_time": "07:06:25"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "13:58:49"
   },
   {
-    "bid": 330.4,
+    "bid": 251.8,
     "epic": "DO.D.OTCDDAX.141.IP",
     "expiry": "22-MAY-25",
     "high": 340.8,
     "instrument_name": "Daily Germany 40 23700 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 236.6,
-    "offer": 332.7,
-    "update_time": "07:06:28"
+    "low": 145.2,
+    "offer": 253.2,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 2.3,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.128.IP",
     "expiry": "22-MAY-25",
-    "high": 15.6,
+    "high": 15.5,
     "instrument_name": "Daily Germany 40 23700 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 2.0,
-    "offer": 6.7,
-    "update_time": "07:06:28"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "14:03:15"
   },
   {
-    "bid": 306.5,
+    "bid": 226.8,
     "epic": "DO.D.OTCDDAX.143.IP",
     "expiry": "22-MAY-25",
     "high": 317.1,
     "instrument_name": "Daily Germany 40 23725 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 214.6,
-    "offer": 309.1,
-    "update_time": "07:06:28"
+    "low": 123.5,
+    "offer": 228.3,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 3.6,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.130.IP",
     "expiry": "22-MAY-25",
-    "high": 18.7,
+    "high": 18.6,
     "instrument_name": "Daily Germany 40 23725 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 3.1,
-    "offer": 8.1,
-    "update_time": "07:06:27"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "14:06:41"
   },
   {
-    "bid": 283.0,
+    "bid": 201.9,
     "epic": "DO.D.OTCDDAX.144.IP",
     "expiry": "22-MAY-25",
     "high": 293.7,
     "instrument_name": "Daily Germany 40 23750 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 193.2,
-    "offer": 285.8,
-    "update_time": "07:06:28"
+    "low": 102.9,
+    "offer": 203.3,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 5.1,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.131.IP",
     "expiry": "22-MAY-25",
     "high": 22.4,
     "instrument_name": "Daily Germany 40 23750 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 4.5,
-    "offer": 9.7,
-    "update_time": "07:06:27"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "14:18:44"
   },
   {
-    "bid": 259.9,
+    "bid": 177.0,
     "epic": "DO.D.OTCDDAX.134.IP",
     "expiry": "22-MAY-25",
     "high": 270.7,
     "instrument_name": "Daily Germany 40 23775 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 172.5,
-    "offer": 262.9,
-    "update_time": "07:06:28"
+    "low": 83.9,
+    "offer": 178.5,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 7.0,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.146.IP",
     "expiry": "22-MAY-25",
     "high": 26.9,
     "instrument_name": "Daily Germany 40 23775 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 6.3,
-    "offer": 11.7,
-    "update_time": "07:06:28"
+    "low": 0.0,
+    "offer": 4.1,
+    "update_time": "14:09:11"
   },
   {
-    "bid": 237.2,
+    "bid": 152.2,
     "epic": "DO.D.OTCDDAX.132.IP",
     "expiry": "22-MAY-25",
     "high": 248.1,
     "instrument_name": "Daily Germany 40 23800 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 152.7,
-    "offer": 240.5,
-    "update_time": "07:06:28"
+    "low": 66.6,
+    "offer": 154.0,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 9.4,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.145.IP",
     "expiry": "22-MAY-25",
-    "high": 32.3,
+    "high": 33.4,
     "instrument_name": "Daily Germany 40 23800 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 8.6,
-    "offer": 14.3,
-    "update_time": "07:06:28"
+    "low": 0.0,
+    "offer": 4.2,
+    "update_time": "14:26:25"
   },
   {
-    "bid": 215.0,
+    "bid": 127.7,
     "epic": "DO.D.OTCDDAX.133.IP",
     "expiry": "22-MAY-25",
     "high": 226.1,
     "instrument_name": "Daily Germany 40 23825 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 133.8,
-    "offer": 218.7,
-    "update_time": "07:06:28"
+    "low": 51.3,
+    "offer": 129.9,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 12.3,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.147.IP",
     "expiry": "22-MAY-25",
-    "high": 38.5,
+    "high": 43.3,
     "instrument_name": "Daily Germany 40 23825 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 11.3,
-    "offer": 17.3,
-    "update_time": "07:06:28"
+    "low": 0.0,
+    "offer": 4.3,
+    "update_time": "14:24:48"
   },
   {
-    "bid": 193.4,
+    "bid": 103.9,
     "epic": "DO.D.OTCDDAX.135.IP",
     "expiry": "22-MAY-25",
     "high": 204.7,
     "instrument_name": "Daily Germany 40 23850 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 116.0,
-    "offer": 197.5,
-    "update_time": "07:06:28"
+    "low": 38.3,
+    "offer": 106.7,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 15.9,
+    "bid": 0.5,
     "epic": "DO.D.OTCDDAX.149.IP",
     "expiry": "22-MAY-25",
-    "high": 45.8,
+    "high": 55.3,
     "instrument_name": "Daily Germany 40 23850 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 14.6,
-    "offer": 21.1,
-    "update_time": "07:06:28"
+    "low": 0.1,
+    "offer": 5.1,
+    "update_time": "14:26:51"
   },
   {
-    "bid": 172.6,
+    "bid": 81.1,
     "epic": "DO.D.OTCDDAX.137.IP",
     "expiry": "22-MAY-25",
     "high": 184.0,
     "instrument_name": "Daily Germany 40 23875 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 99.3,
-    "offer": 177.1,
-    "update_time": "07:06:28"
+    "low": 27.7,
+    "offer": 84.8,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 20.2,
+    "bid": 2.9,
     "epic": "DO.D.OTCDDAX.148.IP",
     "expiry": "22-MAY-25",
-    "high": 54.2,
+    "high": 69.5,
     "instrument_name": "Daily Germany 40 23875 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 18.7,
-    "offer": 25.5,
-    "update_time": "07:06:28"
+    "low": 2.0,
+    "offer": 7.9,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 152.7,
+    "bid": 60.1,
     "epic": "DO.D.OTCDDAX.136.IP",
     "expiry": "22-MAY-25",
     "high": 164.1,
     "instrument_name": "Daily Germany 40 23900 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 83.9,
-    "offer": 157.5,
-    "update_time": "07:06:28"
+    "low": 18.2,
+    "offer": 64.8,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 25.3,
+    "bid": 7.2,
     "epic": "DO.D.OTCDDAX.150.IP",
     "expiry": "22-MAY-25",
-    "high": 63.9,
+    "high": 85.6,
     "instrument_name": "Daily Germany 40 23900 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 23.5,
-    "offer": 30.8,
-    "update_time": "07:06:28"
+    "low": 5.6,
+    "offer": 12.7,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 133.7,
+    "bid": 41.7,
     "epic": "DO.D.OTCDDAX.138.IP",
     "expiry": "22-MAY-25",
     "high": 145.1,
     "instrument_name": "Daily Germany 40 23925 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 69.9,
-    "offer": 138.9,
-    "update_time": "07:06:28"
+    "low": 10.5,
+    "offer": 47.3,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 31.4,
+    "bid": 14.1,
     "epic": "DO.D.OTCDDAX.142.IP",
     "expiry": "22-MAY-25",
-    "high": 74.8,
+    "high": 103.6,
     "instrument_name": "Daily Germany 40 23925 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 29.3,
-    "offer": 37.1,
-    "update_time": "07:06:28"
+    "low": 11.5,
+    "offer": 19.9,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 115.8,
+    "bid": 26.7,
     "epic": "DO.D.OTCDDAX.126.IP",
     "expiry": "22-MAY-25",
     "high": 127.2,
     "instrument_name": "Daily Germany 40 23950 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 57.5,
-    "offer": 121.3,
-    "update_time": "07:06:28"
+    "low": 5.3,
+    "offer": 32.7,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 38.6,
+    "bid": 24.2,
     "epic": "DO.D.OTCDDAX.139.IP",
     "expiry": "22-MAY-25",
-    "high": 87.5,
+    "high": 123.2,
     "instrument_name": "Daily Germany 40 23950 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 36.1,
-    "offer": 44.4,
-    "update_time": "07:06:28"
+    "low": 20.3,
+    "offer": 30.2,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 108.9,
+    "bid": 21.8,
     "epic": "DO.D.OTCDDAX.127.IP",
     "expiry": "22-MAY-25",
     "high": 120.3,
     "instrument_name": "Daily Germany 40 23960 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 53.0,
-    "offer": 114.5,
-    "update_time": "07:06:28"
+    "low": 3.8,
+    "offer": 27.8,
+    "update_time": "14:26:53"
   },
   {
-    "bid": 41.5,
+    "bid": 29.8,
     "epic": "DO.D.OTCDDAX.114.IP",
     "expiry": "22-MAY-25",
-    "high": 92.9,
+    "high": 131.4,
     "instrument_name": "Daily Germany 40 23960 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 39.1,
-    "offer": 47.4,
-    "update_time": "07:06:24"
+    "low": 24.7,
+    "offer": 35.8,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 103.3,
+    "bid": 17.1,
     "epic": "DO.D.OTCDDAX.105.IP",
     "expiry": "22-MAY-25",
     "high": 113.6,
     "instrument_name": "Daily Germany 40 23970 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 48.7,
-    "offer": 109.0,
-    "update_time": "07:06:24"
+    "low": 2.5,
+    "offer": 23.0,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 44.9,
-    "epic": "DO.D.OTCDDAX.118.IP",
+    "bid": 35.6,
+    "epic": "DO.D.OTCDDAX.117.IP",
     "expiry": "22-MAY-25",
-    "high": 98.6,
+    "high": 139.9,
     "instrument_name": "Daily Germany 40 23970 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 42.3,
-    "offer": 50.8,
-    "update_time": "07:06:24"
+    "low": 29.6,
+    "offer": 41.4,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 100.0,
+    "bid": 15.2,
     "epic": "DO.D.OTCDDAX.102.IP",
     "expiry": "22-MAY-25",
     "high": 110.3,
     "instrument_name": "Daily Germany 40 23975 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 46.6,
-    "offer": 105.8,
-    "update_time": "07:06:24"
+    "low": 2.0,
+    "offer": 21.0,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 46.7,
+    "bid": 38.7,
     "epic": "DO.D.OTCDDAX.116.IP",
     "expiry": "22-MAY-25",
-    "high": 101.5,
+    "high": 144.2,
     "instrument_name": "Daily Germany 40 23975 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 44.0,
-    "offer": 52.6,
-    "update_time": "07:06:24"
+    "low": 32.4,
+    "offer": 44.4,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 96.8,
+    "bid": 13.4,
     "epic": "DO.D.OTCDDAX.107.IP",
     "expiry": "22-MAY-25",
     "high": 107.1,
     "instrument_name": "Daily Germany 40 23980 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 44.6,
-    "offer": 102.6,
-    "update_time": "07:06:24"
+    "low": 1.5,
+    "offer": 19.2,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 48.5,
+    "bid": 42.0,
     "epic": "DO.D.OTCDDAX.111.IP",
     "expiry": "22-MAY-25",
-    "high": 104.5,
+    "high": 148.6,
     "instrument_name": "Daily Germany 40 23980 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 45.8,
-    "offer": 54.4,
-    "update_time": "07:06:24"
+    "low": 35.2,
+    "offer": 47.6,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 90.6,
+    "bid": 10.2,
     "epic": "DO.D.OTCDDAX.123.IP",
     "expiry": "22-MAY-25",
     "high": 100.7,
     "instrument_name": "Daily Germany 40 23990 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 40.8,
-    "offer": 96.4,
-    "update_time": "07:06:24"
+    "low": 0.7,
+    "offer": 15.9,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 52.2,
+    "bid": 48.9,
     "epic": "DO.D.OTCDDAX.110.IP",
     "expiry": "22-MAY-25",
-    "high": 110.6,
+    "high": 157.4,
     "instrument_name": "Daily Germany 40 23990 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 49.4,
-    "offer": 58.2,
-    "update_time": "07:06:24"
+    "low": 41.4,
+    "offer": 54.2,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 84.5,
+    "bid": 7.6,
     "epic": "DO.D.OTCDDAX.122.IP",
     "expiry": "22-MAY-25",
     "high": 94.6,
     "instrument_name": "Daily Germany 40 24000 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 37.1,
-    "offer": 90.5,
-    "update_time": "07:06:24"
+    "low": 0.1,
+    "offer": 13.1,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 56.2,
+    "bid": 56.4,
     "epic": "DO.D.OTCDDAX.109.IP",
     "expiry": "22-MAY-25",
-    "high": 116.9,
+    "high": 166.4,
     "instrument_name": "Daily Germany 40 24000 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 53.2,
-    "offer": 62.2,
-    "update_time": "07:06:24"
+    "low": 47.9,
+    "offer": 61.2,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 78.7,
+    "bid": 5.4,
     "epic": "DO.D.OTCDDAX.121.IP",
     "expiry": "22-MAY-25",
     "high": 88.7,
     "instrument_name": "Daily Germany 40 24010 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 33.7,
-    "offer": 84.7,
-    "update_time": "07:06:24"
+    "low": 0.1,
+    "offer": 10.7,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 60.4,
+    "bid": 64.3,
     "epic": "DO.D.OTCDDAX.112.IP",
     "expiry": "22-MAY-25",
-    "high": 123.5,
+    "high": 175.6,
     "instrument_name": "Daily Germany 40 24010 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 57.3,
-    "offer": 66.4,
-    "update_time": "07:06:24"
+    "low": 55.0,
+    "offer": 68.7,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 73.1,
+    "bid": 3.6,
     "epic": "DO.D.OTCDDAX.124.IP",
     "expiry": "22-MAY-25",
     "high": 83.0,
     "instrument_name": "Daily Germany 40 24020 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 30.5,
-    "offer": 79.1,
-    "update_time": "07:06:24"
+    "low": 0.1,
+    "offer": 8.7,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 64.9,
+    "bid": 72.7,
     "epic": "DO.D.OTCDDAX.113.IP",
     "expiry": "22-MAY-25",
-    "high": 130.2,
+    "high": 184.8,
     "instrument_name": "Daily Germany 40 24020 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 61.5,
-    "offer": 70.9,
-    "update_time": "07:06:24"
+    "offer": 76.6,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 70.4,
+    "bid": 2.9,
     "epic": "DO.D.OTCDDAX.125.IP",
     "expiry": "22-MAY-25",
     "high": 80.2,
     "instrument_name": "Daily Germany 40 24025 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 29.0,
-    "offer": 76.4,
-    "update_time": "07:06:24"
+    "low": 0.1,
+    "offer": 7.9,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 66.9,
+    "bid": 77.0,
     "epic": "DO.D.OTCDDAX.104.IP",
     "expiry": "22-MAY-25",
-    "high": 133.6,
+    "high": 189.5,
     "instrument_name": "Daily Germany 40 24025 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 63.7,
-    "offer": 72.9,
-    "update_time": "07:06:24"
+    "offer": 80.7,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 67.5,
+    "bid": 2.2,
     "epic": "DO.D.OTCDDAX.115.IP",
     "expiry": "22-MAY-25",
     "high": 77.5,
     "instrument_name": "Daily Germany 40 24030 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 27.5,
-    "offer": 73.5,
-    "update_time": "07:06:24"
+    "low": 0.1,
+    "offer": 7.1,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 69.3,
+    "bid": 81.4,
     "epic": "DO.D.OTCDDAX.103.IP",
     "expiry": "22-MAY-25",
-    "high": 137.1,
+    "high": 194.2,
     "instrument_name": "Daily Germany 40 24030 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 66.0,
-    "offer": 75.3,
-    "update_time": "07:06:24"
+    "offer": 84.9,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 62.6,
-    "epic": "DO.D.OTCDDAX.117.IP",
+    "bid": 1.1,
+    "epic": "DO.D.OTCDDAX.118.IP",
     "expiry": "22-MAY-25",
     "high": 72.3,
     "instrument_name": "Daily Germany 40 24040 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 24.7,
-    "offer": 68.6,
-    "update_time": "07:06:24"
+    "low": 0.1,
+    "offer": 5.8,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 74.3,
+    "bid": 90.4,
     "epic": "DO.D.OTCDDAX.106.IP",
     "expiry": "22-MAY-25",
-    "high": 144.3,
+    "high": 203.7,
     "instrument_name": "Daily Germany 40 24040 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 70.8,
-    "offer": 80.3,
-    "update_time": "07:06:24"
+    "offer": 93.5,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 58.0,
+    "bid": 0.2,
     "epic": "DO.D.OTCDDAX.119.IP",
     "expiry": "22-MAY-25",
     "high": 67.4,
     "instrument_name": "Daily Germany 40 24050 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 22.1,
-    "offer": 64.0,
-    "update_time": "07:06:24"
+    "low": 0.1,
+    "offer": 4.8,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 79.6,
+    "bid": 99.7,
     "epic": "DO.D.OTCDDAX.101.IP",
     "expiry": "22-MAY-25",
-    "high": 151.6,
+    "high": 213.3,
     "instrument_name": "Daily Germany 40 24050 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 75.9,
-    "offer": 85.5,
-    "update_time": "07:06:24"
+    "offer": 102.4,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 53.5,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.120.IP",
     "expiry": "22-MAY-25",
     "high": 62.7,
     "instrument_name": "Daily Germany 40 24060 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 19.7,
-    "offer": 59.5,
-    "update_time": "07:06:24"
+    "low": 0.0,
+    "offer": 4.5,
+    "update_time": "14:26:23"
   },
   {
-    "bid": 85.3,
+    "bid": 109.1,
     "epic": "DO.D.OTCDDAX.108.IP",
     "expiry": "22-MAY-25",
-    "high": 159.1,
+    "high": 223.0,
     "instrument_name": "Daily Germany 40 24060 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 81.2,
-    "offer": 91.2,
-    "update_time": "07:06:24"
+    "offer": 111.5,
+    "update_time": "14:26:50"
   },
   {
-    "bid": 50.9,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.94.IP",
     "expiry": "22-MAY-25",
     "high": 58.2,
     "instrument_name": "Daily Germany 40 24070 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 17.4,
-    "offer": 56.9,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.4,
+    "update_time": "14:26:36"
   },
   {
-    "bid": 88.5,
+    "bid": 116.8,
     "epic": "DO.D.OTCDDAX.100.IP",
     "expiry": "22-MAY-25",
-    "high": 166.8,
+    "high": 232.7,
     "instrument_name": "Daily Germany 40 24070 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 86.7,
-    "offer": 94.3,
-    "update_time": "07:06:21"
+    "offer": 119.0,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 48.8,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.77.IP",
     "expiry": "22-MAY-25",
     "high": 56.0,
     "instrument_name": "Daily Germany 40 24075 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 16.4,
-    "offer": 54.7,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.3,
+    "update_time": "14:26:23"
   },
   {
-    "bid": 91.3,
+    "bid": 121.6,
     "epic": "DO.D.OTCDDAX.89.IP",
     "expiry": "22-MAY-25",
-    "high": 170.7,
+    "high": 237.6,
     "instrument_name": "Daily Germany 40 24075 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 89.6,
-    "offer": 97.2,
-    "update_time": "07:06:21"
+    "offer": 123.7,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 46.7,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.76.IP",
     "expiry": "22-MAY-25",
     "high": 53.9,
     "instrument_name": "Daily Germany 40 24080 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 15.3,
-    "offer": 52.7,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.3,
+    "update_time": "14:24:04"
   },
   {
-    "bid": 94.3,
+    "bid": 126.4,
     "epic": "DO.D.OTCDDAX.88.IP",
     "expiry": "22-MAY-25",
-    "high": 174.7,
+    "high": 242.5,
     "instrument_name": "Daily Germany 40 24080 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 92.5,
-    "offer": 100.1,
-    "update_time": "07:06:21"
+    "offer": 128.5,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 42.8,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.78.IP",
     "expiry": "22-MAY-25",
     "high": 49.8,
     "instrument_name": "Daily Germany 40 24090 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 13.5,
-    "offer": 48.7,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.2,
+    "update_time": "14:26:18"
   },
   {
-    "bid": 100.4,
+    "bid": 136.2,
     "epic": "DO.D.OTCDDAX.91.IP",
     "expiry": "22-MAY-25",
-    "high": 182.7,
+    "high": 252.3,
     "instrument_name": "Daily Germany 40 24090 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 98.5,
-    "offer": 106.1,
-    "update_time": "07:06:21"
+    "offer": 138.1,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 39.1,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.79.IP",
     "expiry": "22-MAY-25",
     "high": 46.0,
     "instrument_name": "Daily Germany 40 24100 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 11.7,
-    "offer": 44.9,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.1,
+    "update_time": "14:26:24"
   },
   {
-    "bid": 106.7,
+    "bid": 146.1,
     "epic": "DO.D.OTCDDAX.90.IP",
     "expiry": "22-MAY-25",
-    "high": 190.9,
+    "high": 262.2,
     "instrument_name": "Daily Germany 40 24100 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 104.8,
-    "offer": 112.3,
-    "update_time": "07:06:21"
+    "offer": 147.8,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 35.6,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.80.IP",
     "expiry": "22-MAY-25",
     "high": 42.4,
     "instrument_name": "Daily Germany 40 24110 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 10.1,
-    "offer": 41.3,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.1,
+    "update_time": "14:21:10"
   },
   {
-    "bid": 112.9,
+    "bid": 156.0,
     "epic": "DO.D.OTCDDAX.93.IP",
     "expiry": "22-MAY-25",
-    "high": 199.2,
+    "high": 272.0,
     "instrument_name": "Daily Germany 40 24110 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 111.2,
-    "offer": 118.4,
-    "update_time": "07:06:18"
+    "offer": 157.6,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 32.3,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.81.IP",
     "expiry": "22-MAY-25",
     "high": 39.0,
     "instrument_name": "Daily Germany 40 24120 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 8.7,
-    "offer": 38.0,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.1,
+    "update_time": "14:14:09"
   },
   {
-    "bid": 119.6,
+    "bid": 165.9,
     "epic": "DO.D.OTCDDAX.98.IP",
     "expiry": "22-MAY-25",
-    "high": 207.7,
+    "high": 282.0,
     "instrument_name": "Daily Germany 40 24120 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 117.9,
-    "offer": 125.0,
-    "update_time": "07:06:18"
+    "offer": 167.5,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 30.7,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.82.IP",
     "expiry": "22-MAY-25",
     "high": 37.3,
     "instrument_name": "Daily Germany 40 24125 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 8.0,
-    "offer": 36.4,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.1,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 123.4,
+    "bid": 170.9,
     "epic": "DO.D.OTCDDAX.99.IP",
     "expiry": "22-MAY-25",
-    "high": 212.0,
+    "high": 286.9,
     "instrument_name": "Daily Germany 40 24125 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 121.3,
-    "offer": 128.7,
-    "update_time": "07:06:21"
+    "offer": 172.4,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 29.2,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.86.IP",
     "expiry": "22-MAY-25",
     "high": 35.8,
     "instrument_name": "Daily Germany 40 24130 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 7.4,
-    "offer": 34.8,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "14:26:23"
   },
   {
-    "bid": 126.9,
+    "bid": 175.9,
     "epic": "DO.D.OTCDDAX.95.IP",
     "expiry": "22-MAY-25",
-    "high": 216.3,
+    "high": 291.9,
     "instrument_name": "Daily Germany 40 24130 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 124.8,
-    "offer": 132.1,
-    "update_time": "07:06:21"
+    "offer": 177.4,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 26.3,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.85.IP",
     "expiry": "22-MAY-25",
     "high": 32.8,
     "instrument_name": "Daily Germany 40 24140 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 6.2,
-    "offer": 31.9,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "14:21:10"
   },
   {
-    "bid": 134.1,
+    "bid": 185.8,
     "epic": "DO.D.OTCDDAX.96.IP",
     "expiry": "22-MAY-25",
-    "high": 225.0,
+    "high": 301.8,
     "instrument_name": "Daily Germany 40 24140 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 131.9,
-    "offer": 139.1,
-    "update_time": "07:06:21"
+    "offer": 187.3,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 23.6,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.83.IP",
     "expiry": "22-MAY-25",
     "high": 29.9,
     "instrument_name": "Daily Germany 40 24150 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 5.1,
-    "offer": 29.1,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "14:14:09"
   },
   {
-    "bid": 141.4,
+    "bid": 195.8,
     "epic": "DO.D.OTCDDAX.84.IP",
     "expiry": "22-MAY-25",
-    "high": 233.9,
+    "high": 311.8,
     "instrument_name": "Daily Germany 40 24150 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 139.2,
-    "offer": 146.3,
-    "update_time": "07:06:21"
+    "offer": 197.3,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 21.1,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.97.IP",
     "expiry": "22-MAY-25",
     "high": 27.3,
     "instrument_name": "Daily Germany 40 24160 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 4.1,
-    "offer": 26.6,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "13:18:38"
   },
   {
-    "bid": 149.0,
+    "bid": 205.8,
     "epic": "DO.D.OTCDDAX.87.IP",
     "expiry": "22-MAY-25",
-    "high": 242.9,
+    "high": 321.8,
     "instrument_name": "Daily Germany 40 24160 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 146.7,
-    "offer": 153.7,
-    "update_time": "07:06:21"
+    "offer": 207.2,
+    "update_time": "14:26:45"
   },
   {
-    "bid": 18.8,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.92.IP",
     "expiry": "22-MAY-25",
     "high": 24.9,
     "instrument_name": "Daily Germany 40 24170 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 3.3,
-    "offer": 24.2,
-    "update_time": "07:06:21"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "13:15:27"
   },
   {
-    "bid": 154.8,
-    "epic": "DO.D.OTCDDAX.53.IP",
+    "bid": 215.8,
+    "epic": "DO.D.OTCDDAX.54.IP",
     "expiry": "22-MAY-25",
-    "high": 252.0,
+    "high": 331.8,
     "instrument_name": "Daily Germany 40 24170 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 154.4,
-    "offer": 159.4,
-    "update_time": "07:06:17"
+    "offer": 217.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 18.3,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.65.IP",
     "expiry": "22-MAY-25",
     "high": 23.7,
     "instrument_name": "Daily Germany 40 24175 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 2.9,
-    "offer": 23.6,
-    "update_time": "07:06:17"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "13:15:14"
   },
   {
-    "bid": 158.7,
+    "bid": 220.8,
     "epic": "DO.D.OTCDDAX.52.IP",
     "expiry": "22-MAY-25",
-    "high": 256.5,
+    "high": 336.7,
     "instrument_name": "Daily Germany 40 24175 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 158.3,
-    "offer": 163.2,
-    "update_time": "07:06:17"
+    "offer": 222.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 17.2,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.63.IP",
     "expiry": "22-MAY-25",
     "high": 22.6,
     "instrument_name": "Daily Germany 40 24180 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 2.5,
-    "offer": 22.5,
-    "update_time": "07:06:17"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "13:09:14"
   },
   {
-    "bid": 162.7,
+    "bid": 225.8,
     "epic": "DO.D.OTCDDAX.51.IP",
     "expiry": "22-MAY-25",
-    "high": 261.1,
+    "high": 341.7,
     "instrument_name": "Daily Germany 40 24180 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 162.3,
-    "offer": 167.1,
-    "update_time": "07:06:17"
+    "offer": 227.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 15.2,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.64.IP",
     "expiry": "22-MAY-25",
     "high": 20.5,
     "instrument_name": "Daily Germany 40 24190 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 1.8,
-    "offer": 20.4,
-    "update_time": "07:06:17"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "13:06:49"
   },
   {
-    "bid": 170.7,
-    "epic": "DO.D.OTCDDAX.54.IP",
+    "bid": 235.8,
+    "epic": "DO.D.OTCDDAX.53.IP",
     "expiry": "22-MAY-25",
-    "high": 270.4,
+    "high": 351.7,
     "instrument_name": "Daily Germany 40 24190 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 170.3,
-    "offer": 174.9,
-    "update_time": "07:06:17"
+    "offer": 237.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 13.4,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.67.IP",
     "expiry": "22-MAY-25",
     "high": 18.6,
     "instrument_name": "Daily Germany 40 24200 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 1.2,
-    "offer": 18.5,
-    "update_time": "07:06:17"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "11:10:48"
   },
   {
-    "bid": 178.9,
+    "bid": 245.8,
     "epic": "DO.D.OTCDDAX.55.IP",
     "expiry": "22-MAY-25",
-    "high": 279.7,
+    "high": 361.7,
     "instrument_name": "Daily Germany 40 24200 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 178.5,
-    "offer": 183.0,
-    "update_time": "07:06:17"
+    "offer": 247.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 11.7,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.66.IP",
     "expiry": "22-MAY-25",
     "high": 16.8,
     "instrument_name": "Daily Germany 40 24210 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 0.7,
-    "offer": 16.7,
-    "update_time": "07:06:17"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "11:10:33"
   },
   {
-    "bid": 187.3,
+    "bid": 255.8,
     "epic": "DO.D.OTCDDAX.61.IP",
     "expiry": "22-MAY-25",
-    "high": 289.1,
+    "high": 371.7,
     "instrument_name": "Daily Germany 40 24210 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 186.9,
-    "offer": 191.1,
-    "update_time": "07:06:17"
+    "offer": 257.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 10.2,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.75.IP",
     "expiry": "22-MAY-25",
     "high": 15.2,
     "instrument_name": "Daily Germany 40 24220 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 0.2,
-    "offer": 15.1,
-    "update_time": "07:06:17"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "10:35:02"
   },
   {
-    "bid": 195.8,
+    "bid": 265.8,
     "epic": "DO.D.OTCDDAX.62.IP",
     "expiry": "22-MAY-25",
-    "high": 298.6,
+    "high": 381.7,
     "instrument_name": "Daily Germany 40 24220 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 195.4,
-    "offer": 199.5,
-    "update_time": "07:06:17"
+    "offer": 267.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 9.4,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.71.IP",
     "expiry": "22-MAY-25",
     "high": 14.5,
     "instrument_name": "Daily Germany 40 24225 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 0.1,
-    "offer": 14.4,
-    "update_time": "07:06:17"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "10:32:15"
   },
   {
-    "bid": 200.1,
+    "bid": 270.8,
     "epic": "DO.D.OTCDDAX.59.IP",
     "expiry": "22-MAY-25",
-    "high": 303.4,
+    "high": 386.7,
     "instrument_name": "Daily Germany 40 24225 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 199.7,
-    "offer": 203.7,
-    "update_time": "07:06:17"
+    "offer": 272.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 8.8,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.70.IP",
     "expiry": "22-MAY-25",
     "high": 13.7,
     "instrument_name": "Daily Germany 40 24230 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 0.1,
-    "offer": 13.7,
-    "update_time": "07:06:17"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "10:31:20"
   },
   {
-    "bid": 204.5,
+    "bid": 275.8,
     "epic": "DO.D.OTCDDAX.74.IP",
     "expiry": "22-MAY-25",
-    "high": 308.2,
+    "high": 391.7,
     "instrument_name": "Daily Germany 40 24230 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 204.0,
-    "offer": 208.0,
-    "update_time": "07:06:17"
+    "offer": 277.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 7.5,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.58.IP",
     "expiry": "22-MAY-25",
     "high": 12.4,
     "instrument_name": "Daily Germany 40 24240 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 0.1,
-    "offer": 12.3,
-    "update_time": "07:06:17"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "10:28:39"
   },
   {
-    "bid": 213.3,
+    "bid": 285.8,
     "epic": "DO.D.OTCDDAX.73.IP",
     "expiry": "22-MAY-25",
-    "high": 317.8,
+    "high": 401.7,
     "instrument_name": "Daily Germany 40 24240 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 212.8,
-    "offer": 216.6,
-    "update_time": "07:06:17"
+    "offer": 287.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 6.3,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.60.IP",
     "expiry": "22-MAY-25",
     "high": 11.2,
     "instrument_name": "Daily Germany 40 24250 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 0.1,
-    "offer": 11.1,
-    "update_time": "07:06:16"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "09:39:37"
   },
   {
-    "bid": 222.1,
+    "bid": 295.8,
     "epic": "DO.D.OTCDDAX.72.IP",
     "expiry": "22-MAY-25",
-    "high": 327.4,
+    "high": 411.7,
     "instrument_name": "Daily Germany 40 24250 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 221.7,
-    "offer": 225.3,
-    "update_time": "07:06:17"
+    "offer": 297.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 4.0,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.56.IP",
     "expiry": "22-MAY-25",
     "high": 8.6,
     "instrument_name": "Daily Germany 40 24275 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 0.1,
-    "offer": 8.6,
-    "update_time": "07:06:17"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "09:02:31"
   },
   {
-    "bid": 244.9,
+    "bid": 320.8,
     "epic": "DO.D.OTCDDAX.68.IP",
     "expiry": "22-MAY-25",
-    "high": 351.8,
+    "high": 436.7,
     "instrument_name": "Daily Germany 40 24275 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 244.4,
-    "offer": 247.7,
-    "update_time": "07:06:17"
+    "offer": 322.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 2.2,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.57.IP",
     "expiry": "22-MAY-25",
     "high": 6.7,
     "instrument_name": "Daily Germany 40 24300 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 0.1,
-    "offer": 6.6,
-    "update_time": "07:06:17"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "08:46:58"
   },
   {
-    "bid": 268.2,
+    "bid": 345.8,
     "epic": "DO.D.OTCDDAX.69.IP",
     "expiry": "22-MAY-25",
-    "high": 376.3,
+    "high": 461.7,
     "instrument_name": "Daily Germany 40 24300 PUT",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 267.7,
-    "offer": 270.6,
-    "update_time": "07:06:17"
+    "offer": 347.2,
+    "update_time": "14:26:43"
   },
   {
-    "bid": 0.8,
+    "bid": 0.0,
     "epic": "DO.D.OTCDDAX.30.IP",
     "expiry": "22-MAY-25",
     "high": 5.2,
     "instrument_name": "Daily Germany 40 24325 CALL",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 0.1,
-    "offer": 5.1,
-    "update_time": "07:06:14"
+    "low": 0.0,
+    "offer": 4.0,
+    "update_time": "08:21:06"
   },
   {
-    "bid": 293.9,
+    "bid": 371.3,
     "epic": "DO.D.OTCDDAX.41.IP",
     "expiry": "22-MAY-25",
-    "high": 401.0,
+    "high": 486.7,
     "instrument_name": "Daily Germany 40 24325 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 292.9,
-    "offer": 296.0,
-    "update_time": "07:06:14"
+    "low": 291.5,
+    "offer": 372.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
@@ -1635,19 +1635,19 @@
     "instrument_name": "Daily Germany 40 24350 CALL",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
-    "offer": 4.2,
-    "update_time": "07:02:51"
+    "offer": 4.0,
+    "update_time": "07:30:00"
   },
   {
-    "bid": 318.0,
+    "bid": 396.3,
     "epic": "DO.D.OTCDDAX.39.IP",
     "expiry": "22-MAY-25",
-    "high": 425.8,
+    "high": 511.7,
     "instrument_name": "Daily Germany 40 24350 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 317.0,
-    "offer": 319.9,
-    "update_time": "07:06:14"
+    "low": 315.6,
+    "offer": 397.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
@@ -1657,19 +1657,19 @@
     "instrument_name": "Daily Germany 40 24375 CALL",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
-    "offer": 4.2,
-    "update_time": "07:06:09"
+    "offer": 4.0,
+    "update_time": "07:25:45"
   },
   {
-    "bid": 342.4,
+    "bid": 421.3,
     "epic": "DO.D.OTCDDAX.40.IP",
     "expiry": "22-MAY-25",
-    "high": 450.7,
+    "high": 536.7,
     "instrument_name": "Daily Germany 40 24375 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 341.4,
-    "offer": 344.2,
-    "update_time": "07:06:14"
+    "low": 339.9,
+    "offer": 422.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
@@ -1679,41 +1679,41 @@
     "instrument_name": "Daily Germany 40 24400 CALL",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
-    "offer": 4.1,
-    "update_time": "07:00:01"
+    "offer": 4.0,
+    "update_time": "07:14:34"
   },
   {
-    "bid": 367.0,
+    "bid": 446.3,
     "epic": "DO.D.OTCDDAX.50.IP",
     "expiry": "22-MAY-25",
-    "high": 475.6,
+    "high": 561.7,
     "instrument_name": "Daily Germany 40 24400 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 366.0,
-    "offer": 368.6,
-    "update_time": "07:06:14"
+    "low": 364.5,
+    "offer": 447.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.36.IP",
+    "epic": "DO.D.OTCDDAX.37.IP",
     "expiry": "22-MAY-25",
     "high": 5.0,
     "instrument_name": "Daily Germany 40 24425 CALL",
     "last_dealing_date": "2025-05-22T15:29",
     "low": 0.0,
-    "offer": 4.1,
-    "update_time": "07:03:01"
+    "offer": 4.0,
+    "update_time": "07:09:25"
   },
   {
-    "bid": 391.7,
-    "epic": "DO.D.OTCDDAX.48.IP",
+    "bid": 471.3,
+    "epic": "DO.D.OTCDDAX.47.IP",
     "expiry": "22-MAY-25",
-    "high": 500.6,
+    "high": 586.7,
     "instrument_name": "Daily Germany 40 24425 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 390.7,
-    "offer": 393.3,
-    "update_time": "07:06:14"
+    "low": 389.2,
+    "offer": 472.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
@@ -1727,15 +1727,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 416.6,
+    "bid": 496.3,
     "epic": "DO.D.OTCDDAX.42.IP",
     "expiry": "22-MAY-25",
-    "high": 525.5,
+    "high": 611.7,
     "instrument_name": "Daily Germany 40 24450 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 415.6,
-    "offer": 418.1,
-    "update_time": "07:06:14"
+    "low": 414.1,
+    "offer": 497.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
@@ -1749,15 +1749,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 441.4,
+    "bid": 521.3,
     "epic": "DO.D.OTCDDAX.34.IP",
     "expiry": "22-MAY-25",
-    "high": 550.5,
+    "high": 636.7,
     "instrument_name": "Daily Germany 40 24475 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 440.5,
-    "offer": 442.9,
-    "update_time": "07:06:14"
+    "low": 439.0,
+    "offer": 522.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
@@ -1771,15 +1771,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 466.4,
+    "bid": 546.3,
     "epic": "DO.D.OTCDDAX.33.IP",
     "expiry": "22-MAY-25",
-    "high": 575.5,
+    "high": 661.7,
     "instrument_name": "Daily Germany 40 24500 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 465.4,
-    "offer": 467.8,
-    "update_time": "07:06:14"
+    "low": 463.9,
+    "offer": 547.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
@@ -1793,15 +1793,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 491.3,
+    "bid": 571.3,
     "epic": "DO.D.OTCDDAX.32.IP",
     "expiry": "22-MAY-25",
-    "high": 600.5,
+    "high": 686.7,
     "instrument_name": "Daily Germany 40 24525 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 490.4,
-    "offer": 492.8,
-    "update_time": "07:06:14"
+    "low": 488.9,
+    "offer": 572.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
@@ -1815,15 +1815,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 516.3,
+    "bid": 596.3,
     "epic": "DO.D.OTCDDAX.31.IP",
     "expiry": "22-MAY-25",
-    "high": 625.5,
+    "high": 711.7,
     "instrument_name": "Daily Germany 40 24550 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 515.3,
-    "offer": 517.7,
-    "update_time": "07:06:14"
+    "low": 513.8,
+    "offer": 597.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
@@ -1837,19 +1837,19 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 541.3,
-    "epic": "DO.D.OTCDDAX.37.IP",
+    "bid": 621.3,
+    "epic": "DO.D.OTCDDAX.36.IP",
     "expiry": "22-MAY-25",
-    "high": 650.5,
+    "high": 736.7,
     "instrument_name": "Daily Germany 40 24575 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 540.3,
-    "offer": 542.7,
-    "update_time": "07:06:14"
+    "low": 538.8,
+    "offer": 622.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.47.IP",
+    "epic": "DO.D.OTCDDAX.48.IP",
     "expiry": "22-MAY-25",
     "high": 5.0,
     "instrument_name": "Daily Germany 40 24600 CALL",
@@ -1859,15 +1859,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 566.3,
+    "bid": 646.3,
     "epic": "DO.D.OTCDDAX.38.IP",
     "expiry": "22-MAY-25",
-    "high": 675.5,
+    "high": 761.7,
     "instrument_name": "Daily Germany 40 24600 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 565.3,
-    "offer": 567.7,
-    "update_time": "07:06:14"
+    "low": 563.8,
+    "offer": 647.7,
+    "update_time": "14:26:40"
   },
   {
     "bid": 0.0,
@@ -1881,15 +1881,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 592.8,
+    "bid": 671.3,
     "epic": "DO.D.OTCDDAX.10.IP",
     "expiry": "22-MAY-25",
-    "high": 700.5,
+    "high": 786.7,
     "instrument_name": "Daily Germany 40 24625 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 590.3,
-    "offer": 594.2,
-    "update_time": "07:06:11"
+    "low": 588.8,
+    "offer": 672.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
@@ -1903,15 +1903,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 617.8,
+    "bid": 696.3,
     "epic": "DO.D.OTCDDAX.1.IP",
     "expiry": "22-MAY-25",
-    "high": 725.5,
+    "high": 811.7,
     "instrument_name": "Daily Germany 40 24650 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 615.3,
-    "offer": 619.2,
-    "update_time": "07:06:11"
+    "low": 613.8,
+    "offer": 697.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
@@ -1925,19 +1925,19 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 642.8,
+    "bid": 721.3,
     "epic": "DO.D.OTCDDAX.11.IP",
     "expiry": "22-MAY-25",
-    "high": 750.5,
+    "high": 836.7,
     "instrument_name": "Daily Germany 40 24675 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 640.3,
-    "offer": 644.2,
-    "update_time": "07:06:11"
+    "low": 638.8,
+    "offer": 722.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.25.IP",
+    "epic": "DO.D.OTCDDAX.24.IP",
     "expiry": "22-MAY-25",
     "high": 5.0,
     "instrument_name": "Daily Germany 40 24700 CALL",
@@ -1947,15 +1947,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 667.8,
+    "bid": 746.3,
     "epic": "DO.D.OTCDDAX.2.IP",
     "expiry": "22-MAY-25",
-    "high": 775.5,
+    "high": 861.7,
     "instrument_name": "Daily Germany 40 24700 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 665.3,
-    "offer": 669.2,
-    "update_time": "07:06:11"
+    "low": 663.8,
+    "offer": 747.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
@@ -1969,15 +1969,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 692.8,
+    "bid": 771.3,
     "epic": "DO.D.OTCDDAX.4.IP",
     "expiry": "22-MAY-25",
-    "high": 800.5,
+    "high": 886.7,
     "instrument_name": "Daily Germany 40 24725 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 690.3,
-    "offer": 694.2,
-    "update_time": "07:06:11"
+    "low": 688.8,
+    "offer": 772.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
@@ -1991,15 +1991,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 717.8,
+    "bid": 796.3,
     "epic": "DO.D.OTCDDAX.3.IP",
     "expiry": "22-MAY-25",
-    "high": 825.5,
+    "high": 911.7,
     "instrument_name": "Daily Germany 40 24750 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 715.3,
-    "offer": 719.2,
-    "update_time": "07:06:11"
+    "low": 713.8,
+    "offer": 797.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
@@ -2013,15 +2013,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 742.8,
+    "bid": 821.3,
     "epic": "DO.D.OTCDDAX.5.IP",
     "expiry": "22-MAY-25",
-    "high": 850.5,
+    "high": 936.7,
     "instrument_name": "Daily Germany 40 24775 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 740.3,
-    "offer": 744.2,
-    "update_time": "07:06:11"
+    "low": 738.8,
+    "offer": 822.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
@@ -2035,19 +2035,19 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 767.8,
+    "bid": 846.3,
     "epic": "DO.D.OTCDDAX.6.IP",
     "expiry": "22-MAY-25",
-    "high": 875.5,
+    "high": 961.7,
     "instrument_name": "Daily Germany 40 24800 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 765.3,
-    "offer": 769.2,
-    "update_time": "07:06:11"
+    "low": 763.8,
+    "offer": 847.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.19.IP",
+    "epic": "DO.D.OTCDDAX.20.IP",
     "expiry": "22-MAY-25",
     "high": 5.0,
     "instrument_name": "Daily Germany 40 24850 CALL",
@@ -2057,15 +2057,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 817.8,
+    "bid": 896.3,
     "epic": "DO.D.OTCDDAX.8.IP",
     "expiry": "22-MAY-25",
-    "high": 925.5,
+    "high": 1011.7,
     "instrument_name": "Daily Germany 40 24850 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 815.3,
-    "offer": 819.2,
-    "update_time": "07:06:11"
+    "low": 813.8,
+    "offer": 897.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
@@ -2079,15 +2079,15 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 867.8,
+    "bid": 946.3,
     "epic": "DO.D.OTCDDAX.9.IP",
     "expiry": "22-MAY-25",
-    "high": 975.5,
+    "high": 1061.7,
     "instrument_name": "Daily Germany 40 24900 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 865.3,
-    "offer": 869.2,
-    "update_time": "07:06:11"
+    "low": 863.8,
+    "offer": 947.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
@@ -2101,19 +2101,19 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 917.8,
+    "bid": 996.3,
     "epic": "DO.D.OTCDDAX.7.IP",
     "expiry": "22-MAY-25",
-    "high": 1025.5,
+    "high": 1111.7,
     "instrument_name": "Daily Germany 40 24950 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 915.3,
-    "offer": 919.2,
-    "update_time": "07:06:11"
+    "low": 913.8,
+    "offer": 997.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.20.IP",
+    "epic": "DO.D.OTCDDAX.19.IP",
     "expiry": "22-MAY-25",
     "high": 5.0,
     "instrument_name": "Daily Germany 40 25000 CALL",
@@ -2123,19 +2123,19 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 967.8,
+    "bid": 1046.3,
     "epic": "DO.D.OTCDDAX.12.IP",
     "expiry": "22-MAY-25",
-    "high": 1075.5,
+    "high": 1161.7,
     "instrument_name": "Daily Germany 40 25000 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 965.3,
-    "offer": 969.2,
-    "update_time": "07:06:11"
+    "low": 963.8,
+    "offer": 1047.7,
+    "update_time": "14:26:37"
   },
   {
     "bid": 0.0,
-    "epic": "DO.D.OTCDDAX.24.IP",
+    "epic": "DO.D.OTCDDAX.25.IP",
     "expiry": "22-MAY-25",
     "high": 5.0,
     "instrument_name": "Daily Germany 40 25050 CALL",
@@ -2145,14 +2145,14 @@
     "update_time": "07:00:01"
   },
   {
-    "bid": 1017.8,
+    "bid": 1096.3,
     "epic": "DO.D.OTCDDAX.13.IP",
     "expiry": "22-MAY-25",
-    "high": 1125.5,
+    "high": 1211.7,
     "instrument_name": "Daily Germany 40 25050 PUT",
     "last_dealing_date": "2025-05-22T15:29",
-    "low": 1015.3,
-    "offer": 1019.2,
-    "update_time": "07:06:11"
+    "low": 1013.8,
+    "offer": 1097.7,
+    "update_time": "14:26:37"
   }
 ]
