@@ -85,6 +85,10 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
     ) -> Result<Vec<MarketDetails>, AppError> {
         if epics.is_empty() {
             return Ok(Vec::new());
+        } else if epics.len() > 50 {
+            return Err(AppError::InvalidInput(
+                "The maximum number of EPICs is 50".to_string(),
+            ));
         }
 
         // Join the EPICs with commas to create a single request

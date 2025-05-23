@@ -184,11 +184,8 @@ impl IgHttpClient for IgHttpClientImpl {
         
         // If we get a rate limit error, we'll return it directly
         // The caller can implement retry logic if needed
-        match &result {
-            Err(AppError::RateLimitExceeded) => {
-                error!("Rate limit exceeded for {} request to {}", method_str, url);
-            },
-            _ => {}
+        if let Err(AppError::RateLimitExceeded) = &result {
+            error!("Rate limit exceeded for {} request to {}", method_str, url);
         }
         
         result
@@ -225,11 +222,8 @@ impl IgHttpClient for IgHttpClientImpl {
         
         // If we get a rate limit error, we'll return it directly
         // The caller can implement retry logic if needed
-        match &result {
-            Err(AppError::RateLimitExceeded) => {
-                warn!("Rate limit exceeded for unauthenticated {} request to {}", method_str, url);
-            },
-            _ => {}
+        if let Err(AppError::RateLimitExceeded) = &result {
+            warn!("Rate limit exceeded for unauthenticated {} request to {}", method_str, url);
         }
         
         result

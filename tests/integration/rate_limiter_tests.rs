@@ -208,7 +208,7 @@ async fn test_rate_limiter_concurrent_requests() -> Result<(), Box<dyn std::erro
     
     // Test parameters
     let num_concurrent = 3;
-    let search_terms = vec!["Germany 40", "US 500", "UK 100"];
+    let search_terms = ["Germany 40", "US 500", "UK 100"];
     
     info!("Making {} concurrent requests with rate limiter", num_concurrent);
     let start = Instant::now();

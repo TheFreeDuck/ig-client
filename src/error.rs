@@ -133,6 +133,18 @@ pub enum AppError {
     WebSocketError(String),
     /// Deserialization error with details
     Deserialization(String),
+    /// Represents an error type for invalid input.
+    ///
+    /// This enum variant is used to indicate that invalid input has been provided,
+    /// typically taking the form of a string that describes the nature of the issue.
+    ///
+    /// # Variants
+    /// * `InvalidInput(String)`
+    ///   - Contains a `String` value that provides more details about why the input
+    ///     was considered invalid, such as specific formatting issues or constraints
+    ///     that were violated.
+    ///
+    InvalidInput(String),
 }
 
 impl Display for AppError {
@@ -149,6 +161,7 @@ impl Display for AppError {
             AppError::SerializationError(s) => write!(f, "serialization error: {s}"),
             AppError::WebSocketError(s) => write!(f, "websocket error: {s}"),
             AppError::Deserialization(s) => write!(f, "deserialization error: {s}"),
+            AppError::InvalidInput(s) => write!(f, "invalid input: {s}"),
         }
     }
 }
