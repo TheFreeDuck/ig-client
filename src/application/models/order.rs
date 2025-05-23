@@ -4,7 +4,8 @@
    Date: 13/5/25
 ******************************************************************************/
 use crate::impl_json_display;
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Deserializer};
+use serde::de::{self, Error as DeError};
 
 /// Order direction (buy or sell)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
@@ -211,12 +212,24 @@ pub struct CreateOrderResponse {
     pub deal_reference: String,
 }
 
+/// Helper function to deserialize a nullable status field
+/// When the status is null in the JSON, we default to Rejected status
+fn deserialize_nullable_status<'de, D>(deserializer: D) -> Result<Status, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let opt = Option::deserialize(deserializer)?;
+    Ok(opt.unwrap_or(Status::Rejected))
+}
+
 /// Details of a confirmed order
 #[derive(Debug, Clone, Deserialize)]
 pub struct OrderConfirmation {
     /// Date and time of the confirmation
     pub date: String,
     /// Status of the order (accepted, rejected, etc.)
+    /// This can be null in some responses (e.g., when market is closed)
+    #[serde(deserialize_with = "deserialize_nullable_status")]
     pub status: Status,
     /// Reason for rejection if applicable
     pub reason: Option<String>,

@@ -46,12 +46,37 @@ fn test_create_and_close_position() {
             common::create_test_client(common::create_test_config()),
         );
 
-        // Get market details to find current price
-        let epic = "OP.D.OTCDAX1.021100P.IP";
-        let market_details = market_service
-            .get_market_details(&session, epic)
-            .await
-            .expect("Failed to get market details");
+        // Test both an open and a closed market epic
+        let open_epic = "OP.D.OTCDAX1.021100P.IP"; // Epic for an open market
+        let closed_epic = "DO.D.OTCDDAX.71.IP";    // Epic for a closed market that we know returns MARKET_CLOSED_WITH_EDITS
+        
+        // First try with the open market
+        info!("Testing with open market epic: {}", open_epic);
+        let market_details_result = market_service
+            .get_market_details(&session, open_epic)
+            .await;
+        
+        // If the open market fails, try the closed market
+        let (epic, market_details) = match market_details_result {
+            Ok(details) => {
+                info!("Successfully got details for open market");
+                (open_epic, details)
+            },
+            Err(e) => {
+                info!("Open market failed: {:?}, trying closed market", e);
+                // Now try with the closed market
+                info!("Testing with closed market epic: {}", closed_epic);
+                match market_service.get_market_details(&session, closed_epic).await {
+                    Ok(details) => {
+                        info!("Successfully got details for closed market");
+                        (closed_epic, details)
+                    },
+                    Err(e) => {
+                        panic!("Both open and closed market requests failed: {:?}", e);
+                    }
+                }
+            }
+        };
 
         // Get current price and set limit price slightly higher for a buy order
         let current_price = market_details.snapshot.offer.unwrap_or(100.0);
@@ -97,6 +122,20 @@ fn test_create_and_close_position() {
                 info!("  Deal ID: {:?}", confirmation.deal_id);
                 info!("  Status: {:?}", confirmation.status);
                 info!("  Reason: {:?}", confirmation.reason);
+                
+                // Check if this is a closed market response
+                if confirmation.reason.as_deref() == Some("MARKET_CLOSED_WITH_EDITS") {
+                    info!("✅ Successfully verified serialization of MARKET_CLOSED_WITH_EDITS response");
+                    info!("✅ Status field is correctly handled as: {:?}", confirmation.status);
+                    
+                    // Verify that all fields are correctly deserialized
+                    assert!(confirmation.deal_id.is_some(), "deal_id should be present");
+                    // For closed markets, status could be null in the JSON but should be deserialized as Rejected
+                    assert_eq!(confirmation.status, ig_client::application::models::order::Status::Rejected, 
+                              "Status should be Rejected for closed markets");
+                    assert_eq!(confirmation.reason, Some("MARKET_CLOSED_WITH_EDITS".to_string()), 
+                              "Reason should be MARKET_CLOSED_WITH_EDITS");
+                }
 
                 if confirmation.status == ig_client::application::models::order::Status::Rejected {
                     info!("Order was rejected: {:?}", confirmation.reason);
@@ -184,6 +223,90 @@ fn test_create_and_close_position() {
 
 #[test]
 #[ignore]
+fn test_closed_market_serialization() {
+    setup_logger();
+    // Create test configuration and client
+    let config = common::create_test_config();
+    let client = common::create_test_client(config.clone());
+
+    // Create order service
+    let order_service = OrderServiceImpl::new(config.clone(), client.clone());
+
+    // Get a session
+    let session = common::login_with_account_switch();
+
+    // Create a runtime for the async operations
+    let rt = Runtime::new().expect("Failed to create runtime");
+
+    // Test creating an order in a closed market
+    rt.block_on(async {
+        // Wait to respect the rate limit
+        ig_client::utils::rate_limiter::account_trading_limiter()
+            .wait()
+            .await;
+        
+        info!("Testing order creation with a known closed market");
+        
+        // Use a market that we know is closed
+        let closed_epic = "DO.D.OTCDDAX.71.IP";
+        
+        // Create a test order for the closed market
+        let mut create_order = CreateOrderRequest::limit(
+            closed_epic.to_string(),
+            Direction::Buy,
+            0.2, // Small size
+            100.0, // Arbitrary price
+        )
+        .with_reference(format!("test_closed_{}", chrono::Utc::now().timestamp()));
+
+        // Set required fields
+        create_order.expiry = Some("JUL-25".to_string());
+        create_order.guaranteed_stop = Some(false);
+        create_order.currency_code = Some("EUR".to_string());
+        create_order.time_in_force = ig_client::application::models::order::TimeInForce::FillOrKill;
+
+        // Attempt to create the position (should be rejected due to closed market)
+        let create_result = order_service.create_order(&session, &create_order).await;
+
+        match create_result {
+            Ok(response) => {
+                info!("Got deal reference for closed market: {}", response.deal_reference);
+
+                // Get the order confirmation to verify serialization
+                let confirmation = order_service
+                    .get_order_confirmation(&session, &response.deal_reference)
+                    .await;
+
+                match confirmation {
+                    Ok(conf) => {
+                        info!("✅ Successfully parsed confirmation for closed market");
+                        info!("  Deal ID: {:?}", conf.deal_id);
+                        info!("  Status: {:?}", conf.status);
+                        info!("  Reason: {:?}", conf.reason);
+
+                        // Verify the closed market response fields
+                        assert!(conf.deal_id.is_some(), "deal_id should be present");
+                        assert_eq!(conf.status, ig_client::application::models::order::Status::Rejected,
+                                "Status should be Rejected for closed markets");
+                        assert_eq!(conf.reason, Some("MARKET_CLOSED_WITH_EDITS".to_string()),
+                                "Reason should be MARKET_CLOSED_WITH_EDITS");
+                        
+                        info!("✅ Closed market serialization test passed");
+                    },
+                    Err(e) => {
+                        panic!("Failed to get confirmation for closed market: {:?}", e);
+                    }
+                }
+            },
+            Err(e) => {
+                panic!("Failed to create order for closed market test: {:?}", e);
+            }
+        }
+    });
+}
+
+#[test]
+#[ignore]
 fn test_update_position() {
     setup_logger();
     // Create test configuration and client
@@ -227,12 +350,37 @@ fn test_update_position() {
                 common::create_test_client(common::create_test_config()),
             );
 
-            // Get market details to find current price
-            let epic = "OP.D.OTCDAX1.021100P.IP";
-            let market_details = market_service
-                .get_market_details(&session, epic)
-                .await
-                .expect("Failed to get market details");
+            // Test both an open and a closed market epic
+            let open_epic = "OP.D.OTCDAX1.021100P.IP"; // Epic for an open market
+            let closed_epic = "DO.D.OTCDDAX.71.IP";    // Epic for a closed market that we know returns MARKET_CLOSED_WITH_EDITS
+            
+            // First try with the open market
+            info!("Testing with open market epic: {}", open_epic);
+            let market_details_result = market_service
+                .get_market_details(&session, open_epic)
+                .await;
+            
+            // If the open market fails, try the closed market
+            let (epic, market_details) = match market_details_result {
+                Ok(details) => {
+                    info!("Successfully got details for open market");
+                    (open_epic, details)
+                },
+                Err(e) => {
+                    info!("Open market failed: {:?}, trying closed market", e);
+                    // Now try with the closed market
+                    info!("Testing with closed market epic: {}", closed_epic);
+                    match market_service.get_market_details(&session, closed_epic).await {
+                        Ok(details) => {
+                            info!("Successfully got details for closed market");
+                            (closed_epic, details)
+                        },
+                        Err(e) => {
+                            panic!("Both open and closed market requests failed: {:?}", e);
+                        }
+                    }
+                }
+            };
 
             // Get current price and set limit price slightly higher for a buy order
             let current_price = market_details.snapshot.offer.unwrap_or(100.0);

@@ -30,8 +30,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let session = authenticator.login().await?;
     info!("Session started successfully");
 
-    // No need for delay anymore
-
     // Create account service
     let account_service = AccountServiceImpl::new(Arc::clone(&config), Arc::clone(&http_client));
     info!("Account service created");
