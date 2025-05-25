@@ -4,18 +4,12 @@ use ig_client::application::services::market_service::MarketServiceImpl;
 use ig_client::presentation::build_market_hierarchy;
 use ig_client::utils::logger::setup_logger;
 use ig_client::{
-    application::models::market::{MarketData, MarketNavigationResponse},
-    application::services::MarketService,
-    config::Config,
-    error::AppError,
-    session::auth::IgAuth,
-    session::interface::{IgAuthenticator, IgSession},
-    transport::http_client::IgHttpClientImpl,
+    application::services::MarketService, config::Config, error::AppError, session::auth::IgAuth,
+    session::interface::IgAuthenticator, transport::http_client::IgHttpClientImpl,
 };
-use serde::{Deserialize, Serialize};
-use std::{error::Error, future::Future, pin::Pin, sync::Arc};
+use std::{error::Error, sync::Arc};
 use tokio;
-use tracing::{debug, error, info, warn};
+use tracing::{error, info, warn};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
