@@ -179,6 +179,8 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
     }
 }
 
+
+
 #[cfg(test)]
 mod tests {
     use super::*;

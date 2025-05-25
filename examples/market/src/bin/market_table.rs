@@ -1,25 +1,13 @@
-use ig_client::application::models::market::MarketNode;
 use ig_client::application::services::market_service::MarketServiceImpl;
-use ig_client::presentation::build_market_hierarchy;
+use ig_client::presentation::{build_market_hierarchy, extract_markets_from_hierarchy};
 use ig_client::utils::logger::setup_logger;
+use ig_client::utils::market_parser::{normalize_text, parse_instrument_name};
 use ig_client::{
-    application::models::market::MarketData,
-    config::Config,
-    session::auth::IgAuth,
-    session::interface::IgAuthenticator,
+    config::Config, session::auth::IgAuth, session::interface::IgAuthenticator,
     transport::http_client::IgHttpClientImpl,
 };
 use std::{error::Error, sync::Arc};
 use tracing::{error, info};
-use ig_client::utils::market_parser::{parse_instrument_name, normalize_text};
-
-/// Constants for formatting the table
-const EPIC_WIDTH: usize = 30;
-const NAME_WIDTH: usize = 40;
-const ASSET_WIDTH: usize = 30;
-const STRIKE_WIDTH: usize = 15;
-const TYPE_WIDTH: usize = 10;
-const EXPIRY_WIDTH: usize = 15;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -84,7 +72,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     info!("Building market hierarchy...");
     let hierarchy = match build_market_hierarchy(&market_service, &session, None, 0).await {
         Ok(h) => {
-            info!("Successfully built hierarchy with {} top-level nodes", h.len());
+            info!(
+                "Successfully built hierarchy with {} top-level nodes",
+                h.len()
+            );
             h
         }
         Err(e) => {
@@ -103,7 +94,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .map(|market| {
             let parsed_info = parse_instrument_name(&market.instrument_name);
             let normalized_asset_name = normalize_text(&parsed_info.asset_name);
-            
+
             // Create a JSON object with all fields
             serde_json::json!({
                 "epic": market.epic,
@@ -123,91 +114,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
             return Err(Box::new(e) as Box<dyn Error>);
         }
     };
-    
+
     let filename = "Data/market_table.json";
     if let Err(e) = std::fs::write(&filename, &json) {
         error!("Failed to write to file {}: {:?}", filename, e);
         return Err(Box::new(e) as Box<dyn Error>);
     }
     info!("Complete market data saved to '{}'", filename);
-
-    // Print the table header
-    println!(
-        "\n{:<width_epic$} {:<width_name$} {:<width_asset$} {:<width_strike$} {:<width_type$} {:<width_expiry$}",
-        "EPIC", "INSTRUMENT NAME", "ASSET NAME", "STRIKE", "TYPE", "EXPIRY",
-        width_epic = EPIC_WIDTH,
-        width_name = NAME_WIDTH,
-        width_asset = ASSET_WIDTH,
-        width_strike = STRIKE_WIDTH,
-        width_type = TYPE_WIDTH,
-        width_expiry = EXPIRY_WIDTH
-    );
-    println!(
-        "{:-<width_epic$} {:-<width_name$} {:-<width_asset$} {:-<width_strike$} {:-<width_type$} {:-<width_expiry$}",
-        "", "", "", "", "", "",
-        width_epic = EPIC_WIDTH,
-        width_name = NAME_WIDTH,
-        width_asset = ASSET_WIDTH,
-        width_strike = STRIKE_WIDTH,
-        width_type = TYPE_WIDTH,
-        width_expiry = EXPIRY_WIDTH
-    );
-
-    // Sort markets by instrument name for better readability
-    let mut sorted_markets = markets;
-    sorted_markets.sort_by(|a, b| a.instrument_name.to_lowercase().cmp(&b.instrument_name.to_lowercase()));
-
-    // Print the table rows
-    for market in sorted_markets {
-        // Parse the instrument name to extract asset name, strike, and option type
-        let parsed_info = parse_instrument_name(&market.instrument_name);
-        
-        // Normalize the asset name
-        let normalized_asset_name = normalize_text(&parsed_info.asset_name);
-        
-        println!(
-            "{:<width_epic$} {:<width_name$} {:<width_asset$} {:<width_strike$} {:<width_type$} {:<width_expiry$}",
-            truncate(&market.epic, EPIC_WIDTH - 2),
-            truncate(&market.instrument_name, NAME_WIDTH - 2),
-            truncate(&normalized_asset_name, ASSET_WIDTH - 2),
-            truncate(parsed_info.strike.as_deref().unwrap_or("-"), STRIKE_WIDTH - 2),
-            truncate(parsed_info.option_type.as_deref().unwrap_or("-"), TYPE_WIDTH - 2),
-            truncate(&market.expiry, EXPIRY_WIDTH - 2),
-            width_epic = EPIC_WIDTH,
-            width_name = NAME_WIDTH,
-            width_asset = ASSET_WIDTH,
-            width_strike = STRIKE_WIDTH,
-            width_type = TYPE_WIDTH,
-            width_expiry = EXPIRY_WIDTH
-        );
-    }
-
-    info!("Market table generated successfully");
     Ok(())
-}
-
-/// Recursively extract all markets from the hierarchy into a flat list
-fn extract_markets_from_hierarchy(nodes: &[MarketNode]) -> Vec<MarketData> {
-    let mut all_markets = Vec::new();
-
-    for node in nodes {
-        // Add markets from this node
-        all_markets.extend(node.markets.clone());
-
-        // Recursively add markets from child nodes
-        if !node.children.is_empty() {
-            all_markets.extend(extract_markets_from_hierarchy(&node.children));
-        }
-    }
-
-    all_markets
-}
-
-/// Helper function to truncate strings to a maximum length
-fn truncate(s: &str, max_len: usize) -> String {
-    if s.len() <= max_len {
-        s.to_string()
-    } else {
-        format!("{}...", &s[0..max_len - 3])
-    }
 }

@@ -331,3 +331,20 @@ pub fn build_market_hierarchy<'a>(
         Ok(nodes)
     })
 }
+
+/// Recursively extract all markets from the hierarchy into a flat list
+pub fn extract_markets_from_hierarchy(nodes: &[MarketNode]) -> Vec<crate::application::models::market::MarketData> {
+    let mut all_markets = Vec::new();
+
+    for node in nodes {
+        // Add markets from this node
+        all_markets.extend(node.markets.clone());
+
+        // Recursively add markets from child nodes
+        if !node.children.is_empty() {
+            all_markets.extend(extract_markets_from_hierarchy(&node.children));
+        }
+    }
+
+    all_markets
+}
