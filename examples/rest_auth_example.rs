@@ -4,6 +4,8 @@
 use ig_client::config::Config;
 use ig_client::session::auth::IgAuth;
 use ig_client::session::interface::IgAuthenticator;
+use ig_client::utils::rate_limiter::RateLimitType;
+use std::sync::Arc;
 use tracing::{error, info};
 use tracing_subscriber::FmtSubscriber;
 
@@ -16,7 +18,10 @@ async fn main() {
     tracing::subscriber::set_global_default(sub).expect("setting default subscriber failed");
 
     // 1. Load config from env (see Config::new)
-    let cfg = Config::new();
+    let cfg = Arc::new(Config::with_rate_limit_type(
+        RateLimitType::NonTradingAccount,
+        0.7,
+    ));
     info!("Loaded config → {}", cfg.rest_api.base_url);
     // 2. Instantiate authenticator
     let auth = IgAuth::new(&cfg);

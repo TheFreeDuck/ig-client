@@ -116,7 +116,7 @@ fn test_order_service_config() {
     let session = IgSession::new(
         "CST123".to_string(),
         "XST123".to_string(),
-        "ACC123".to_string()
+        "ACC123".to_string(),
     );
 
     // Verify session was created successfully

@@ -103,6 +103,7 @@ mod tests_setup_logger {
 mod tests_setup_logger_bis {
     use super::*;
     use std::sync::Mutex;
+    use tracing::info;
     use tracing::subscriber::with_default;
     use tracing_subscriber::Layer;
     use tracing_subscriber::layer::SubscriberExt;
@@ -150,7 +151,7 @@ mod tests_setup_logger_bis {
 
         with_default(subscriber, || {
             setup_logger();
-            tracing::info!("Test log");
+            info!("Test log");
         });
 
         assert_eq!(*level.lock().unwrap(), Some(Level::INFO));
@@ -253,7 +254,7 @@ mod tests_setup_logger_bis {
 
         with_default(subscriber, || {
             setup_logger();
-            tracing::info!("Test log");
+            info!("Test log");
         });
 
         assert_eq!(*level.lock().unwrap(), Some(Level::INFO));

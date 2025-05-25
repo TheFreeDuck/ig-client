@@ -12,12 +12,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_rate_limit_type_min_interval() {
-        // Test that each rate limit type returns the expected interval
-        assert_eq!(RateLimitType::NonTradingAccount.min_interval_ms(), 4000);
-        assert_eq!(RateLimitType::TradingAccount.min_interval_ms(), 2000);
-        assert_eq!(RateLimitType::NonTradingApp.min_interval_ms(), 3000);
-        assert_eq!(RateLimitType::HistoricalPrice.min_interval_ms(), 120000);
+    fn test_rate_limit_type_limits() {
+        // Test that each rate limit type returns the expected limits
+        assert_eq!(RateLimitType::NonTradingAccount.request_limit(), 30);
+        assert_eq!(RateLimitType::TradingAccount.request_limit(), 100);
+        assert_eq!(RateLimitType::NonTradingApp.request_limit(), 60);
+        assert_eq!(RateLimitType::HistoricalPrice.request_limit(), 10000);
     }
 
     #[test]

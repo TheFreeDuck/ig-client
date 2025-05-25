@@ -49,13 +49,13 @@ fn test_create_and_close_position() {
         // Test both an open and a closed market epic
         let open_epic = "OP.D.OTCDAX1.021100P.IP"; // Epic for an open market
         let closed_epic = "DO.D.OTCDDAX.71.IP";    // Epic for a closed market that we know returns MARKET_CLOSED_WITH_EDITS
-        
+
         // First try with the open market
         info!("Testing with open market epic: {}", open_epic);
         let market_details_result = market_service
             .get_market_details(&session, open_epic)
             .await;
-        
+
         // If the open market fails, try the closed market
         let (epic, market_details) = match market_details_result {
             Ok(details) => {
@@ -122,18 +122,18 @@ fn test_create_and_close_position() {
                 info!("  Deal ID: {:?}", confirmation.deal_id);
                 info!("  Status: {:?}", confirmation.status);
                 info!("  Reason: {:?}", confirmation.reason);
-                
+
                 // Check if this is a closed market response
                 if confirmation.reason.as_deref() == Some("MARKET_CLOSED_WITH_EDITS") {
                     info!("✅ Successfully verified serialization of MARKET_CLOSED_WITH_EDITS response");
                     info!("✅ Status field is correctly handled as: {:?}", confirmation.status);
-                    
+
                     // Verify that all fields are correctly deserialized
                     assert!(confirmation.deal_id.is_some(), "deal_id should be present");
                     // For closed markets, status could be null in the JSON but should be deserialized as Rejected
-                    assert_eq!(confirmation.status, ig_client::application::models::order::Status::Rejected, 
+                    assert_eq!(confirmation.status, ig_client::application::models::order::Status::Rejected,
                               "Status should be Rejected for closed markets");
-                    assert_eq!(confirmation.reason, Some("MARKET_CLOSED_WITH_EDITS".to_string()), 
+                    assert_eq!(confirmation.reason, Some("MARKET_CLOSED_WITH_EDITS".to_string()),
                               "Reason should be MARKET_CLOSED_WITH_EDITS");
                 }
 
@@ -244,17 +244,17 @@ fn test_closed_market_serialization() {
         ig_client::utils::rate_limiter::account_trading_limiter()
             .wait()
             .await;
-        
+
         info!("Testing order creation with a known closed market");
-        
+
         // Use a market that we know is closed
         let closed_epic = "DO.D.OTCDDAX.71.IP";
-        
+
         // Create a test order for the closed market
         let mut create_order = CreateOrderRequest::limit(
             closed_epic.to_string(),
             Direction::Buy,
-            0.2, // Small size
+            0.2,   // Small size
             100.0, // Arbitrary price
         )
         .with_reference(format!("test_closed_{}", chrono::Utc::now().timestamp()));
@@ -270,7 +270,10 @@ fn test_closed_market_serialization() {
 
         match create_result {
             Ok(response) => {
-                info!("Got deal reference for closed market: {}", response.deal_reference);
+                info!(
+                    "Got deal reference for closed market: {}",
+                    response.deal_reference
+                );
 
                 // Get the order confirmation to verify serialization
                 let confirmation = order_service
@@ -286,18 +289,24 @@ fn test_closed_market_serialization() {
 
                         // Verify the closed market response fields
                         assert!(conf.deal_id.is_some(), "deal_id should be present");
-                        assert_eq!(conf.status, ig_client::application::models::order::Status::Rejected,
-                                "Status should be Rejected for closed markets");
-                        assert_eq!(conf.reason, Some("MARKET_CLOSED_WITH_EDITS".to_string()),
-                                "Reason should be MARKET_CLOSED_WITH_EDITS");
-                        
+                        assert_eq!(
+                            conf.status,
+                            ig_client::application::models::order::Status::Rejected,
+                            "Status should be Rejected for closed markets"
+                        );
+                        assert_eq!(
+                            conf.reason,
+                            Some("MARKET_CLOSED_WITH_EDITS".to_string()),
+                            "Reason should be MARKET_CLOSED_WITH_EDITS"
+                        );
+
                         info!("✅ Closed market serialization test passed");
-                    },
+                    }
                     Err(e) => {
                         panic!("Failed to get confirmation for closed market: {:?}", e);
                     }
                 }
-            },
+            }
             Err(e) => {
                 panic!("Failed to create order for closed market test: {:?}", e);
             }
@@ -352,29 +361,31 @@ fn test_update_position() {
 
             // Test both an open and a closed market epic
             let open_epic = "OP.D.OTCDAX1.021100P.IP"; // Epic for an open market
-            let closed_epic = "DO.D.OTCDDAX.71.IP";    // Epic for a closed market that we know returns MARKET_CLOSED_WITH_EDITS
-            
+            let closed_epic = "DO.D.OTCDDAX.71.IP"; // Epic for a closed market that we know returns MARKET_CLOSED_WITH_EDITS
+
             // First try with the open market
             info!("Testing with open market epic: {}", open_epic);
-            let market_details_result = market_service
-                .get_market_details(&session, open_epic)
-                .await;
-            
+            let market_details_result =
+                market_service.get_market_details(&session, open_epic).await;
+
             // If the open market fails, try the closed market
             let (epic, market_details) = match market_details_result {
                 Ok(details) => {
                     info!("Successfully got details for open market");
                     (open_epic, details)
-                },
+                }
                 Err(e) => {
                     info!("Open market failed: {:?}, trying closed market", e);
                     // Now try with the closed market
                     info!("Testing with closed market epic: {}", closed_epic);
-                    match market_service.get_market_details(&session, closed_epic).await {
+                    match market_service
+                        .get_market_details(&session, closed_epic)
+                        .await
+                    {
                         Ok(details) => {
                             info!("Successfully got details for closed market");
                             (closed_epic, details)
-                        },
+                        }
                         Err(e) => {
                             panic!("Both open and closed market requests failed: {:?}", e);
                         }

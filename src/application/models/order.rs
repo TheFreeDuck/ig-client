@@ -4,7 +4,7 @@
    Date: 13/5/25
 ******************************************************************************/
 use crate::impl_json_display;
-use serde::{Deserialize, Serialize, Deserializer};
+use serde::{Deserialize, Deserializer, Serialize};
 
 /// Order direction (buy or sell)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]

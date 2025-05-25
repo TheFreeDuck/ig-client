@@ -3,6 +3,7 @@ use ig_client::application::services::account_service::AccountServiceImpl;
 use ig_client::application::services::market_service::MarketServiceImpl;
 use ig_client::presentation::build_market_hierarchy;
 use ig_client::utils::logger::setup_logger;
+use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::{
     application::services::MarketService, config::Config, error::AppError, session::auth::IgAuth,
     session::interface::IgAuthenticator, transport::http_client::IgHttpClientImpl,
@@ -17,14 +18,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
     setup_logger();
 
     // Load configuration from environment variables
-    let config = Config::new();
+    let config = Arc::new(Config::with_rate_limit_type(
+        RateLimitType::NonTradingAccount,
+        0.7,
+    ));
 
     // Create HTTP client
-    let client = Arc::new(IgHttpClientImpl::new(Arc::new(config.clone())));
+    let client = Arc::new(IgHttpClientImpl::new(config.clone()));
 
     // Create services
-    let _account_service = AccountServiceImpl::new(Arc::new(config.clone()), client.clone());
-    let market_service = MarketServiceImpl::new(Arc::new(config.clone()), client.clone());
+    let _account_service = AccountServiceImpl::new(config.clone(), client.clone());
+    let market_service = MarketServiceImpl::new(config.clone(), client.clone());
 
     // Create authenticator
     let auth = IgAuth::new(&config);

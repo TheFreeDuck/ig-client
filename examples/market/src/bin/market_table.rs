@@ -2,6 +2,7 @@ use ig_client::application::services::market_service::MarketServiceImpl;
 use ig_client::presentation::{build_market_hierarchy, extract_markets_from_hierarchy};
 use ig_client::utils::logger::setup_logger;
 use ig_client::utils::market_parser::{normalize_text, parse_instrument_name};
+use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::{
     config::Config, session::auth::IgAuth, session::interface::IgAuthenticator,
     transport::http_client::IgHttpClientImpl,
@@ -14,8 +15,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Configure logger
     setup_logger();
 
-    // Load configuration from environment variables
-    let config = Arc::new(Config::new());
+    let config = Arc::new(Config::with_rate_limit_type(
+        RateLimitType::NonTradingAccount,
+        0.7,
+    ));
     info!("Loaded configuration → {}", config.rest_api.base_url);
 
     // Create HTTP client

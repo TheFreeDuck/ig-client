@@ -58,7 +58,7 @@ pub enum AuthError {
     /// Unexpected HTTP status code
     Unexpected(StatusCode),
     /// Rate limit exceeded error
-    RateLimitExceeded
+    RateLimitExceeded,
 }
 
 impl Display for AuthError {

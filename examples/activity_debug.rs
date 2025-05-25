@@ -1,3 +1,4 @@
+use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::{
     config::Config, session::auth::IgAuth, session::interface::IgAuthenticator,
     utils::logger::setup_logger,
@@ -10,7 +11,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     setup_logger();
 
     // Create configuration using the default Config implementation
-    let config = Arc::new(Config::new());
+    let config = Arc::new(Config::with_rate_limit_type(
+        RateLimitType::NonTradingAccount,
+        0.7,
+    ));
     info!("Configuration loaded");
 
     // Create authenticator

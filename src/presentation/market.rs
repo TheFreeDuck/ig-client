@@ -1,6 +1,5 @@
 use crate::application::models::market::{MarketNavigationResponse, MarketNode};
 use crate::application::services::MarketService;
-use crate::constants::SLEEP_TIME_PER_REQUEST;
 use crate::error::AppError;
 use crate::presentation::serialization::{string_as_bool_opt, string_as_float_opt};
 use crate::session::interface::IgSession;
@@ -215,7 +214,19 @@ pub struct MarketFields {
     update_time: Option<String>,
 }
 
+use once_cell::sync::Lazy;
+use std::sync::Arc;
+use tokio::sync::Semaphore;
+
+// Global semaphore to limit concurrency in API requests
+// This ensures that rate limits are not exceeded
+static API_SEMAPHORE: Lazy<Arc<Semaphore>> = Lazy::new(|| Arc::new(Semaphore::new(1)));
+
 /// Function to recursively build the market hierarchy with rate limiting
+///
+/// This function builds the market hierarchy recursively, respecting
+/// the API rate limits. It uses a semaphore to ensure that only
+/// one request is made at a time, thus avoiding exceeding rate limits.
 pub fn build_market_hierarchy<'a>(
     market_service: &'a impl MarketService,
     session: &'a IgSession,
@@ -229,9 +240,12 @@ pub fn build_market_hierarchy<'a>(
             return Ok(Vec::new());
         }
 
-        // Add a delay to respect rate limits (SLEEP_TIME ms between requests)
-        tokio::time::sleep(tokio::time::Duration::from_millis(SLEEP_TIME_PER_REQUEST)).await;
-        
+        // Acquire the semaphore to limit concurrency
+        // This ensures that only one API request is made at a time
+        let _permit = API_SEMAPHORE.clone().acquire_owned().await.unwrap();
+
+        // The rate limiter will handle any necessary delays between requests
+        // No explicit sleep calls are needed here
 
         // Get the nodes and markets at the current level
         let navigation: MarketNavigationResponse = match node_id {
@@ -282,14 +296,16 @@ pub fn build_market_hierarchy<'a>(
         // Process all nodes at this level
         let nodes_to_process = navigation.nodes;
 
-        // Process nodes with rate limiting
-        for (i, node) in nodes_to_process.into_iter().enumerate() {
-            // Add a delay between node processing to respect rate limits
-            if i > 0 {
-                tokio::time::sleep(tokio::time::Duration::from_millis(SLEEP_TIME_PER_REQUEST))
-                    .await;
-            }
+        // Release the semaphore before processing child nodes
+        // This allows other requests to be processed while we wait
+        // for recursive requests to complete
+        drop(_permit);
 
+        // Process nodes sequentially with rate limiting
+        // This is important to respect the API rate limits
+        // By processing nodes sequentially, we allow the rate limiter
+        // to properly control the flow of requests
+        for node in nodes_to_process.into_iter() {
             // Recursively get the children of this node
             match build_market_hierarchy(market_service, session, Some(&node.id), depth + 1).await {
                 Ok(children) => {
@@ -333,7 +349,9 @@ pub fn build_market_hierarchy<'a>(
 }
 
 /// Recursively extract all markets from the hierarchy into a flat list
-pub fn extract_markets_from_hierarchy(nodes: &[MarketNode]) -> Vec<crate::application::models::market::MarketData> {
+pub fn extract_markets_from_hierarchy(
+    nodes: &[MarketNode],
+) -> Vec<crate::application::models::market::MarketData> {
     let mut all_markets = Vec::new();
 
     for node in nodes {
