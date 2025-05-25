@@ -8,7 +8,6 @@
 //! error handling with exponential backoff.
 
 use chrono::{Duration, Utc};
-use ig_client::constants::{ERROR_COOLDOWN_SECONDS, MAX_CONSECUTIVE_ERRORS};
 use ig_client::{
     application::models::transaction::TransactionList, application::services::AccountService,
     application::services::account_service::AccountServiceImpl, config::Config,
@@ -17,23 +16,8 @@ use ig_client::{
 };
 use std::{sync::Arc, time::Duration as StdDuration};
 use tokio::{signal, time};
-use tracing::{debug, error, info, warn};
+use tracing::{debug, error, info};
 
-/// Apply exponential backoff when too many errors occur
-pub async fn apply_backoff(consecutive_errors: &mut u32) {
-    let backoff_time =
-        ERROR_COOLDOWN_SECONDS * (2_u64.pow(*consecutive_errors - MAX_CONSECUTIVE_ERRORS));
-    let capped_backoff = backoff_time.min(3600); // Cap at 1 hour max
-
-    warn!(
-        "Hit maximum consecutive errors ({}). Entering cooldown period of {} seconds",
-        MAX_CONSECUTIVE_ERRORS, capped_backoff
-    );
-
-    // Pause for cooldown period
-    time::sleep(std::time::Duration::from_secs(capped_backoff)).await;
-    *consecutive_errors = 0; // Reset after cooldown
-}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -59,9 +43,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             return Err(Box::<dyn std::error::Error>::from(e));
         }
     };
-
-    // Initialize error counter
-    let mut consecutive_errors = 0;
 
     // Set up signal handlers for graceful shutdown
     let ctrl_c = signal::ctrl_c();
@@ -98,11 +79,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     }
                     Err(e) => {
                         error!("Failed to login: {}", e);
-                        consecutive_errors += 1;
-
-                        if consecutive_errors >= MAX_CONSECUTIVE_ERRORS {
-                            apply_backoff(&mut consecutive_errors).await;
-                        }
                         continue; // Skip this iteration and try again
                     }
                 };
@@ -131,11 +107,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     Ok(transactions) => transactions,
                     Err(e) => {
                         error!("Failed to get transactions: {}", e);
-                        consecutive_errors += 1;
-
-                        if consecutive_errors >= MAX_CONSECUTIVE_ERRORS {
-                            apply_backoff(&mut consecutive_errors).await;
-                        }
                         continue; // Skip this iteration and try again
                     }
                 };
@@ -195,15 +166,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     match store_transactions(&pool, tx_ref).await {
                         Ok(inserted) => {
                             info!("Successfully stored {} transactions in database", inserted);
-                            consecutive_errors = 0; // Reset error counter on success
                         }
                         Err(e) => {
                             error!("Error storing transactions: {}", e);
-                            consecutive_errors += 1;
-
-                            if consecutive_errors >= MAX_CONSECUTIVE_ERRORS {
-                                apply_backoff(&mut consecutive_errors).await;
-                            }
                         }
                     };
                 } else {

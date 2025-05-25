@@ -1,4 +1,5 @@
 use ig_client::config::{Config, Credentials, RestApiConfig, WebSocketConfig};
+use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::error::AppError;
 use ig_client::session::interface::IgSession;
 use ig_client::storage::config::DatabaseConfig;
@@ -27,6 +28,8 @@ fn create_test_config(base_url: &str) -> Arc<Config> {
             url: "wss://example.com".to_string(),
             reconnect_interval: 5,
         },
+        rate_limit_type: RateLimitType::NonTradingAccount,
+        rate_limit_safety_margin: 0.8,
         database: DatabaseConfig {
             url: "postgres://user:pass@localhost/ig_db".to_string(),
             max_connections: 5,

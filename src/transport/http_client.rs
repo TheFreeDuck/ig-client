@@ -207,6 +207,7 @@ impl IgHttpClient for IgHttpClientImpl {
         info!("Making unauthenticated {} request to {}", method_str, url);
 
         // Use the global app rate limiter for unauthenticated requests
+        // This is thread-safe and can be called from multiple threads concurrently
         let limiter = app_non_trading_limiter();
         limiter.wait().await;
 

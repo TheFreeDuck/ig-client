@@ -1,4 +1,5 @@
 use ig_client::config::{Config, Credentials, RestApiConfig, WebSocketConfig};
+use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::error::AuthError;
 use ig_client::session::auth::IgAuth;
 use ig_client::session::interface::{IgAuthenticator, IgSession};
@@ -29,6 +30,8 @@ fn create_test_config(server_url: &str) -> Config {
             url: "postgres://user:pass@localhost/ig_db".to_string(),
             max_connections: 5,
         },
+        rate_limit_type: RateLimitType::NonTradingAccount,
+        rate_limit_safety_margin: 0.8,
         sleep_hours: 1,
         page_size: 20,
         days_to_look_back: 7,

@@ -148,17 +148,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
                             error!("❌ Failed to fetch details for {}: {:?}", epic, e);
                         }
                     }
-
-                    // Add a small delay between individual requests
-                    tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
                 }
             }
-        }
-
-        // Add a delay between batches to avoid rate limiting
-        if chunk_end < epics.len() {
-            info!("Waiting {}ms before next batch...", REQUEST_DELAY_MS);
-            tokio::time::sleep(tokio::time::Duration::from_millis(REQUEST_DELAY_MS)).await;
         }
 
         // Save intermediate results after each batch

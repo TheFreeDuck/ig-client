@@ -8,14 +8,14 @@ use ig_client::{
 };
 use std::{error::Error, sync::Arc};
 use tracing::{error, info};
+use ig_client::utils::rate_limiter::RateLimitType;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     // Configure logger
     setup_logger();
 
-    // Load configuration from environment variables
-    let config = Arc::new(Config::new());
+    let config = Arc::new(Config::with_rate_limit_type(RateLimitType::NonTradingAccount, 0.7));
     info!("Loaded configuration → {}", config.rest_api.base_url);
 
     // Create HTTP client

@@ -1,6 +1,7 @@
 use crate::constants::{DAYS_TO_BACK_LOOK, DEFAULT_PAGE_SIZE, DEFAULT_SLEEP_TIME};
 use crate::impl_json_display;
 use crate::storage::config::DatabaseConfig;
+use crate::utils::rate_limiter::RateLimitType;
 use dotenv::dotenv;
 use serde::{Deserialize, Serialize};
 use sqlx::postgres::PgPoolOptions;
@@ -39,13 +40,16 @@ pub struct Config {
     pub websocket: WebSocketConfig,
     /// Database configuration for data persistence
     pub database: DatabaseConfig,
-
     /// Number of hours between transaction fetching operations
     pub sleep_hours: u64,
     /// Number of items to retrieve per page in API requests
     pub page_size: u32,
     /// Number of days to look back when fetching historical data
     pub days_to_look_back: i64,
+    /// Rate limit type to use for API requests
+    pub rate_limit_type: RateLimitType,
+    /// Safety margin for rate limiting (0.0-1.0)
+    pub rate_limit_safety_margin: f64,
 }
 
 impl_json_display!(Config);
@@ -111,6 +115,21 @@ impl Config {
     ///
     /// A new `Config` instance
     pub fn new() -> Self {
+        warn!("Using not rate-limited configuration. This is not recommended for production use.");
+        Self::with_rate_limit_type(RateLimitType::NonTradingAccount, 0.8)
+    }
+
+    /// Creates a new configuration instance with a specific rate limit type
+    ///
+    /// # Arguments
+    ///
+    /// * `rate_limit_type` - The type of rate limit to enforce
+    /// * `safety_margin` - A value between 0.0 and 1.0 representing the percentage of the actual limit to use
+    ///
+    /// # Returns
+    ///
+    /// A new `Config` instance
+    pub fn with_rate_limit_type(rate_limit_type: RateLimitType, safety_margin: f64) -> Self {
         // Explicitly load the .env file
         match dotenv() {
             Ok(_) => info!("Successfully loaded .env file"),
@@ -164,6 +183,9 @@ impl Config {
             }
         );
 
+        // Ensure safety margin is within valid range
+        let safety_margin = safety_margin.clamp(0.1, 1.0);
+
         Config {
             credentials: Credentials {
                 username,
@@ -197,6 +219,8 @@ impl Config {
             sleep_hours,
             page_size,
             days_to_look_back,
+            rate_limit_type,
+            rate_limit_safety_margin: safety_margin,
         }
     }
 
@@ -310,6 +334,8 @@ mod tests_display {
             sleep_hours: 0,
             page_size: 0,
             days_to_look_back: 0,
+            rate_limit_type: RateLimitType::NonTradingAccount,
+            rate_limit_safety_margin: 0.8,
         };
 
         let display_output = config.to_string();
@@ -336,7 +362,9 @@ mod tests_display {
             },
             "sleep_hours": 0,
             "page_size": 0,
-            "days_to_look_back": 0
+            "days_to_look_back": 0,
+            "rate_limit_type": "NonTradingAccount",
+            "rate_limit_safety_margin": 0.8
         });
 
         assert_json_eq!(
