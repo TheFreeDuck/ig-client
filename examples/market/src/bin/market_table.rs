@@ -11,12 +11,15 @@ use ig_client::{
 };
 use std::{error::Error, sync::Arc};
 use tracing::{error, info};
-use ig_client::utils::market_parser::parse_instrument_name;
+use ig_client::utils::market_parser::{parse_instrument_name, normalize_text};
 
 /// Constants for formatting the table
 const EPIC_WIDTH: usize = 30;
-const NAME_WIDTH: usize = 50;
-const EXPIRY_WIDTH: usize = 20;
+const NAME_WIDTH: usize = 40;
+const ASSET_WIDTH: usize = 30;
+const STRIKE_WIDTH: usize = 15;
+const TYPE_WIDTH: usize = 10;
+const EXPIRY_WIDTH: usize = 15;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -99,13 +102,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .iter()
         .map(|market| {
             let parsed_info = parse_instrument_name(&market.instrument_name);
-            match serde_json::to_value(parsed_info) {
-                Ok(value) => value,
-                Err(e) => {
-                    error!("Failed to serialize parsed market data: {:?}", e);
-                    return serde_json::json!({});
-                }
-            }
+            let normalized_asset_name = normalize_text(&parsed_info.asset_name);
+            
+            // Create a JSON object with all fields
+            serde_json::json!({
+                "epic": market.epic,
+                "instrument_name": market.instrument_name,
+                "expiry": market.expiry,
+                "asset_name": normalized_asset_name,
+                "strike": parsed_info.strike,
+                "option_type": parsed_info.option_type
+            })
         })
         .collect::<Vec<_>>();
 
@@ -126,17 +133,23 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Print the table header
     println!(
-        "\n{:<width_epic$} {:<width_name$} {:<width_expiry$}",
-        "EPIC", "INSTRUMENT NAME", "EXPIRY",
+        "\n{:<width_epic$} {:<width_name$} {:<width_asset$} {:<width_strike$} {:<width_type$} {:<width_expiry$}",
+        "EPIC", "INSTRUMENT NAME", "ASSET NAME", "STRIKE", "TYPE", "EXPIRY",
         width_epic = EPIC_WIDTH,
         width_name = NAME_WIDTH,
+        width_asset = ASSET_WIDTH,
+        width_strike = STRIKE_WIDTH,
+        width_type = TYPE_WIDTH,
         width_expiry = EXPIRY_WIDTH
     );
     println!(
-        "{:-<width_epic$} {:-<width_name$} {:-<width_expiry$}",
-        "", "", "",
+        "{:-<width_epic$} {:-<width_name$} {:-<width_asset$} {:-<width_strike$} {:-<width_type$} {:-<width_expiry$}",
+        "", "", "", "", "", "",
         width_epic = EPIC_WIDTH,
         width_name = NAME_WIDTH,
+        width_asset = ASSET_WIDTH,
+        width_strike = STRIKE_WIDTH,
+        width_type = TYPE_WIDTH,
         width_expiry = EXPIRY_WIDTH
     );
 
@@ -146,13 +159,25 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Print the table rows
     for market in sorted_markets {
+        // Parse the instrument name to extract asset name, strike, and option type
+        let parsed_info = parse_instrument_name(&market.instrument_name);
+        
+        // Normalize the asset name
+        let normalized_asset_name = normalize_text(&parsed_info.asset_name);
+        
         println!(
-            "{:<width_epic$} {:<width_name$} {:<width_expiry$}",
+            "{:<width_epic$} {:<width_name$} {:<width_asset$} {:<width_strike$} {:<width_type$} {:<width_expiry$}",
             truncate(&market.epic, EPIC_WIDTH - 2),
             truncate(&market.instrument_name, NAME_WIDTH - 2),
+            truncate(&normalized_asset_name, ASSET_WIDTH - 2),
+            truncate(parsed_info.strike.as_deref().unwrap_or("-"), STRIKE_WIDTH - 2),
+            truncate(parsed_info.option_type.as_deref().unwrap_or("-"), TYPE_WIDTH - 2),
             truncate(&market.expiry, EXPIRY_WIDTH - 2),
             width_epic = EPIC_WIDTH,
             width_name = NAME_WIDTH,
+            width_asset = ASSET_WIDTH,
+            width_strike = STRIKE_WIDTH,
+            width_type = TYPE_WIDTH,
             width_expiry = EXPIRY_WIDTH
         );
     }
