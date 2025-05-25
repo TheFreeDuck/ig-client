@@ -1,8 +1,15 @@
+use crate::application::models::market::{MarketNavigationResponse, MarketNode};
+use crate::application::services::MarketService;
+use crate::constants::SLEEP_TIME_PER_REQUEST;
+use crate::error::AppError;
 use crate::presentation::serialization::{string_as_bool_opt, string_as_float_opt};
+use crate::session::interface::IgSession;
 use lightstreamer_rs::subscription::ItemUpdate;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
+use std::pin::Pin;
+use tracing::{debug, error, info};
 
 /// Represents the current state of a market
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Default)]
@@ -206,4 +213,123 @@ pub struct MarketFields {
     #[serde(rename = "UPDATE_TIME")]
     #[serde(default)]
     update_time: Option<String>,
+}
+
+/// Function to recursively build the market hierarchy with rate limiting
+pub fn build_market_hierarchy<'a>(
+    market_service: &'a impl MarketService,
+    session: &'a IgSession,
+    node_id: Option<&'a str>,
+    depth: usize,
+) -> Pin<Box<dyn Future<Output = Result<Vec<MarketNode>, AppError>> + 'a>> {
+    Box::pin(async move {
+        // Limit the depth to avoid infinite loops
+        if depth > 7 {
+            debug!("Reached maximum depth of 5, stopping recursion");
+            return Ok(Vec::new());
+        }
+
+        // Add a delay to respect rate limits (SLEEP_TIME ms between requests)
+        if depth > 0 {
+            tokio::time::sleep(tokio::time::Duration::from_millis(SLEEP_TIME_PER_REQUEST)).await;
+        }
+
+        // Get the nodes and markets at the current level
+        let navigation: MarketNavigationResponse = match node_id {
+            Some(id) => {
+                debug!("Getting navigation node: {}", id);
+                match market_service.get_market_navigation_node(session, id).await {
+                    Ok(response) => {
+                        debug!(
+                            "Response received for node {}: {} nodes, {} markets",
+                            id,
+                            response.nodes.len(),
+                            response.markets.len()
+                        );
+                        response
+                    }
+                    Err(e) => {
+                        error!("Error getting node {}: {:?}", id, e);
+                        // If we hit a rate limit, return empty results instead of failing
+                        if matches!(e, AppError::RateLimitExceeded | AppError::Unexpected(_)) {
+                            info!("Rate limit or API error encountered, returning partial results");
+                            return Ok(Vec::new());
+                        }
+                        return Err(e);
+                    }
+                }
+            }
+            None => {
+                debug!("Getting top-level navigation nodes");
+                match market_service.get_market_navigation(session).await {
+                    Ok(response) => {
+                        debug!(
+                            "Response received for top-level nodes: {} nodes, {} markets",
+                            response.nodes.len(),
+                            response.markets.len()
+                        );
+                        response
+                    }
+                    Err(e) => {
+                        error!("Error getting top-level nodes: {:?}", e);
+                        return Err(e);
+                    }
+                }
+            }
+        };
+
+        let mut nodes = Vec::new();
+
+        // Process all nodes at this level
+        let nodes_to_process = navigation.nodes;
+
+        // Process nodes with rate limiting
+        for (i, node) in nodes_to_process.into_iter().enumerate() {
+            // Add a delay between node processing to respect rate limits
+            if i > 0 {
+                tokio::time::sleep(tokio::time::Duration::from_millis(SLEEP_TIME_PER_REQUEST))
+                    .await;
+            }
+
+            // Recursively get the children of this node
+            match build_market_hierarchy(market_service, session, Some(&node.id), depth + 1).await {
+                Ok(children) => {
+                    info!("Adding node {} with {} children", node.name, children.len());
+                    nodes.push(MarketNode {
+                        id: node.id.clone(),
+                        name: node.name.clone(),
+                        children,
+                        markets: Vec::new(),
+                    });
+                }
+                Err(e) => {
+                    error!("Error building hierarchy for node {}: {:?}", node.id, e);
+                    // Continuar con otros nodos incluso si uno falla
+                    if depth < 7 {
+                        nodes.push(MarketNode {
+                            id: node.id.clone(),
+                            name: format!("{} (error: {})", node.name, e),
+                            children: Vec::new(),
+                            markets: Vec::new(),
+                        });
+                    }
+                }
+            }
+        }
+
+        // Process all markets in this node
+        let markets_to_process = navigation.markets;
+        for market in markets_to_process {
+            // Añadir mercados como nodos hoja (sin hijos)
+            debug!("Adding market: {}", market.instrument_name);
+            nodes.push(MarketNode {
+                id: market.epic.clone(),
+                name: market.instrument_name.clone(),
+                children: Vec::new(),
+                markets: vec![market],
+            });
+        }
+
+        Ok(nodes)
+    })
 }
