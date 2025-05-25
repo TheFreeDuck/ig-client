@@ -230,9 +230,8 @@ pub fn build_market_hierarchy<'a>(
         }
 
         // Add a delay to respect rate limits (SLEEP_TIME ms between requests)
-        if depth > 0 {
-            tokio::time::sleep(tokio::time::Duration::from_millis(SLEEP_TIME_PER_REQUEST)).await;
-        }
+        tokio::time::sleep(tokio::time::Duration::from_millis(SLEEP_TIME_PER_REQUEST)).await;
+        
 
         // Get the nodes and markets at the current level
         let navigation: MarketNavigationResponse = match node_id {
@@ -320,7 +319,6 @@ pub fn build_market_hierarchy<'a>(
         // Process all markets in this node
         let markets_to_process = navigation.markets;
         for market in markets_to_process {
-            // Añadir mercados como nodos hoja (sin hijos)
             debug!("Adding market: {}", market.instrument_name);
             nodes.push(MarketNode {
                 id: market.epic.clone(),

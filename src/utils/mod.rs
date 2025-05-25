@@ -4,6 +4,8 @@ pub mod display;
 pub mod finance;
 /// Module containing logging utilities
 pub mod logger;
+/// Module containing market instrument name parsing utilities
+pub mod market_parser;
 /// Module containing parsing utilities for instrument names and other data
 pub mod parsing;
 

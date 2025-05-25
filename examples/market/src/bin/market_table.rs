@@ -11,6 +11,7 @@ use ig_client::{
 };
 use std::{error::Error, sync::Arc};
 use tracing::{error, info};
+use ig_client::utils::market_parser::parse_instrument_name;
 
 /// Constants for formatting the table
 const EPIC_WIDTH: usize = 30;
@@ -97,11 +98,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let json_data = markets
         .iter()
         .map(|market| {
-            serde_json::json!({
-                "epic": market.epic,
-                "instrument_name": market.instrument_name,
-                "expiry": market.expiry
-            })
+            let parsed_info = parse_instrument_name(&market.instrument_name);
+            match serde_json::to_value(parsed_info) {
+                Ok(value) => value,
+                Err(e) => {
+                    error!("Failed to serialize parsed market data: {:?}", e);
+                    return serde_json::json!({});
+                }
+            }
         })
         .collect::<Vec<_>>();
 

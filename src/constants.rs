@@ -15,4 +15,4 @@ pub const DEFAULT_SLEEP_TIME: u64 = 24;
 /// Default page size for API requests
 pub const DEFAULT_PAGE_SIZE: u32 = 50;
 
-pub const SLEEP_TIME_PER_REQUEST: u64 = 2000;
+pub const SLEEP_TIME_PER_REQUEST: u64 = 1000;

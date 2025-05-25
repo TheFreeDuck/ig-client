@@ -5,7 +5,6 @@
 ******************************************************************************/
 use crate::impl_json_display;
 use serde::{Deserialize, Serialize, Deserializer};
-use serde::de::{self, Error as DeError};
 
 /// Order direction (buy or sell)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
