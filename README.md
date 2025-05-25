@@ -32,11 +32,12 @@ The IG Markets API Client for Rust is designed to provide a reliable and efficie
 - **Working Orders**: Create and manage working orders with support for limit and stop orders
 - **Transaction History**: Access detailed transaction and activity history
 - **WebSocket Support**: Real-time market data streaming via WebSocket connections
-- **Rate Limiting**: Built-in rate limiting to comply with API usage restrictions
+- **Advanced Rate Limiting**: Sophisticated rate limiting with automatic backoff, concurrent request management, and explicit rate limit error handling
 - **Fully Documented**: Comprehensive documentation for all components and methods
 - **Error Handling**: Robust error handling and reporting with detailed error types
 - **Type Safety**: Strong type checking for API requests and responses
 - **Async Support**: Built with async/await for efficient non-blocking operations
+- **Concurrency Management**: Built-in semaphores and thread-safe primitives for handling concurrent API requests
 - **Configurable**: Flexible configuration options for different environments (demo/live)
 - **Persistence**: Optional database integration for storing historical data
 - **Database Support**: Integration with SQLx for storing and retrieving transaction data
@@ -48,7 +49,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-ig-client = "0.1.5"
+ig-client = "0.1.6"
 tokio = { version = "1", features = ["full"] }  # For async runtime
 dotenv = "0.15"                                 # For environment variable loading
 tracing = "0.1"                                # For logging
@@ -419,6 +420,37 @@ make bench        # Run benchmarks
 make bench-show   # Show benchmark results
 ```
 
+#### Rate Limiting
+
+The library includes a sophisticated rate limiting system to comply with IG Markets API restrictions:
+
+- **Multiple Rate Limit Types**: Different limits for trading, non-trading, and historical data requests
+- **Thread-Safe Implementation**: Uses `tokio::sync::Mutex` for safe concurrent access
+- **Automatic Backoff**: Dynamically calculates wait times based on request history
+- **Explicit Rate Limit Handling**: Detects and handles rate limit errors from the API
+- **Global Semaphore**: Limits concurrent API requests to prevent overwhelming the API
+- **Configurable Safety Margins**: Adjustable safety margins to stay below API limits
+- **Rate Limit Error Recovery**: Automatic cooldown and recovery when rate limits are exceeded
+
+Example of configuring rate limits:
+
+```rust
+// Create a configuration with custom rate limit settings
+let config = Arc::new(Config::with_rate_limit_type(
+    RateLimitType::NonTradingAccount,  // Type of rate limit to enforce
+    0.8,                               // Safety margin (80% of actual limit)
+));
+
+// The rate limiter will automatically be used by all services
+let http_client = IgHttpClientImpl::new(config.clone());
+let auth = IgAuth::new(config.clone());
+
+// When rate limits are exceeded, the system will automatically:
+// 1. Detect the rate limit error from the API
+// 2. Enforce a mandatory cooldown period
+// 3. Gradually resume requests with appropriate delays
+```
+
 #### Continuous Integration
 
 ```bash
@@ -462,8 +494,9 @@ make workflow     # Run all CI workflow steps locally
 │       ├── display.rs     # Display utilities
 │       ├── finance.rs     # Financial calculations
 │       ├── logger.rs      # Logging utilities
+│       ├── market_parser.rs # Market data parsing utilities
 │       ├── parsing.rs     # Parsing utilities
-│       └── rate_limiter.rs # Rate limiting
+│       └── rate_limiter.rs # Advanced rate limiting with concurrency management
 ├── examples/              # Example applications
 ├── tests/                 # Tests
 │   ├── integration/       # Integration tests

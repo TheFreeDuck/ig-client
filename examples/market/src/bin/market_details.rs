@@ -180,19 +180,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
                         })
                     })
                     .collect::<Vec<_>>();
-                
+
                 // Convert to JSON string and save to file
                 let json = serde_json::to_string_pretty(&json_data)
                     .map_err(|e| Box::new(e) as Box<dyn Error>)?;
-                
+
                 // Create a filename with timestamp to avoid overwriting previous files
                 let timestamp = chrono::Local::now().format("%Y%m%d_%H%M%S");
-                let intermediate_filename = format!("Data/market_details_intermediate_{}.json", timestamp);
-                
+                let intermediate_filename =
+                    format!("Data/market_details_intermediate_{}.json", timestamp);
+
                 // Write to file
                 fs::write(&intermediate_filename, &json)
                     .map_err(|e| Box::new(e) as Box<dyn Error>)?;
-                    
+
                 info!("Saved intermediate results to {}", intermediate_filename);
             }
         }
