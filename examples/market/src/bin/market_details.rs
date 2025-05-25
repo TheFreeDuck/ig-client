@@ -154,49 +154,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 }
             }
         }
-
-        // Save intermediate results after each batch
-        if processed_count > 0 {
-            info!(
-                "Processed {}/{} EPICs. Saving intermediate results...",
-                processed_count,
-                epics.len()
-            );
-
-            // Save intermediate results to JSON
-            if !market_details_vec.is_empty() {
-                let json_data = market_details_vec.iter()
-                    .map(|(epic, details)| {
-                        serde_json::json!({
-                            "epic": epic,
-                            "instrument_name": details.instrument.name,
-                            "expiry": details.instrument.expiry,
-                            "last_dealing_date": details.instrument.expiry_details.as_ref().map(|ed| ed.last_dealing_date.clone()),
-                            "bid": details.snapshot.bid,
-                            "offer": details.snapshot.offer,
-                            "high": details.snapshot.high,
-                            "low": details.snapshot.low,
-                            "update_time": details.snapshot.update_time
-                        })
-                    })
-                    .collect::<Vec<_>>();
-
-                // Convert to JSON string and save to file
-                let json = serde_json::to_string_pretty(&json_data)
-                    .map_err(|e| Box::new(e) as Box<dyn Error>)?;
-
-                // Create a filename with timestamp to avoid overwriting previous files
-                let timestamp = chrono::Local::now().format("%Y%m%d_%H%M%S");
-                let intermediate_filename =
-                    format!("Data/market_details_intermediate_{}.json", timestamp);
-
-                // Write to file
-                fs::write(&intermediate_filename, &json)
-                    .map_err(|e| Box::new(e) as Box<dyn Error>)?;
-
-                info!("Saved intermediate results to {}", intermediate_filename);
-            }
-        }
     }
 
     // Display the results in a table format
