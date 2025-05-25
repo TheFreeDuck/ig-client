@@ -1,6 +1,7 @@
 // Common utilities for integration tests
 
 use ig_client::utils::logger::setup_logger;
+use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::{
     config::Config,
     session::auth::IgAuth,
@@ -14,7 +15,10 @@ use tracing::info;
 /// Creates a test configuration
 pub fn create_test_config() -> Arc<Config> {
     // Use the default configuration which should load from environment variables
-    Arc::new(Config::new())
+    Arc::new(Config::with_rate_limit_type(
+        RateLimitType::NonTradingAccount,
+        0.7,
+    ))
 }
 
 /// Creates an HTTP client for tests
@@ -38,7 +42,9 @@ pub fn login_with_account_switch() -> IgSession {
 
     // Login and get a session
     rt.block_on(async {
-        login_with_account_switch_async().await.expect("Failed to login")
+        login_with_account_switch_async()
+            .await
+            .expect("Failed to login")
     })
 }
 

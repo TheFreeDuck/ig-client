@@ -1,9 +1,9 @@
 use ig_client::config::{Config, Credentials, RestApiConfig, WebSocketConfig};
-use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::error::AppError;
 use ig_client::session::interface::IgSession;
 use ig_client::storage::config::DatabaseConfig;
 use ig_client::transport::http_client::{IgHttpClient, IgHttpClientImpl};
+use ig_client::utils::rate_limiter::RateLimitType;
 use mockito::{self, Server};
 use reqwest::Method;
 use serde::{Deserialize, Serialize};
@@ -44,7 +44,7 @@ fn create_test_session() -> IgSession {
     IgSession::new(
         "test_cst".to_string(),
         "test_xst".to_string(),
-        "test_account".to_string()
+        "test_account".to_string(),
     )
 }
 

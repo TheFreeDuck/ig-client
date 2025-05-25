@@ -29,11 +29,17 @@ impl fmt::Display for ParsedOptionInfo {
 /// Structure to represent the parsed market data with additional information
 #[derive(Debug, Serialize)]
 pub struct ParsedMarketData {
+    /// Unique identifier for the market (EPIC code)
     pub epic: String,
+    /// Full name of the financial instrument
     pub instrument_name: String,
+    /// Expiry date of the instrument (if applicable)
     pub expiry: String,
+    /// Name of the underlying asset
     pub asset_name: String,
+    /// Strike price for options
     pub strike: Option<String>,
+    /// Type of option (e.g., 'CALL' or 'PUT')
     pub option_type: Option<String>,
 }
 

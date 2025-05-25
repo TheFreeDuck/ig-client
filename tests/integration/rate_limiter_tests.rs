@@ -200,10 +200,11 @@ async fn make_multiple_requests<
 /// Calculate intervals between request start times
 fn calculate_intervals(durations: &[u128]) -> Vec<u128> {
     let mut intervals = Vec::with_capacity(durations.len() - 1);
-    for i in 1..durations.len() {
+    // Use an iterator instead of a range-based loop
+    for &duration in durations.iter().skip(1) {
         // This is a simplification - in reality we'd need the actual start times
         // but for this test, we'll use the durations as a proxy for intervals
-        intervals.push(durations[i]);
+        intervals.push(duration);
     }
     intervals
 }

@@ -362,7 +362,6 @@ pub struct MarketNavigationNode {
     pub name: String,
 }
 
-
 /// Estructura que representa un nodo en la jerarquía de mercados
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MarketNode {

@@ -1,4 +1,5 @@
 use ig_client::application::services::market_service::MarketServiceImpl;
+use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::{
     application::services::MarketService, config::Config, session::auth::IgAuth,
     session::interface::IgAuthenticator, transport::http_client::IgHttpClientImpl,
@@ -13,7 +14,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     setup_logger();
 
     // Load configuration
-    let config = Arc::new(Config::new());
+    let config = Arc::new(Config::with_rate_limit_type(
+        RateLimitType::NonTradingAccount,
+        0.7,
+    ));
     info!("Loaded configuration → {}", config.rest_api.base_url);
 
     // Create the HTTP client

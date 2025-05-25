@@ -8,6 +8,7 @@
 //! error handling with exponential backoff.
 
 use chrono::{Duration, Utc};
+use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::{
     application::models::transaction::TransactionList, application::services::AccountService,
     application::services::account_service::AccountServiceImpl, config::Config,
@@ -18,14 +19,16 @@ use std::{sync::Arc, time::Duration as StdDuration};
 use tokio::{signal, time};
 use tracing::{debug, error, info};
 
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     setup_logger();
 
     info!("Starting transaction loop service");
 
-    let config = Arc::new(Config::new());
+    let config = Arc::new(Config::with_rate_limit_type(
+        RateLimitType::NonTradingAccount,
+        0.7,
+    ));
     info!(
         "Configuration: interval={} hours, page_size={}, lookback={} days",
         config.sleep_hours, config.page_size, config.days_to_look_back

@@ -1,5 +1,7 @@
 use ig_client::config::{Config, Credentials, RestApiConfig, WebSocketConfig, get_env_or_default};
+use ig_client::utils::rate_limiter::RateLimitType;
 use std::env;
+use std::sync::Arc;
 
 // Helper function para obtener un valor de entorno o un valor por defecto
 // Esta es una implementación simplificada para los tests
@@ -70,15 +72,12 @@ fn test_get_env_or_default_nonexistent() {
 
 #[test]
 fn test_config_with_env_vars() {
-    // Este test verifica que los valores por defecto están presentes
-    // en lugar de intentar modificar variables de entorno
-    let config = Config::new();
+    let config = Arc::new(Config::with_rate_limit_type(
+        RateLimitType::NonTradingAccount,
+        0.7,
+    ));
 
-    // Verificar que la URL base contiene el valor esperado
-    // La implementación actual usa "https://demo-api.ig.com/gateway/deal"
     assert!(config.rest_api.base_url.contains("demo-api.ig.com"));
-
-    // Verificar otros valores por defecto
     assert!(config.rest_api.timeout > 0);
     assert!(!config.websocket.url.is_empty());
     assert!(config.websocket.reconnect_interval > 0);

@@ -1,10 +1,5 @@
 // Authentication module for IG Markets API
 
-use async_trait::async_trait;
-use reqwest::{Client, StatusCode};
-use std::time::Duration;
-use tracing::{debug, error, info, warn};
-use rand;
 use crate::{
     config::Config,
     error::AuthError,
@@ -12,6 +7,11 @@ use crate::{
     session::response::{AccountSwitchRequest, AccountSwitchResponse, SessionResp},
     utils::rate_limiter::app_non_trading_limiter,
 };
+use async_trait::async_trait;
+use rand;
+use reqwest::{Client, StatusCode};
+use std::time::Duration;
+use tracing::{debug, error, info, warn};
 
 /// Authentication handler for IG Markets API
 pub struct IgAuth<'a> {
@@ -68,16 +68,16 @@ impl IgAuthenticator for IgAuth<'_> {
         // Configuración para reintentos
         const MAX_RETRIES: u32 = 3;
         const INITIAL_RETRY_DELAY_MS: u64 = 10000; // 2 segundos
-        
+
         // Implementamos un mecanismo de reintento con espera exponencial
         let mut retry_count = 0;
         let mut retry_delay_ms = INITIAL_RETRY_DELAY_MS;
-        
+
         loop {
             // Use the global app rate limiter for unauthenticated requests
             let limiter = app_non_trading_limiter();
             limiter.wait().await;
-            
+
             // Following the exact approach from trading-ig Python library
             let url = self.rest_url("session");
 
@@ -122,13 +122,14 @@ impl IgAuthenticator for IgAuth<'_> {
                 .header("Version", "2")
                 .json(&body)
                 .send()
-                .await {
-                    Ok(resp) => resp,
-                    Err(e) => {
-                        error!("Failed to send login request: {}", e);
-                        return Err(AuthError::Unexpected(StatusCode::INTERNAL_SERVER_ERROR))
-                    },
-                };
+                .await
+            {
+                Ok(resp) => resp,
+                Err(e) => {
+                    error!("Failed to send login request: {}", e);
+                    return Err(AuthError::Unexpected(StatusCode::INTERNAL_SERVER_ERROR));
+                }
+            };
 
             // Log the response status and headers for debugging
             info!("Login response status: {}", resp.status());
@@ -177,13 +178,9 @@ impl IgAuthenticator for IgAuth<'_> {
 
                     // Return a new session with the CST, token, and account ID
                     // Use the rate limit type and safety margin from the config
-                    let session = IgSession::from_config(
-                        cst.clone(),
-                        token.clone(),
-                        account_id,
-                        self.cfg,
-                    );
-                    
+                    let session =
+                        IgSession::from_config(cst.clone(), token.clone(), account_id, self.cfg);
+
                     // Log rate limiter stats if available
                     if let Some(stats) = session.get_rate_limit_stats().await {
                         debug!("Rate limiter initialized: {}", stats);
@@ -206,31 +203,36 @@ impl IgAuthenticator for IgAuth<'_> {
                         .text()
                         .await
                         .unwrap_or_else(|_| "Could not read response body".to_string());
-                    
+
                     if body.contains("exceeded-api-key-allowance") {
                         error!("Rate Limit Exceeded: {}", &body);
-                        
+
                         // Implementamos reintento con espera exponencial para este caso específico
                         if retry_count < MAX_RETRIES {
                             retry_count += 1;
                             // Usamos un retraso más largo y añadimos un poco de aleatoriedad para evitar patrones
                             let jitter = rand::random::<u64>() % 5000; // Hasta 5 segundos de jitter
                             let delay = retry_delay_ms + jitter;
-                            warn!("Rate limit exceeded. Retrying in {} ms (attempt {} of {})", 
-                                 delay, retry_count, MAX_RETRIES);
-                            
+                            warn!(
+                                "Rate limit exceeded. Retrying in {} ms (attempt {} of {})",
+                                delay, retry_count, MAX_RETRIES
+                            );
+
                             // Esperar antes de reintentar
                             tokio::time::sleep(Duration::from_millis(delay)).await;
-                            
+
                             // Aumentar el tiempo de espera exponencialmente para el próximo reintento
                             retry_delay_ms *= 2; // Exponential backoff
                             continue;
                         } else {
-                            error!("Maximum retry attempts ({}) reached. Giving up.", MAX_RETRIES);
+                            error!(
+                                "Maximum retry attempts ({}) reached. Giving up.",
+                                MAX_RETRIES
+                            );
                             return Err(AuthError::RateLimitExceeded);
                         }
                     }
-                    
+
                     error!("Response body: {}", body);
                     return Err(AuthError::BadCredentials);
                 }
@@ -326,7 +328,7 @@ impl IgAuthenticator for IgAuth<'_> {
                     cst,
                     token,
                     json.account_id,
-                    self.cfg
+                    self.cfg,
                 ))
             }
             other => {

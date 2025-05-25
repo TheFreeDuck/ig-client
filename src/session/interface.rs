@@ -1,9 +1,11 @@
-use std::sync::Arc;
 use crate::config::Config;
 use crate::error::{AppError, AuthError};
-use crate::utils::rate_limiter::{app_non_trading_limiter, create_rate_limiter, RateLimiter, RateLimitType, RateLimiterStats};
-use tracing::debug;
+use crate::utils::rate_limiter::{
+    RateLimitType, RateLimiter, RateLimiterStats, app_non_trading_limiter, create_rate_limiter,
+};
+use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
+use tracing::debug;
 
 /// Session information for IG Markets API authentication
 #[derive(Debug, Clone)]
@@ -30,7 +32,7 @@ pub struct IgSession {
 
 impl IgSession {
     /// Creates a new session with the given credentials
-    /// 
+    ///
     /// This is a simplified version for tests and basic usage.
     /// Uses default values for most fields and a default rate limiter.
     pub fn new(cst: String, token: String, account_id: String) -> Self {
@@ -42,15 +44,19 @@ impl IgSession {
             account_id,
             lightstreamer_endpoint: String::new(),
             api_key: String::new(),
-            rate_limiter: Some(create_rate_limiter(RateLimitType::NonTradingAccount, Some(0.8))),
+            rate_limiter: Some(create_rate_limiter(
+                RateLimitType::NonTradingAccount,
+                Some(0.8),
+            )),
             concurrent_mode: Arc::new(AtomicBool::new(false)),
         }
     }
-    
+
     /// Creates a new session with the given parameters
-    /// 
+    ///
     /// This creates a thread-safe session that can be shared across multiple threads.
     /// The rate limiter is wrapped in an Arc to ensure proper synchronization.
+    #[allow(clippy::too_many_arguments)]
     pub fn new_with_config(
         base_url: String,
         cst: String,
@@ -64,7 +70,7 @@ impl IgSession {
     ) -> Self {
         // Create a rate limiter with the specified type and safety margin
         let rate_limiter = create_rate_limiter(rate_limit_type, Some(rate_limit_safety_margin));
-        
+
         Self {
             base_url,
             cst,
@@ -77,11 +83,16 @@ impl IgSession {
             concurrent_mode: Arc::new(AtomicBool::new(false)),
         }
     }
-    
+
     /// Creates a new session with the given credentials and a rate limiter
-    /// 
+    ///
     /// This creates a thread-safe session that can be shared across multiple threads.
-    pub fn with_rate_limiter(cst: String, token: String, account_id: String, limit_type: RateLimitType) -> Self {
+    pub fn with_rate_limiter(
+        cst: String,
+        token: String,
+        account_id: String,
+        limit_type: RateLimitType,
+    ) -> Self {
         Self {
             cst,
             token,
@@ -94,7 +105,7 @@ impl IgSession {
             concurrent_mode: Arc::new(AtomicBool::new(false)),
         }
     }
-    
+
     /// Creates a new session with the given credentials and rate limiter configuration from Config
     pub fn from_config(cst: String, token: String, account_id: String, config: &Config) -> Self {
         Self {
@@ -107,26 +118,26 @@ impl IgSession {
             api_key: String::new(),
             rate_limiter: Some(create_rate_limiter(
                 config.rate_limit_type,
-                Some(config.rate_limit_safety_margin)
+                Some(config.rate_limit_safety_margin),
             )),
             concurrent_mode: Arc::new(AtomicBool::new(false)),
         }
     }
-    
+
     /// Waits if necessary to respect rate limits before making a request
-    /// 
+    ///
     /// This method will always use a rate limiter - either the one configured in the session,
     /// or a default one if none is configured.
-    /// 
+    ///
     /// This method is thread-safe and can be called from multiple threads concurrently.
-    /// 
+    ///
     /// # Returns
     /// * `Ok(())` - If the rate limit is respected
     /// * `Err(AppError::RateLimitExceeded)` - If the rate limit has been exceeded and cannot be respected
     pub async fn respect_rate_limit(&self) -> Result<(), AppError> {
         // Mark that this session is being used in a concurrent context
         self.concurrent_mode.store(true, Ordering::SeqCst);
-        
+
         // Get the rate limiter from the session or use a default one
         let limiter = match &self.rate_limiter {
             Some(limiter) => limiter.clone(),
@@ -137,12 +148,12 @@ impl IgSession {
                 app_non_trading_limiter()
             }
         };
-        
+
         // Wait if necessary to respect the rate limit
         limiter.wait().await;
         Ok(())
     }
-    
+
     /// Gets statistics about the current rate limit usage
     pub async fn get_rate_limit_stats(&self) -> Option<RateLimiterStats> {
         match &self.rate_limiter {

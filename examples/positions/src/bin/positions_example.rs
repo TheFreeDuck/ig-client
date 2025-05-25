@@ -1,4 +1,5 @@
 use ig_client::application::services::AccountService;
+use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::{
     application::services::account_service::AccountServiceImpl, config::Config,
     session::auth::IgAuth, session::interface::IgAuthenticator,
@@ -14,7 +15,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Create configuration using the default Config implementation
     // This will read from environment variables as defined in src/config.rs
-    let config = Arc::new(Config::new());
+    let config = Arc::new(Config::with_rate_limit_type(
+        RateLimitType::TradingAccount,
+        0.7,
+    ));
     info!("Configuration loaded");
 
     // Create HTTP client

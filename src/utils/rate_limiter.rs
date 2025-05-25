@@ -1,16 +1,17 @@
 // Rate limiter for API requests
 // This module provides utilities to prevent hitting IG Markets API rate limits
 
+use crate::constants::{BASE_DELAY_MS, SAFETY_BUFFER_MS};
+use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
 use std::sync::Arc;
-use tokio::sync::Mutex;
 use std::time::{Duration, Instant};
-use serde::{Deserialize, Serialize};
+use tokio::sync::Mutex;
 use tokio::time::sleep;
-use tracing::{debug, info};
+use tracing::{debug, info, warn};
 
 /// Rate limiter type for different API endpoints with their respective limits
-/// 
+///
 /// These limits are based on the official IG Markets API documentation:
 /// - Per-app non-trading requests per minute: 60
 /// - Per-account trading requests per minute: 100 (Applies to create/amend position or working order requests)
@@ -42,9 +43,9 @@ impl RateLimitType {
     /// Gets the time window in milliseconds
     pub fn time_window_ms(&self) -> u64 {
         match self {
-            Self::NonTradingAccount => 60_000,  // 1 minute
-            Self::TradingAccount => 60_000,     // 1 minute
-            Self::NonTradingApp => 60_000,      // 1 minute
+            Self::NonTradingAccount => 60_000,    // 1 minute
+            Self::TradingAccount => 60_000,       // 1 minute
+            Self::NonTradingApp => 60_000,        // 1 minute
             Self::HistoricalPrice => 604_800_000, // 1 week
         }
     }
@@ -80,11 +81,11 @@ impl RateLimiter {
             safety_margin: 1.0,
         }
     }
-    
+
     /// Creates a new rate limiter with a custom safety margin
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// * `safety_margin` - A value between 0.0 and 1.0 representing the percentage of the actual limit to use
     ///   (e.g., 0.8 means use 80% of the actual limit)
     pub fn with_safety_margin(&mut self, safety_margin: f64) -> Self {
@@ -95,7 +96,7 @@ impl RateLimiter {
             safety_margin,
         }
     }
-    
+
     /// Returns the rate limit type for this limiter
     pub fn limit_type(&self) -> RateLimitType {
         self.limit_type
@@ -111,7 +112,7 @@ impl RateLimiter {
     async fn cleanup_history(&self, now: Instant) {
         let mut history = self.request_history.lock().await;
         let window_duration = Duration::from_millis(self.limit_type.time_window_ms());
-        
+
         // Remove requests that are older than the time window
         while let Some(oldest) = history.front() {
             if now.duration_since(*oldest) >= window_duration {
@@ -133,42 +134,41 @@ impl RateLimiter {
     pub async fn time_until_next_request_ms(&self) -> u64 {
         let now = Instant::now();
         self.cleanup_history(now).await;
-        
+
         // Use async lock to avoid blocking the thread
         let history = self.request_history.lock().await;
         let effective_limit = self.effective_limit();
-        
+
         // Be more conservative: leave a safety margin for concurrent requests
         // This is especially important in recursive or concurrent contexts
         let usage_threshold = effective_limit.saturating_sub(2);
-        
+
         if history.len() < usage_threshold {
             // We're well below the limit, no need to wait
             return 0;
         }
-        
+
         // If we're close to the limit but haven't reached it, add a small delay
         // to prevent multiple concurrent requests from exceeding the limit
         if history.len() < effective_limit {
             // Add a small delay proportional to how close we are to the limit
             let proximity_factor = (history.len() as f64) / (effective_limit as f64);
-            let base_delay = 100; // 100ms base delay
-            return (base_delay as f64 * proximity_factor * proximity_factor).round() as u64;
+            return (BASE_DELAY_MS as f64 * proximity_factor * proximity_factor).round() as u64;
         }
-        
+
         // We're at the limit, need to wait for the oldest request to expire
         if let Some(oldest) = history.front() {
             let window_duration = Duration::from_millis(self.limit_type.time_window_ms());
             let time_since_oldest = now.duration_since(*oldest);
-            
+
             if time_since_oldest < window_duration {
                 // Calculate how long until the oldest request expires
                 let wait_time = window_duration.saturating_sub(time_since_oldest);
-                // Add a larger buffer for extra safety
-                return wait_time.as_millis() as u64 + 100; 
+                // Add a buffer for extra safety
+                return wait_time.as_millis() as u64 + SAFETY_BUFFER_MS;
             }
         }
-        
+
         0 // Should never reach here after cleanup, but just in case
     }
 
@@ -179,16 +179,39 @@ impl RateLimiter {
         history.push_back(now);
     }
 
+    /// Notifies the rate limiter that a rate limit error has been encountered
+    /// This will cause the rate limiter to enforce a mandatory cooldown period
+    pub async fn notify_rate_limit_exceeded(&self) {
+        // Add multiple "fake" requests to the history to force a cooldown
+        let now = Instant::now();
+        let mut history = self.request_history.lock().await;
+
+        // Clear the history and add enough requests to reach the limit
+        // This ensures we'll enforce a full cooldown period
+        history.clear();
+
+        // Add enough requests to reach the limit
+        let limit = self.effective_limit();
+        for _ in 0..limit {
+            history.push_back(now);
+        }
+
+        warn!(
+            "Rate limit exceeded! Enforcing mandatory cooldown period for {:?}",
+            self.limit_type
+        );
+    }
+
     /// Waits if necessary to respect the rate limit
     /// This method is thread-safe and can be called from multiple threads concurrently
     pub async fn wait(&self) {
         // Register the request BEFORE waiting
         // This is crucial to prevent multiple concurrent requests from exceeding the rate limit
         self.record_request().await;
-        
+
         // Now calculate the wait time based on the updated history
         let wait_time = self.time_until_next_request_ms().await;
-        
+
         if wait_time > 0 {
             info!(
                 "Rate limiter ({:?}): waiting for {}ms ({}/{} requests used in window)",
@@ -207,12 +230,12 @@ impl RateLimiter {
             );
         }
     }
-    
+
     /// Gets statistics about the current rate limit usage
     pub async fn get_stats(&self) -> RateLimiterStats {
         let now = Instant::now();
         self.cleanup_history(now).await;
-        
+
         let history = self.request_history.lock().await;
         let count = history.len();
         let limit = self.effective_limit();
@@ -221,7 +244,7 @@ impl RateLimiter {
         } else {
             0.0
         };
-        
+
         RateLimiterStats {
             limit_type: self.limit_type,
             request_count: count,
@@ -260,50 +283,49 @@ impl std::fmt::Display for RateLimiterStats {
 
 /// Global rate limiter for non-trading account requests (30 per minute)
 pub fn account_non_trading_limiter() -> Arc<RateLimiter> {
-    static INSTANCE: once_cell::sync::Lazy<Arc<RateLimiter>> =
-        once_cell::sync::Lazy::new(|| {
-            let mut limiter = RateLimiter::new(RateLimitType::NonTradingAccount);
-            Arc::new(limiter.with_safety_margin(0.8))
-        });
+    static INSTANCE: once_cell::sync::Lazy<Arc<RateLimiter>> = once_cell::sync::Lazy::new(|| {
+        let mut limiter = RateLimiter::new(RateLimitType::NonTradingAccount);
+        Arc::new(limiter.with_safety_margin(0.8))
+    });
 
     INSTANCE.clone()
 }
 
 /// Global rate limiter for trading account requests (100 per minute)
 pub fn account_trading_limiter() -> Arc<RateLimiter> {
-    static INSTANCE: once_cell::sync::Lazy<Arc<RateLimiter>> =
-        once_cell::sync::Lazy::new(|| {
-            let mut limiter = RateLimiter::new(RateLimitType::TradingAccount);
-            Arc::new(limiter.with_safety_margin(0.8))
-        });
+    static INSTANCE: once_cell::sync::Lazy<Arc<RateLimiter>> = once_cell::sync::Lazy::new(|| {
+        let mut limiter = RateLimiter::new(RateLimitType::TradingAccount);
+        Arc::new(limiter.with_safety_margin(0.8))
+    });
 
     INSTANCE.clone()
 }
 
 /// Global rate limiter for non-trading app requests (60 per minute)
 pub fn app_non_trading_limiter() -> Arc<RateLimiter> {
-    static INSTANCE: once_cell::sync::Lazy<Arc<RateLimiter>> =
-        once_cell::sync::Lazy::new(|| {
-            let mut limiter = RateLimiter::new(RateLimitType::NonTradingApp);
-            Arc::new(limiter.with_safety_margin(0.8))
-        });
+    static INSTANCE: once_cell::sync::Lazy<Arc<RateLimiter>> = once_cell::sync::Lazy::new(|| {
+        let mut limiter = RateLimiter::new(RateLimitType::NonTradingApp);
+        Arc::new(limiter.with_safety_margin(0.8))
+    });
 
     INSTANCE.clone()
 }
 
 /// Global rate limiter for historical price data requests (10,000 points per week)
 pub fn historical_price_limiter() -> Arc<RateLimiter> {
-    static INSTANCE: once_cell::sync::Lazy<Arc<RateLimiter>> =
-        once_cell::sync::Lazy::new(|| {
-            let mut limiter = RateLimiter::new(RateLimitType::HistoricalPrice);
-            Arc::new(limiter.with_safety_margin(0.8))
-        });
+    static INSTANCE: once_cell::sync::Lazy<Arc<RateLimiter>> = once_cell::sync::Lazy::new(|| {
+        let mut limiter = RateLimiter::new(RateLimitType::HistoricalPrice);
+        Arc::new(limiter.with_safety_margin(0.8))
+    });
 
     INSTANCE.clone()
 }
 
 /// Creates a rate limiter with the specified type
-pub fn create_rate_limiter(limit_type: RateLimitType, safety_margin: Option<f64>) -> Arc<RateLimiter> {
+pub fn create_rate_limiter(
+    limit_type: RateLimitType,
+    safety_margin: Option<f64>,
+) -> Arc<RateLimiter> {
     let mut limiter = RateLimiter::new(limit_type);
     match safety_margin {
         Some(margin) => Arc::new(limiter.with_safety_margin(margin)),
@@ -330,12 +352,12 @@ macro_rules! rate_limited_test {
 mod tests {
     use super::*;
     use tokio::runtime::Runtime;
-    
+
     #[test]
     fn test_rate_limiter_effective_limit() {
         let limiter = RateLimiter::new(RateLimitType::NonTradingAccount);
         assert_eq!(limiter.effective_limit(), 30); // Default safety margin is 1.0
-        
+
         let mut limiter = RateLimiter::new(RateLimitType::NonTradingAccount);
         let limiter = limiter.with_safety_margin(0.5);
         assert_eq!(limiter.effective_limit(), 15); // 30 * 0.5 = 15
@@ -348,12 +370,12 @@ mod tests {
             let mut limiter = RateLimiter::new(RateLimitType::NonTradingAccount);
             let limiter = limiter.with_safety_margin(1.0);
             assert_eq!(limiter.current_request_count().await, 0);
-            
+
             // Record some requests manually
             for _ in 0..5 {
                 limiter.record_request().await;
             }
-            
+
             assert_eq!(limiter.current_request_count().await, 5);
         });
     }
@@ -364,12 +386,12 @@ mod tests {
         rt.block_on(async {
             let mut limiter = RateLimiter::new(RateLimitType::NonTradingAccount);
             let limiter = limiter.with_safety_margin(0.8);
-            
+
             // Record some requests
             for _ in 0..10 {
                 limiter.record_request().await;
             }
-            
+
             let stats = limiter.get_stats().await;
             assert_eq!(stats.request_count, 10);
             assert_eq!(stats.effective_limit, 24); // 30 * 0.8 = 24

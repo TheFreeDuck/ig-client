@@ -214,16 +214,16 @@ pub struct MarketFields {
     update_time: Option<String>,
 }
 
+use once_cell::sync::Lazy;
 use std::sync::Arc;
 use tokio::sync::Semaphore;
-use once_cell::sync::Lazy;
 
 // Global semaphore to limit concurrency in API requests
 // This ensures that rate limits are not exceeded
 static API_SEMAPHORE: Lazy<Arc<Semaphore>> = Lazy::new(|| Arc::new(Semaphore::new(1)));
 
 /// Function to recursively build the market hierarchy with rate limiting
-/// 
+///
 /// This function builds the market hierarchy recursively, respecting
 /// the API rate limits. It uses a semaphore to ensure that only
 /// one request is made at a time, thus avoiding exceeding rate limits.
@@ -239,14 +239,14 @@ pub fn build_market_hierarchy<'a>(
             debug!("Reached maximum depth of 5, stopping recursion");
             return Ok(Vec::new());
         }
-        
+
         // Acquire the semaphore to limit concurrency
         // This ensures that only one API request is made at a time
         let _permit = API_SEMAPHORE.clone().acquire_owned().await.unwrap();
-        
+
         // The rate limiter will handle any necessary delays between requests
         // No explicit sleep calls are needed here
-        
+
         // Get the nodes and markets at the current level
         let navigation: MarketNavigationResponse = match node_id {
             Some(id) => {
@@ -300,7 +300,7 @@ pub fn build_market_hierarchy<'a>(
         // This allows other requests to be processed while we wait
         // for recursive requests to complete
         drop(_permit);
-        
+
         // Process nodes sequentially with rate limiting
         // This is important to respect the API rate limits
         // By processing nodes sequentially, we allow the rate limiter
@@ -349,7 +349,9 @@ pub fn build_market_hierarchy<'a>(
 }
 
 /// Recursively extract all markets from the hierarchy into a flat list
-pub fn extract_markets_from_hierarchy(nodes: &[MarketNode]) -> Vec<crate::application::models::market::MarketData> {
+pub fn extract_markets_from_hierarchy(
+    nodes: &[MarketNode],
+) -> Vec<crate::application::models::market::MarketData> {
     let mut all_markets = Vec::new();
 
     for node in nodes {

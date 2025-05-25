@@ -1,14 +1,14 @@
 use ig_client::application::services::market_service::MarketServiceImpl;
+use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::{
     application::services::MarketService, config::Config, session::auth::IgAuth,
     session::interface::IgAuthenticator, transport::http_client::IgHttpClientImpl,
     utils::logger::setup_logger,
 };
-use std::{error::Error, sync::Arc};
+use std::{error::Error, fs, sync::Arc};
 use tracing::{error, info};
 
 // Constants for API request handling
-const REQUEST_DELAY_MS: u64 = 3000; // Delay between API requests in milliseconds
 const BATCH_SIZE: usize = 25; // Number of EPICs to process before saving results
 
 #[tokio::main]
@@ -17,7 +17,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     setup_logger();
 
     // Load configuration
-    let config = Arc::new(Config::new());
+    let config = Arc::new(Config::with_rate_limit_type(
+        RateLimitType::NonTradingAccount,
+        0.7,
+    ));
     info!("Loaded configuration → {}", config.rest_api.base_url);
 
     // Create the HTTP client
@@ -178,6 +181,19 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     })
                     .collect::<Vec<_>>();
                 
+                // Convert to JSON string and save to file
+                let json = serde_json::to_string_pretty(&json_data)
+                    .map_err(|e| Box::new(e) as Box<dyn Error>)?;
+                
+                // Create a filename with timestamp to avoid overwriting previous files
+                let timestamp = chrono::Local::now().format("%Y%m%d_%H%M%S");
+                let intermediate_filename = format!("Data/market_details_intermediate_{}.json", timestamp);
+                
+                // Write to file
+                fs::write(&intermediate_filename, &json)
+                    .map_err(|e| Box::new(e) as Box<dyn Error>)?;
+                    
+                info!("Saved intermediate results to {}", intermediate_filename);
             }
         }
     }

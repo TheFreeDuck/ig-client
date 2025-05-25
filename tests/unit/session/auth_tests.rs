@@ -1,9 +1,9 @@
 use ig_client::config::{Config, Credentials, RestApiConfig, WebSocketConfig};
-use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::error::AuthError;
 use ig_client::session::auth::IgAuth;
 use ig_client::session::interface::{IgAuthenticator, IgSession};
 use ig_client::storage::config::DatabaseConfig;
+use ig_client::utils::rate_limiter::RateLimitType;
 use mockito::{self, Server};
 use tokio_test::block_on;
 
@@ -50,7 +50,7 @@ fn test_ig_session_new() {
     let session = IgSession::new(
         "CST123".to_string(),
         "XST456".to_string(),
-        "ACC789".to_string()
+        "ACC789".to_string(),
     );
 
     assert_eq!(session.cst, "CST123");
@@ -125,7 +125,7 @@ fn test_switch_account_success() {
     let session = IgSession::new(
         "test_cst".to_string(),
         "test_token".to_string(),
-        "A12345".to_string()
+        "A12345".to_string(),
     );
 
     // Mock the switch account endpoint
@@ -157,7 +157,7 @@ fn test_refresh_success() {
     let session = IgSession::new(
         "test_cst".to_string(),
         "test_token".to_string(),
-        "A12345".to_string()
+        "A12345".to_string(),
     );
 
     // Mock the refresh endpoint

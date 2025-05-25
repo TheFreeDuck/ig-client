@@ -178,11 +178,15 @@ mod tests {
     use super::*;
     use crate::config::Config;
     use crate::transport::http_client::IgHttpClientImpl;
+    use crate::utils::rate_limiter::RateLimitType;
     use std::sync::Arc;
 
     #[test]
     fn test_get_and_set_config() {
-        let config = Arc::new(Config::new());
+        let config = Arc::new(Config::with_rate_limit_type(
+            RateLimitType::NonTradingAccount,
+            0.7,
+        ));
         let client = Arc::new(IgHttpClientImpl::new(config.clone()));
         let mut service = OrderServiceImpl::new(config.clone(), client.clone());
 
