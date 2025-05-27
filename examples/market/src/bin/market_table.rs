@@ -1,7 +1,7 @@
 use ig_client::application::services::market_service::MarketServiceImpl;
 use ig_client::presentation::{build_market_hierarchy, extract_markets_from_hierarchy};
 use ig_client::utils::logger::setup_logger;
-use ig_client::utils::market_parser::{normalize_text, parse_instrument_name};
+use ig_client::utils::parsing::{normalize_text, parse_instrument_name};
 use ig_client::utils::rate_limiter::RateLimitType;
 use ig_client::{
     config::Config, session::auth::IgAuth, session::interface::IgAuthenticator,

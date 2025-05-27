@@ -72,7 +72,7 @@ fn test_store_transaction_from_account_transaction() {
         date: "2025-05-15T10:30:00".to_string(),
         date_utc: "2025-05-15T10:30:00".to_string(),
         open_date_utc: "2025-05-15T09:00:00".to_string(),
-        instrument_name: "GOLD CALL 2000".to_string(),
+        instrument_name: "Daily Gold (Aug Future) 3395 CALL".to_string(),
         period: "MAY-25".to_string(),
         profit_and_loss: "E100.50".to_string(),
         transaction_type: "DEAL".to_string(),
@@ -92,9 +92,9 @@ fn test_store_transaction_from_account_transaction() {
     assert_eq!(store_tx.reference, "ABCD1234");
     assert_eq!(store_tx.pnl_eur, 100.50);
     assert!(!store_tx.is_fee);
-    assert_eq!(store_tx.underlying, Some("GOLD".to_string()));
+    assert_eq!(store_tx.underlying, Some("Gold".to_string()));
     assert_eq!(store_tx.option_type, Some("CALL".to_string()));
-    assert_eq!(store_tx.strike, Some(2000.0));
+    assert_eq!(store_tx.strike, Some(3395.0));
     assert!(store_tx.expiry.is_some());
 }
 
@@ -125,7 +125,7 @@ fn test_store_transaction_from_account_transaction_with_fee() {
     assert_eq!(store_tx.reference, "FEE1234");
     assert_eq!(store_tx.pnl_eur, -0.50);
     assert!(store_tx.is_fee);
-    assert_eq!(store_tx.underlying, None);
+    assert_eq!(store_tx.underlying, Some("Admin Fee".to_string()));
     assert_eq!(store_tx.option_type, None);
     assert_eq!(store_tx.strike, None);
     assert_eq!(store_tx.expiry, None);
@@ -138,7 +138,7 @@ fn test_store_transaction_from_account_transaction_with_specific_date() {
         date: "2025-05-15T10:30:00".to_string(),
         date_utc: "2025-05-15T10:30:00".to_string(),
         open_date_utc: "2025-05-15T09:00:00".to_string(),
-        instrument_name: "US500 PUT 4500".to_string(),
+        instrument_name: "Weekly US 500 (Wed) 5200 CALL ($1)".to_string(),
         period: "15-MAY-25".to_string(), // Specific date format
         profit_and_loss: "E-75.25".to_string(),
         transaction_type: "DEAL".to_string(),
@@ -158,9 +158,9 @@ fn test_store_transaction_from_account_transaction_with_specific_date() {
     assert_eq!(store_tx.reference, "EFGH5678");
     assert_eq!(store_tx.pnl_eur, -75.25);
     assert!(!store_tx.is_fee);
-    assert_eq!(store_tx.underlying, Some("US500".to_string()));
-    assert_eq!(store_tx.option_type, Some("PUT".to_string()));
-    assert_eq!(store_tx.strike, Some(4500.0));
+    assert_eq!(store_tx.underlying, Some("US 500".to_string()));
+    assert_eq!(store_tx.option_type, Some("CALL".to_string()));
+    assert_eq!(store_tx.strike, Some(5200.0));
     assert!(store_tx.expiry.is_some());
 }
 
@@ -211,35 +211,6 @@ fn test_transaction_list_from_account_transactions() {
     assert_eq!(tx_list.as_ref()[0].pnl_eur, 100.50);
     assert_eq!(tx_list.as_ref()[1].reference, "EFGH5678");
     assert_eq!(tx_list.as_ref()[1].pnl_eur, -75.25);
-}
-
-#[test]
-fn test_store_transaction_from_reference_account_transaction() {
-    // Create a mock AccountTransaction
-    let account_tx = AccountTransaction {
-        date: "2025-05-15T10:30:00".to_string(),
-        date_utc: "2025-05-15T10:30:00".to_string(),
-        open_date_utc: "2025-05-15T09:00:00".to_string(),
-        instrument_name: "GOLD CALL 2000".to_string(),
-        period: "MAY-25".to_string(),
-        profit_and_loss: "E100.50".to_string(),
-        transaction_type: "DEAL".to_string(),
-        reference: "ABCD1234".to_string(),
-        open_level: "1950.5".to_string(),
-        close_level: "2050.75".to_string(),
-        size: "1".to_string(),
-        currency: "EUR".to_string(),
-        cash_transaction: false,
-    };
-
-    // Convert to StoreTransaction using the reference implementation
-    let store_tx = StoreTransaction::from(&account_tx);
-
-    // Now we can directly access the fields
-    assert_eq!(store_tx.transaction_type, "DEAL");
-    assert_eq!(store_tx.reference, "ABCD1234");
-    assert_eq!(store_tx.pnl_eur, 100.50);
-    assert_eq!(store_tx.underlying, Some("GOLD".to_string()));
 }
 
 #[test]

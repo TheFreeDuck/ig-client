@@ -1,6 +1,6 @@
 use crate::application::models::account::AccountTransaction;
 use crate::impl_json_display;
-use crate::utils::parsing::{InstrumentInfo, parse_instrument_name};
+use crate::utils::parsing::{ParsedOptionInfo, parse_instrument_name};
 use chrono::{DateTime, Datelike, Duration, NaiveDate, NaiveDateTime, Utc, Weekday};
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
@@ -87,9 +87,14 @@ impl From<AccountTransaction> for StoreTransaction {
             None
         }
 
-        let instrument_info: InstrumentInfo = parse_instrument_name(&raw.instrument_name).unwrap();
-        let underlying = instrument_info.underlying;
-        let strike = instrument_info.strike;
+        let instrument_info: ParsedOptionInfo = parse_instrument_name(&raw.instrument_name);
+        let underlying = Some(instrument_info.asset_name);
+        let strike = match instrument_info {
+            ParsedOptionInfo {
+                strike: Some(s), ..
+            } => Some(s.parse::<f64>().ok()).flatten(),
+            _ => None,
+        };
         let option_type = instrument_info.option_type;
         let deal_date = NaiveDateTime::parse_from_str(&raw.date_utc, "%Y-%m-%dT%H:%M:%S")
             .map(|naive| naive.and_utc())
