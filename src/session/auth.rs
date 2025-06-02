@@ -67,9 +67,9 @@ impl IgAuthenticator for IgAuth<'_> {
     async fn login(&self) -> Result<IgSession, AuthError> {
         // Configuración para reintentos
         const MAX_RETRIES: u32 = 3;
-        const INITIAL_RETRY_DELAY_MS: u64 = 10000; // 2 segundos
+        const INITIAL_RETRY_DELAY_MS: u64 = 10000; // 10 segundos
 
-        // Implementamos un mecanismo de reintento con espera exponencial
+        
         let mut retry_count = 0;
         let mut retry_delay_ms = INITIAL_RETRY_DELAY_MS;
 

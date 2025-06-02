@@ -192,12 +192,12 @@ impl IgHttpClient for IgHttpClientImpl {
         if RATE_LIMITED.load(Ordering::SeqCst) {
             warn!("System is currently rate limited. Adding extra delay before request.");
             // Add an extra delay if we're in a rate-limited situation
-            tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+            tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await;
         }
 
         // Acquire a permit from the semaphore to limit concurrent requests
         // This ensures we don't overwhelm the API with too many concurrent requests
-        let _permit = API_SEMAPHORE.acquire().await.unwrap();
+        let permit = API_SEMAPHORE.acquire().await.unwrap();
         debug!(
             "Acquired API semaphore permit for {} request to {}",
             method_str, url
@@ -224,7 +224,7 @@ impl IgHttpClient for IgHttpClientImpl {
             Err(e) => {
                 error!("Network error for {} request to {}: {}", method_str, url, e);
                 // Release the permit before returning
-                drop(_permit);
+                drop(permit);
                 return Err(AppError::Network(e));
             }
         };
@@ -240,7 +240,7 @@ impl IgHttpClient for IgHttpClientImpl {
 
         // Release the permit (this happens automatically when _permit goes out of scope,
         // but we do it explicitly for clarity)
-        drop(_permit);
+        drop(permit);
 
         result
     }
