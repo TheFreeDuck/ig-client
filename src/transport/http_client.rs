@@ -6,6 +6,7 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use tokio::sync::Semaphore;
 use tracing::{debug, error, info, warn};
+use std::time::Duration;
 
 use crate::utils::rate_limiter::app_non_trading_limiter;
 use crate::{config::Config, error::AppError, session::interface::IgSession};
@@ -19,6 +20,12 @@ static API_SEMAPHORE: Lazy<Arc<Semaphore>> = Lazy::new(|| {
 
 // Flag to indicate if we're in a rate-limited situation
 static RATE_LIMITED: Lazy<Arc<AtomicBool>> = Lazy::new(|| Arc::new(AtomicBool::new(false)));
+
+// Default retry configuration
+const DEFAULT_MAX_RETRIES: u32 = 10; // Increase max retries to ensure all requests are processed
+const DEFAULT_INITIAL_BACKOFF_MS: u64 = 1000; // 1 second
+const DEFAULT_MAX_BACKOFF_MS: u64 = 60000; // 60 seconds max backoff
+const DEFAULT_BACKOFF_FACTOR: f64 = 2.0; // Exponential backoff factor
 
 /// Interface for the IG HTTP client
 #[async_trait]
@@ -53,6 +60,10 @@ pub trait IgHttpClient: Send + Sync {
 pub struct IgHttpClientImpl {
     config: Arc<Config>,
     client: Client,
+    max_retries: u32,
+    initial_backoff_ms: u64,
+    max_backoff_ms: u64,
+    backoff_factor: f64,
 }
 
 impl IgHttpClientImpl {
@@ -60,11 +71,58 @@ impl IgHttpClientImpl {
     pub fn new(config: Arc<Config>) -> Self {
         let client = Client::builder()
             .user_agent("ig-client/0.1.0")
-            .timeout(std::time::Duration::from_secs(config.rest_api.timeout))
+            .timeout(Duration::from_secs(config.rest_api.timeout))
             .build()
             .expect("Failed to create HTTP client");
 
-        Self { config, client }
+        Self {
+            config,
+            client,
+            max_retries: DEFAULT_MAX_RETRIES,
+            initial_backoff_ms: DEFAULT_INITIAL_BACKOFF_MS,
+            max_backoff_ms: DEFAULT_MAX_BACKOFF_MS,
+            backoff_factor: DEFAULT_BACKOFF_FACTOR,
+        }
+    }
+    
+    /// Configure retry behavior
+    pub fn with_retry_config(
+        mut self,
+        max_retries: u32,
+        initial_backoff_ms: u64,
+        max_backoff_ms: u64,
+        backoff_factor: f64,
+    ) -> Self {
+        self.max_retries = max_retries;
+        self.initial_backoff_ms = initial_backoff_ms;
+        self.max_backoff_ms = max_backoff_ms;
+        self.backoff_factor = backoff_factor;
+        self
+    }
+    
+    /// Calculate backoff duration for retry attempts with jitter
+    fn calculate_backoff_duration(&self, retry_count: u32) -> Duration {
+        use rand::Rng;
+        let base_backoff_ms = (self.initial_backoff_ms as f64 * self.backoff_factor.powi(retry_count as i32)) as u64;
+        let capped_backoff_ms = base_backoff_ms.min(self.max_backoff_ms);
+        
+        // Add jitter (±20%) to avoid thundering herd problem
+        let jitter_factor = rand::rng().random_range(0.8..1.2);
+        let jittered_backoff_ms = (capped_backoff_ms as f64 * jitter_factor) as u64;
+        
+        Duration::from_millis(jittered_backoff_ms)
+    }
+
+    /// Check if an error is retryable
+    fn is_retryable_error(&self, error: &AppError) -> bool {
+        match error {
+            AppError::RateLimitExceeded => true,
+            AppError::Network(e) => {
+                // Retry on connection errors, timeouts, and server errors
+                e.is_timeout() || e.is_connect() || e.status().map_or(false, |s| s.is_server_error())
+            },
+            _ => false
+        }
     }
 
     /// Builds the complete URL for a request
@@ -129,8 +187,8 @@ impl IgHttpClientImpl {
             }
             StatusCode::FORBIDDEN => {
                 let body = response.text().await?;
-                if body.contains("exceeded-api-key-allowance") {
-                    self.handle_rate_limit(&url, "FORBIDDEN with exceeded-api-key-allowance")
+                if body.contains("exceeded-api-key-allowance") || body.contains("exceeded-account-allowance") {
+                    self.handle_rate_limit(&url, "FORBIDDEN with exceeded-api-key-allowance or exceeded-account-allowance")
                         .await;
                     Err(AppError::RateLimitExceeded)
                 } else {
@@ -161,11 +219,12 @@ impl IgHttpClientImpl {
         non_trading_limiter.notify_rate_limit_exceeded().await;
 
         // Schedule a task to reset the flag after a delay
+        // Increased from 30 to 60 seconds to give more time for rate limit to reset
         let rate_limited = RATE_LIMITED.clone();
         tokio::spawn(async move {
-            tokio::time::sleep(tokio::time::Duration::from_secs(30)).await;
+            tokio::time::sleep(tokio::time::Duration::from_secs(60)).await;
             rate_limited.store(false, Ordering::SeqCst);
-            info!("Rate limit flag reset after 30 second cooldown");
+            info!("Rate limit flag reset after 60 second cooldown");
         });
     }
 }
@@ -188,60 +247,129 @@ impl IgHttpClient for IgHttpClientImpl {
         let method_str = method.as_str().to_string(); // Store method as string for logging
         debug!("Making {} request to {}", method_str, url);
 
-        // Check if we're currently rate limited
-        if RATE_LIMITED.load(Ordering::SeqCst) {
-            warn!("System is currently rate limited. Adding extra delay before request.");
-            // Add an extra delay if we're in a rate-limited situation
-            tokio::time::sleep(tokio::time::Duration::from_millis(1000)).await;
+        let mut retry_count = 0;
+        
+        // Retry loop
+        loop {
+            // Check if we should retry
+            if retry_count > 0 {
+                if retry_count > self.max_retries {
+                    warn!("Max retries ({}) exceeded for {} request to {}", 
+                          self.max_retries, method_str, url);
+                    break; // Exit the loop and try one last time without retrying
+                }
+
+                // Calculate backoff duration
+                let backoff = self.calculate_backoff_duration(retry_count - 1);
+                info!("Retry attempt {} for {} request to {}. Waiting for {:?} before retrying", 
+                      retry_count, method_str, url, backoff);
+                tokio::time::sleep(backoff).await;
+            }
+
+            // Check if we're currently rate limited
+            if RATE_LIMITED.load(Ordering::SeqCst) {
+                warn!("System is currently rate limited. Adding extra delay before request.");
+                // Add a longer extra delay if we're in a rate-limited situation
+                // Use retry count to increase delay for subsequent retries
+                let rate_limit_delay = 2000 + (retry_count * 1000) as u64;
+                tokio::time::sleep(tokio::time::Duration::from_millis(rate_limit_delay)).await;
+            }
+
+            // Acquire a permit from the semaphore to limit concurrent requests
+            // This ensures we don't overwhelm the API with too many concurrent requests
+            let permit = API_SEMAPHORE.acquire().await.unwrap();
+            debug!(
+                "Acquired API semaphore permit for {} request to {}",
+                method_str, url
+            );
+
+            // Respect rate limits before making the request
+            // This will handle the actual rate limiting based on request history
+            match session.respect_rate_limit().await {
+                Ok(()) => {},
+                Err(e) => {
+                    drop(permit);
+                    if self.is_retryable_error(&e) {
+                        retry_count += 1;
+                        continue;
+                    }
+                    return Err(e);
+                }
+            }
+
+            let mut builder = self.client.request(method.clone(), &url);
+            builder = self.add_common_headers(builder, version);
+            builder = self.add_auth_headers(builder, session);
+
+            if let Some(data) = body {
+                builder = builder.json(data);
+            }
+
+            // Send the request
+            let response_result = builder.send().await;
+
+            // Check for network errors
+            let response = match response_result {
+                Ok(resp) => resp,
+                Err(e) => {
+                    error!("Network error for {} request to {}: {}", method_str, url, e);
+                    // Release the permit before continuing
+                    drop(permit);
+                    
+                    // Check if we should retry
+                    let app_error = AppError::Network(e);
+                    if self.is_retryable_error(&app_error) {
+                        retry_count += 1;
+                        continue;
+                    }
+                    return Err(app_error);
+                }
+            };
+
+            // Process the response - rate limiting is handled inside process_response
+            let result = self.process_response::<R>(response).await;
+
+            // If the request was successful, reset the rate limited flag
+            if result.is_ok() && RATE_LIMITED.load(Ordering::SeqCst) {
+                RATE_LIMITED.store(false, Ordering::SeqCst);
+                info!("Rate limit flag reset after successful request to {}", url);
+            }
+
+            // Release the permit (this happens automatically when permit goes out of scope,
+            // but we do it explicitly for clarity)
+            drop(permit);
+
+            // Handle the result
+            match &result {
+                Err(e) if self.is_retryable_error(e) => {
+                    retry_count += 1;
+                    continue;
+                }
+                _ => return result,
+            }
         }
-
-        // Acquire a permit from the semaphore to limit concurrent requests
-        // This ensures we don't overwhelm the API with too many concurrent requests
+        
+        // Final attempt without retrying
+        info!("Making final attempt for {} request to {} after max retries", method_str, url);
+        
+        // Acquire a permit from the semaphore
         let permit = API_SEMAPHORE.acquire().await.unwrap();
-        debug!(
-            "Acquired API semaphore permit for {} request to {}",
-            method_str, url
-        );
-
-        // Respect rate limits before making the request
-        // This will handle the actual rate limiting based on request history
+        
+        // Respect rate limits
         session.respect_rate_limit().await?;
-
+        
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);
         builder = self.add_auth_headers(builder, session);
-
+        
         if let Some(data) = body {
             builder = builder.json(data);
         }
-
-        // Send the request
-        let response_result = builder.send().await;
-
-        // Check for network errors
-        let response = match response_result {
-            Ok(resp) => resp,
-            Err(e) => {
-                error!("Network error for {} request to {}: {}", method_str, url, e);
-                // Release the permit before returning
-                drop(permit);
-                return Err(AppError::Network(e));
-            }
-        };
-
-        // Process the response - rate limiting is handled inside process_response
+        
+        let response = builder.send().await?;
         let result = self.process_response::<R>(response).await;
-
-        // If the request was successful, reset the rate limited flag
-        if result.is_ok() && RATE_LIMITED.load(Ordering::SeqCst) {
-            RATE_LIMITED.store(false, Ordering::SeqCst);
-            info!("Rate limit flag reset after successful request to {}", url);
-        }
-
-        // Release the permit (this happens automatically when _permit goes out of scope,
-        // but we do it explicitly for clarity)
+        
         drop(permit);
-
         result
     }
 
@@ -260,66 +388,125 @@ impl IgHttpClient for IgHttpClientImpl {
         let method_str = method.as_str().to_string(); // Store method as string for logging
         info!("Making unauthenticated {} request to {}", method_str, url);
 
-        // Check if we're currently rate limited
-        if RATE_LIMITED.load(Ordering::SeqCst) {
-            warn!(
-                "System is currently rate limited. Adding extra delay before unauthenticated request."
+        let mut retry_count = 0;
+        
+        // Retry loop
+        loop {
+            // Check if we should retry
+            if retry_count > 0 {
+                if retry_count > self.max_retries {
+                    warn!("Max retries ({}) exceeded for unauthenticated {} request to {}", 
+                          self.max_retries, method_str, url);
+                    break; // Exit the loop and try one last time without retrying
+                }
+
+                // Calculate backoff duration
+                let backoff = self.calculate_backoff_duration(retry_count - 1);
+                info!("Retry attempt {} for unauthenticated {} request to {}. Waiting for {:?} before retrying", 
+                      retry_count, method_str, url, backoff);
+                tokio::time::sleep(backoff).await;
+            }
+
+            // Check if we're currently rate limited
+            if RATE_LIMITED.load(Ordering::SeqCst) {
+                warn!(
+                    "System is currently rate limited. Adding extra delay before unauthenticated request."
+                );
+                // Add a longer extra delay if we're in a rate-limited situation
+                // Use retry count to increase delay for subsequent retries
+                let rate_limit_delay = 1000 + (retry_count * 500) as u64;
+                tokio::time::sleep(tokio::time::Duration::from_millis(rate_limit_delay)).await;
+            }
+
+            // Acquire a permit from the semaphore to limit concurrent requests
+            let permit = API_SEMAPHORE.acquire().await.unwrap();
+            debug!(
+                "Acquired API semaphore permit for unauthenticated {} request to {}",
+                method_str, url
             );
-            // Add an extra delay if we're in a rate-limited situation
-            tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+
+            // Use the global app rate limiter for unauthenticated requests
+            // This is thread-safe and can be called from multiple threads concurrently
+            let limiter = app_non_trading_limiter();
+            limiter.wait().await;
+
+            let mut builder = self.client.request(method.clone(), &url);
+            builder = self.add_common_headers(builder, version);
+
+            if let Some(data) = body {
+                builder = builder.json(data);
+            }
+
+            // Send the request
+            let response_result = builder.send().await;
+
+            // Check for network errors
+            let response = match response_result {
+                Ok(resp) => resp,
+                Err(e) => {
+                    error!(
+                        "Network error for unauthenticated {} request to {}: {}",
+                        method_str, url, e
+                    );
+                    // Release the permit before continuing
+                    drop(permit);
+                    
+                    // Check if we should retry
+                    let app_error = AppError::Network(e);
+                    if self.is_retryable_error(&app_error) {
+                        retry_count += 1;
+                        continue;
+                    }
+                    return Err(app_error);
+                }
+            };
+
+            // Process the response - rate limiting is handled inside process_response
+            let result = self.process_response::<R>(response).await;
+
+            // If the request was successful, reset the rate limited flag
+            if result.is_ok() && RATE_LIMITED.load(Ordering::SeqCst) {
+                RATE_LIMITED.store(false, Ordering::SeqCst);
+                info!(
+                    "Rate limit flag reset after successful unauthenticated request to {}",
+                    url
+                );
+            }
+
+            // Release the permit
+            drop(permit);
+
+            // Handle the result
+            match &result {
+                Err(e) if self.is_retryable_error(e) => {
+                    retry_count += 1;
+                    continue;
+                }
+                _ => return result,
+            }
         }
-
-        // Acquire a permit from the semaphore to limit concurrent requests
-        let _permit = API_SEMAPHORE.acquire().await.unwrap();
-        debug!(
-            "Acquired API semaphore permit for unauthenticated {} request to {}",
-            method_str, url
-        );
-
-        // Use the global app rate limiter for unauthenticated requests
-        // This is thread-safe and can be called from multiple threads concurrently
+        
+        // Final attempt without retrying
+        info!("Making final attempt for unauthenticated {} request to {} after max retries", method_str, url);
+        
+        // Acquire a permit from the semaphore
+        let permit = API_SEMAPHORE.acquire().await.unwrap();
+        
+        // Use the global app rate limiter
         let limiter = app_non_trading_limiter();
         limiter.wait().await;
-
+        
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);
-
+        
         if let Some(data) = body {
             builder = builder.json(data);
         }
-
-        // Send the request
-        let response_result = builder.send().await;
-
-        // Check for network errors
-        let response = match response_result {
-            Ok(resp) => resp,
-            Err(e) => {
-                error!(
-                    "Network error for unauthenticated {} request to {}: {}",
-                    method_str, url, e
-                );
-                // Release the permit before returning
-                drop(_permit);
-                return Err(AppError::Network(e));
-            }
-        };
-
-        // Process the response - rate limiting is handled inside process_response
+        
+        let response = builder.send().await?;
         let result = self.process_response::<R>(response).await;
-
-        // If the request was successful, reset the rate limited flag
-        if result.is_ok() && RATE_LIMITED.load(Ordering::SeqCst) {
-            RATE_LIMITED.store(false, Ordering::SeqCst);
-            info!(
-                "Rate limit flag reset after successful unauthenticated request to {}",
-                url
-            );
-        }
-
-        // Release the permit
-        drop(_permit);
-
+        
+        drop(permit);
         result
     }
 }
