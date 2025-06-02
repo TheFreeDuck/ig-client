@@ -8,7 +8,7 @@ use tokio::sync::Semaphore;
 use tracing::{debug, error, info, warn};
 use std::time::Duration;
 
-use crate::utils::rate_limiter::app_non_trading_limiter;
+use crate::utils::rate_limiter::{app_non_trading_limiter, one_per_second_limiter};
 use crate::{config::Config, error::AppError, session::interface::IgSession};
 
 // Global semaphore to limit concurrent API requests
@@ -296,6 +296,10 @@ impl IgHttpClient for IgHttpClientImpl {
                     return Err(e);
                 }
             }
+            
+            // Enforce one request per second limit to prevent bursts
+            // This is crucial to avoid hitting rate limits
+            one_per_second_limiter().wait().await;
 
             let mut builder = self.client.request(method.clone(), &url);
             builder = self.add_common_headers(builder, version);
@@ -357,6 +361,9 @@ impl IgHttpClient for IgHttpClientImpl {
         
         // Respect rate limits
         session.respect_rate_limit().await?;
+        
+        // Enforce one request per second limit to prevent bursts
+        one_per_second_limiter().wait().await;
         
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);
@@ -429,6 +436,10 @@ impl IgHttpClient for IgHttpClientImpl {
             // This is thread-safe and can be called from multiple threads concurrently
             let limiter = app_non_trading_limiter();
             limiter.wait().await;
+            
+            // Enforce one request per second limit to prevent bursts
+            // This is crucial to avoid hitting rate limits
+            one_per_second_limiter().wait().await;
 
             let mut builder = self.client.request(method.clone(), &url);
             builder = self.add_common_headers(builder, version);
@@ -495,6 +506,9 @@ impl IgHttpClient for IgHttpClientImpl {
         // Use the global app rate limiter
         let limiter = app_non_trading_limiter();
         limiter.wait().await;
+        
+        // Enforce one request per second limit to prevent bursts
+        one_per_second_limiter().wait().await;
         
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);

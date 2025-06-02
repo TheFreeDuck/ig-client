@@ -27,6 +27,8 @@ pub enum RateLimitType {
     NonTradingApp,
     /// Historical price data: 10,000 points per week (price history endpoints)
     HistoricalPrice,
+    /// One request per second (special rate limit to prevent bursts)
+    OnePerSecond,
 }
 
 impl RateLimitType {
@@ -37,6 +39,7 @@ impl RateLimitType {
             Self::TradingAccount => 100,    // 100 requests per minute
             Self::NonTradingApp => 60,      // 60 requests per minute
             Self::HistoricalPrice => 10000, // 10,000 points per week
+            Self::OnePerSecond => 1,        // 1 request per second
         }
     }
 
@@ -47,6 +50,7 @@ impl RateLimitType {
             Self::TradingAccount => 60_000,       // 1 minute
             Self::NonTradingApp => 60_000,        // 1 minute
             Self::HistoricalPrice => 604_800_000, // 1 week
+            Self::OnePerSecond => 1_000,          // 1 second
         }
     }
 
@@ -57,6 +61,7 @@ impl RateLimitType {
             Self::TradingAccount => "100 requests per minute (per account)".to_string(),
             Self::NonTradingApp => "60 requests per minute (per app)".to_string(),
             Self::HistoricalPrice => "10,000 points per week".to_string(),
+            Self::OnePerSecond => "1 request per second".to_string(),
         }
     }
 }
@@ -331,6 +336,16 @@ pub fn create_rate_limiter(
         Some(margin) => Arc::new(limiter.with_safety_margin(margin)),
         None => Arc::new(limiter),
     }
+}
+
+/// Global rate limiter for one request per second
+pub fn one_per_second_limiter() -> Arc<RateLimiter> {
+    static INSTANCE: once_cell::sync::Lazy<Arc<RateLimiter>> = once_cell::sync::Lazy::new(|| {
+        let limiter = RateLimiter::new(RateLimitType::OnePerSecond);
+        Arc::new(limiter)
+    });
+
+    INSTANCE.clone()
 }
 
 /// Default global rate limiter (uses the most conservative limit: non-trading account)
