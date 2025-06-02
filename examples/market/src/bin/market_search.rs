@@ -78,7 +78,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             );
 
             // Display the results in a table format
-            println!(
+            info!(
                 "\n{:<40} {:<15} {:<10} {:<10} {:<10} {:<10} {:<15} {:<15} {:<20}",
                 "INSTRUMENT NAME",
                 "EPIC",
@@ -90,7 +90,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 "UNDERLYING_PRICE",
                 "UPDATE TIME"
             );
-            println!(
+            info!(
                 "{:-<40} {:-<15} {:-<10} {:-<10} {:-<10} {:-<10} {:-<15} {:-<15} {:-<20}",
                 "", "", "", "", "", "", "", "", ""
             );
@@ -112,7 +112,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     _ => None,
                 };
 
-                println!(
+                info!(
                     "{:<40} {:<15} {:<10} {:<10} {:<10} {:<10} {:<15} {:<15} {:<20}",
                     truncate(&market.instrument_name, 38),
                     truncate(&market.epic, 13),

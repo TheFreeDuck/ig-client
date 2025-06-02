@@ -8,6 +8,7 @@
 /// # Examples
 ///
 /// ```
+/// use tracing::info;
 /// use ig_client::impl_json_display;
 ///
 /// #[derive(serde::Serialize)]
@@ -23,7 +24,7 @@
 ///     field2: 42,
 /// };
 ///
-/// println!("{}", my_struct); // Outputs JSON representation
+/// info!("{}", my_struct); // Outputs JSON representation
 /// ```
 macro_rules! impl_json_display {
     ($($t:ty),+) => {

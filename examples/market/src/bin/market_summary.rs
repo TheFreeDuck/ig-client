@@ -288,14 +288,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 
     // Display the results
-    println!(
+    info!(
         "\n{:<30} {:<20} {:<10} {:<10} {:<10} {:<10} {:<20}",
         "INSTRUMENT NAME", "EPIC", "BID", "OFFER", "MID", "SPREAD", "LAST DEALING DATE"
     );
-    println!("{:-<110}", "");
+    info!("{:-<110}", "");
 
     for summary in &market_summaries {
-        println!(
+        info!(
             "{:<30} {:<20} {:<10.2} {:<10.2} {:<10.2} {:<10.2} {:<20}",
             summary.instrument_name,
             summary.epic,

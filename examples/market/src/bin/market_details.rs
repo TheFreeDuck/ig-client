@@ -200,11 +200,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 
     // Display the results in a table format
-    println!(
+    info!(
         "\n{:<40} {:<15} {:<10} {:<10} {:<10} {:<10} {:<20} {:<15}",
         "INSTRUMENT NAME", "EPIC", "BID", "OFFER", "MID", "SPREAD", "LAST DEALING DATE", "HIGH/LOW"
     );
-    println!(
+    info!(
         "{:-<40} {:-<15} {:-<10} {:-<10} {:-<10} {:-<10} {:-<20} {:-<15}",
         "", "", "", "", "", "", "", ""
     );
@@ -273,7 +273,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .map(|ed| truncate(&ed.last_dealing_date, 18))
             .unwrap_or_else(|| truncate(&details.instrument.expiry, 18));
 
-        println!(
+        info!(
             "{:<40} {:<15} {:<10} {:<10} {:<10} {:<10} {:<20} {:<15}",
             truncate(&details.instrument.name, 38),
             truncate(epic, 13),
