@@ -6,7 +6,7 @@ use ig_client::{
     utils::logger::setup_logger,
 };
 use std::{error::Error, fs, sync::Arc};
-use tracing::{error, info};
+use tracing::{debug, error, info};
 
 // Constants for API request handling
 const BATCH_SIZE: usize = 25; // Number of EPICs to process before saving results
@@ -110,7 +110,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         );
 
         // Log the EPICs being processed in this batch
-        info!("EPICs in this batch: {}", epics_chunk.join(", "));
+        debug!("EPICs in this batch: {}", epics_chunk.join(", "));
 
         match market_service
             .get_multiple_market_details(&session, epics_chunk)

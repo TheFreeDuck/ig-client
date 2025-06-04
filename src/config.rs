@@ -115,8 +115,7 @@ impl Config {
     ///
     /// A new `Config` instance
     pub fn new() -> Self {
-        warn!("Using not rate-limited configuration. This is not recommended for production use.");
-        Self::with_rate_limit_type(RateLimitType::NonTradingAccount, 0.8)
+        Self::with_rate_limit_type(RateLimitType::OnePerSecond, 0.5)
     }
 
     /// Creates a new configuration instance with a specific rate limit type

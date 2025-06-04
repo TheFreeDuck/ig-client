@@ -95,7 +95,7 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
         let epics_str = epics.join(",");
         let path = format!("markets?epics={}", epics_str);
 
-        info!(
+        debug!(
             "Getting market details for {} EPICs in a batch: {}",
             epics.len(),
             epics_str
