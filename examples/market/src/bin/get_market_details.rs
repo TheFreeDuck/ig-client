@@ -1,14 +1,14 @@
-use std::error::Error;
-use std::sync::Arc;
-use tracing::{error, info};
-use ig_client::application::services::market_service::MarketServiceImpl;
 use ig_client::application::services::MarketService;
+use ig_client::application::services::market_service::MarketServiceImpl;
 use ig_client::config::Config;
 use ig_client::session::auth::IgAuth;
 use ig_client::session::interface::IgAuthenticator;
 use ig_client::transport::http_client::IgHttpClientImpl;
 use ig_client::utils::logger::setup_logger;
 use ig_client::utils::rate_limiter::RateLimitType;
+use std::error::Error;
+use std::sync::Arc;
+use tracing::{error, info};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -52,9 +52,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .login()
         .await
         .map_err(|e| Box::new(e) as Box<dyn Error>)?;
-    
+
     let mut markets_got = Vec::new();
-    
+
     for epic in epics {
         info!("Fetching market details for {} individually", epic);
 

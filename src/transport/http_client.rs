@@ -4,9 +4,9 @@ use reqwest::{Client, Method, RequestBuilder, Response, StatusCode};
 use serde::{Serialize, de::DeserializeOwned};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::time::Duration;
 use tokio::sync::Semaphore;
 use tracing::{debug, error, info, warn};
-use std::time::Duration;
 
 use crate::utils::rate_limiter::{app_non_trading_limiter, one_per_second_limiter};
 use crate::{config::Config, error::AppError, session::interface::IgSession};
@@ -84,7 +84,7 @@ impl IgHttpClientImpl {
             backoff_factor: DEFAULT_BACKOFF_FACTOR,
         }
     }
-    
+
     /// Configure retry behavior
     pub fn with_retry_config(
         mut self,
@@ -99,17 +99,18 @@ impl IgHttpClientImpl {
         self.backoff_factor = backoff_factor;
         self
     }
-    
+
     /// Calculate backoff duration for retry attempts with jitter
     fn calculate_backoff_duration(&self, retry_count: u32) -> Duration {
         use rand::Rng;
-        let base_backoff_ms = (self.initial_backoff_ms as f64 * self.backoff_factor.powi(retry_count as i32)) as u64;
+        let base_backoff_ms =
+            (self.initial_backoff_ms as f64 * self.backoff_factor.powi(retry_count as i32)) as u64;
         let capped_backoff_ms = base_backoff_ms.min(self.max_backoff_ms);
-        
+
         // Add jitter (±20%) to avoid thundering herd problem
         let jitter_factor = rand::rng().random_range(0.8..1.2);
         let jittered_backoff_ms = (capped_backoff_ms as f64 * jitter_factor) as u64;
-        
+
         Duration::from_millis(jittered_backoff_ms)
     }
 
@@ -119,9 +120,9 @@ impl IgHttpClientImpl {
             AppError::RateLimitExceeded => true,
             AppError::Network(e) => {
                 // Retry on connection errors, timeouts, and server errors
-                e.is_timeout() || e.is_connect() || e.status().map_or(false, |s| s.is_server_error())
-            },
-            _ => false
+                e.is_timeout() || e.is_connect() || e.status().is_some_and(|s| s.is_server_error())
+            }
+            _ => false,
         }
     }
 
@@ -187,9 +188,14 @@ impl IgHttpClientImpl {
             }
             StatusCode::FORBIDDEN => {
                 let body = response.text().await?;
-                if body.contains("exceeded-api-key-allowance") || body.contains("exceeded-account-allowance") {
-                    self.handle_rate_limit(&url, "FORBIDDEN with exceeded-api-key-allowance or exceeded-account-allowance")
-                        .await;
+                if body.contains("exceeded-api-key-allowance")
+                    || body.contains("exceeded-account-allowance")
+                {
+                    self.handle_rate_limit(
+                        &url,
+                        "FORBIDDEN with exceeded-api-key-allowance or exceeded-account-allowance",
+                    )
+                    .await;
                     Err(AppError::RateLimitExceeded)
                 } else {
                     error!("Forbidden access to {}: {}", url, body);
@@ -248,21 +254,25 @@ impl IgHttpClient for IgHttpClientImpl {
         debug!("Making {} request to {}", method_str, url);
 
         let mut retry_count = 0;
-        
+
         // Retry loop
         loop {
             // Check if we should retry
             if retry_count > 0 {
                 if retry_count > self.max_retries {
-                    warn!("Max retries ({}) exceeded for {} request to {}", 
-                          self.max_retries, method_str, url);
+                    warn!(
+                        "Max retries ({}) exceeded for {} request to {}",
+                        self.max_retries, method_str, url
+                    );
                     break; // Exit the loop and try one last time without retrying
                 }
 
                 // Calculate backoff duration
                 let backoff = self.calculate_backoff_duration(retry_count - 1);
-                info!("Retry attempt {} for {} request to {}. Waiting for {:?} before retrying", 
-                      retry_count, method_str, url, backoff);
+                info!(
+                    "Retry attempt {} for {} request to {}. Waiting for {:?} before retrying",
+                    retry_count, method_str, url, backoff
+                );
                 tokio::time::sleep(backoff).await;
             }
 
@@ -286,7 +296,7 @@ impl IgHttpClient for IgHttpClientImpl {
             // Respect rate limits before making the request
             // This will handle the actual rate limiting based on request history
             match session.respect_rate_limit().await {
-                Ok(()) => {},
+                Ok(()) => {}
                 Err(e) => {
                     drop(permit);
                     if self.is_retryable_error(&e) {
@@ -296,7 +306,7 @@ impl IgHttpClient for IgHttpClientImpl {
                     return Err(e);
                 }
             }
-            
+
             // Enforce one request per second limit to prevent bursts
             // This is crucial to avoid hitting rate limits
             one_per_second_limiter().wait().await;
@@ -319,7 +329,7 @@ impl IgHttpClient for IgHttpClientImpl {
                     error!("Network error for {} request to {}: {}", method_str, url, e);
                     // Release the permit before continuing
                     drop(permit);
-                    
+
                     // Check if we should retry
                     let app_error = AppError::Network(e);
                     if self.is_retryable_error(&app_error) {
@@ -352,30 +362,33 @@ impl IgHttpClient for IgHttpClientImpl {
                 _ => return result,
             }
         }
-        
+
         // Final attempt without retrying
-        info!("Making final attempt for {} request to {} after max retries", method_str, url);
-        
+        info!(
+            "Making final attempt for {} request to {} after max retries",
+            method_str, url
+        );
+
         // Acquire a permit from the semaphore
         let permit = API_SEMAPHORE.acquire().await.unwrap();
-        
+
         // Respect rate limits
         session.respect_rate_limit().await?;
-        
+
         // Enforce one request per second limit to prevent bursts
         one_per_second_limiter().wait().await;
-        
+
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);
         builder = self.add_auth_headers(builder, session);
-        
+
         if let Some(data) = body {
             builder = builder.json(data);
         }
-        
+
         let response = builder.send().await?;
         let result = self.process_response::<R>(response).await;
-        
+
         drop(permit);
         result
     }
@@ -396,21 +409,25 @@ impl IgHttpClient for IgHttpClientImpl {
         info!("Making unauthenticated {} request to {}", method_str, url);
 
         let mut retry_count = 0;
-        
+
         // Retry loop
         loop {
             // Check if we should retry
             if retry_count > 0 {
                 if retry_count > self.max_retries {
-                    warn!("Max retries ({}) exceeded for unauthenticated {} request to {}", 
-                          self.max_retries, method_str, url);
+                    warn!(
+                        "Max retries ({}) exceeded for unauthenticated {} request to {}",
+                        self.max_retries, method_str, url
+                    );
                     break; // Exit the loop and try one last time without retrying
                 }
 
                 // Calculate backoff duration
                 let backoff = self.calculate_backoff_duration(retry_count - 1);
-                info!("Retry attempt {} for unauthenticated {} request to {}. Waiting for {:?} before retrying", 
-                      retry_count, method_str, url, backoff);
+                info!(
+                    "Retry attempt {} for unauthenticated {} request to {}. Waiting for {:?} before retrying",
+                    retry_count, method_str, url, backoff
+                );
                 tokio::time::sleep(backoff).await;
             }
 
@@ -436,7 +453,7 @@ impl IgHttpClient for IgHttpClientImpl {
             // This is thread-safe and can be called from multiple threads concurrently
             let limiter = app_non_trading_limiter();
             limiter.wait().await;
-            
+
             // Enforce one request per second limit to prevent bursts
             // This is crucial to avoid hitting rate limits
             one_per_second_limiter().wait().await;
@@ -461,7 +478,7 @@ impl IgHttpClient for IgHttpClientImpl {
                     );
                     // Release the permit before continuing
                     drop(permit);
-                    
+
                     // Check if we should retry
                     let app_error = AppError::Network(e);
                     if self.is_retryable_error(&app_error) {
@@ -496,30 +513,33 @@ impl IgHttpClient for IgHttpClientImpl {
                 _ => return result,
             }
         }
-        
+
         // Final attempt without retrying
-        info!("Making final attempt for unauthenticated {} request to {} after max retries", method_str, url);
-        
+        info!(
+            "Making final attempt for unauthenticated {} request to {} after max retries",
+            method_str, url
+        );
+
         // Acquire a permit from the semaphore
         let permit = API_SEMAPHORE.acquire().await.unwrap();
-        
+
         // Use the global app rate limiter
         let limiter = app_non_trading_limiter();
         limiter.wait().await;
-        
+
         // Enforce one request per second limit to prevent bursts
         one_per_second_limiter().wait().await;
-        
+
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);
-        
+
         if let Some(data) = body {
             builder = builder.json(data);
         }
-        
+
         let response = builder.send().await?;
         let result = self.process_response::<R>(response).await;
-        
+
         drop(permit);
         result
     }

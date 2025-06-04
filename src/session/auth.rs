@@ -69,7 +69,6 @@ impl IgAuthenticator for IgAuth<'_> {
         const MAX_RETRIES: u32 = 3;
         const INITIAL_RETRY_DELAY_MS: u64 = 10000; // 10 segundos
 
-        
         let mut retry_count = 0;
         let mut retry_delay_ms = INITIAL_RETRY_DELAY_MS;
 
