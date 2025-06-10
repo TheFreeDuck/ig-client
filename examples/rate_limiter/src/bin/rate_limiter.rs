@@ -131,7 +131,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     // Display final statistics
     info!("All tasks completed. Displaying statistics...");
-    let mut stats_vec = stats_tracker.lock().await;
+    let stats_vec = stats_tracker.lock().await;
 
     // Create a vector of indices sorted by global request number
     let mut indices: Vec<usize> = (0..stats_vec.len()).collect();

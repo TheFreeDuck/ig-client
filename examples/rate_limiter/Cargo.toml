@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ig-client = { path = "../.." }
-tokio = { version = "1.28", features = ["full"] }
-tracing = "0.1"
-rand = "0.8"
-futures = "0.3"
+rand = { workspace = true }
+futures = { workspace = true }
+ig-client = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }

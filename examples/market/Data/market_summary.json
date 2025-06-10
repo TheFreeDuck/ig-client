@@ -1,0 +1,371 @@
+[
+  {
+    "bid": 531.0,
+    "epic": "OP.D.OTCNIK2.35000P.IP",
+    "instrument_name": "Japón 225 35000 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 836.5,
+    "offer": 571.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 649.0,
+    "epic": "OP.D.OTCNIK2.35125P.IP",
+    "instrument_name": "Japón 225 37750 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 1013.5,
+    "offer": 689.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 558.0,
+    "epic": "OP.D.OTCNIK2.35250P.IP",
+    "instrument_name": "Japón 225 35125 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 877.0,
+    "offer": 598.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 586.0,
+    "epic": "OP.D.OTCNIK2.35375P.IP",
+    "instrument_name": "Japón 225 35250 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 919.0,
+    "offer": 626.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 1286.0,
+    "epic": "OP.D.OTCNIK2.35500P.IP",
+    "instrument_name": "Japón 225 37250 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 1969.0,
+    "offer": 1326.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 615.0,
+    "epic": "OP.D.OTCNIK2.37250C.IP",
+    "instrument_name": "Japón 225 35375 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 962.5,
+    "offer": 655.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 1416.0,
+    "epic": "OP.D.OTCNIK2.37250P.IP",
+    "instrument_name": "Japón 225 37500 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 2164.0,
+    "offer": 1456.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 646.0,
+    "epic": "OP.D.OTCNIK2.37500C.IP",
+    "instrument_name": "Japón 225 35500 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 1009.0,
+    "offer": 686.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 754.0,
+    "epic": "OP.D.OTCNIK2.37500P.IP",
+    "instrument_name": "Japón 225 37500 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 1171.0,
+    "offer": 794.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 874.0,
+    "epic": "OP.D.OTCNIK2.37750C.IP",
+    "instrument_name": "Japón 225 37250 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 1351.0,
+    "offer": 914.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 1562.0,
+    "epic": "OP.D.OTCNIK2.37750P.IP",
+    "instrument_name": "Japón 225 37750 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 2383.0,
+    "offer": 1602.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 333.0,
+    "epic": "OP.D.OTCNIK2.38000C.IP",
+    "instrument_name": "Japón 225 38750 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 539.5,
+    "offer": 373.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 2441.0,
+    "epic": "OP.D.OTCNIK2.38000P.IP",
+    "instrument_name": "Japón 225 39000 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 3701.5,
+    "offer": 2481.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 1718.0,
+    "epic": "OP.D.OTCNIK2.38250C.IP",
+    "instrument_name": "Japón 225 38000 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 2617.0,
+    "offer": 1758.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 471.0,
+    "epic": "OP.D.OTCNIK2.38250P.IP",
+    "instrument_name": "Japón 225 38250 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 746.5,
+    "offer": 511.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 1883.0,
+    "epic": "OP.D.OTCNIK2.38500C.IP",
+    "instrument_name": "Japón 225 38250 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 2864.5,
+    "offer": 1923.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 395.0,
+    "epic": "OP.D.OTCNIK2.38500P.IP",
+    "instrument_name": "Japón 225 38500 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 632.5,
+    "offer": 435.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 2057.0,
+    "epic": "OP.D.OTCNIK2.38750C.IP",
+    "instrument_name": "Japón 225 38500 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 3125.5,
+    "offer": 2097.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 2245.0,
+    "epic": "OP.D.OTCNIK2.38750P.IP",
+    "instrument_name": "Japón 225 38750 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 3407.5,
+    "offer": 2285.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 556.0,
+    "epic": "OP.D.OTCNIK2.39000C.IP",
+    "instrument_name": "Japón 225 38000 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 874.0,
+    "offer": 596.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 279.0,
+    "epic": "OP.D.OTCNIK2.39000P.IP",
+    "instrument_name": "Japón 225 39000 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 458.5,
+    "offer": 319.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 748.0,
+    "epic": "OP.D.OTCNIK2.39250C.IP",
+    "instrument_name": "Japón 225 35875 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 1162.0,
+    "offer": 788.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 2852.0,
+    "epic": "OP.D.OTCNIK2.39250P.IP",
+    "instrument_name": "Japón 225 39500 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 4318.0,
+    "offer": 2892.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 127.0,
+    "epic": "OP.D.OTCNIK2.39500C.IP",
+    "instrument_name": "Japón 225 40000 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 226.5,
+    "offer": 163.0,
+    "spread": 36.0
+  },
+  {
+    "bid": 2643.0,
+    "epic": "OP.D.OTCNIK2.39500P.IP",
+    "instrument_name": "Japón 225 39250 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 4004.5,
+    "offer": 2683.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 191.0,
+    "epic": "OP.D.OTCNIK2.39750C.IP",
+    "instrument_name": "Japón 225 39500 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 326.5,
+    "offer": 231.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 155.0,
+    "epic": "OP.D.OTCNIK2.39750P.IP",
+    "instrument_name": "Japón 225 39750 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 272.5,
+    "offer": 195.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 679.0,
+    "epic": "OP.D.OTCNIK2.40000C.IP",
+    "instrument_name": "Japón 225 35625 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 1058.5,
+    "offer": 719.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 232.0,
+    "epic": "OP.D.OTCNIK2.35625P.IP",
+    "instrument_name": "Japón 225 39250 CALL",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 388.0,
+    "offer": 272.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 713.0,
+    "epic": "OP.D.OTCNIK2.35750P.IP",
+    "instrument_name": "Japón 225 35750 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 1109.5,
+    "offer": 753.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 3066.0,
+    "epic": "OP.D.OTCNIK2.35875P.IP",
+    "instrument_name": "Japón 225 39750 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 4639.0,
+    "offer": 3106.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 87.0,
+    "epic": "OP.D.OTCNIK2.36000P.IP",
+    "instrument_name": "France 40 7100 PUT (E1)",
+    "last_dealing_date": "2025-08-15T13:30",
+    "mid": 138.5,
+    "offer": 95.0,
+    "spread": 8.0
+  },
+  {
+    "bid": 74.2,
+    "epic": "OP.D.OTCCAC3.6800P.IP",
+    "instrument_name": "France 40 7000 PUT (E1)",
+    "last_dealing_date": "2025-08-15T13:30",
+    "mid": 119.30000000000001,
+    "offer": 82.2,
+    "spread": 8.0
+  },
+  {
+    "bid": 53.9,
+    "epic": "OP.D.OTCCAC3.6900P.IP",
+    "instrument_name": "France 40 6800 PUT (E1)",
+    "last_dealing_date": "2025-08-15T13:30",
+    "mid": 88.85,
+    "offer": 61.9,
+    "spread": 8.0
+  },
+  {
+    "bid": 141.8,
+    "epic": "OP.D.OTCCAC3.7000P.IP",
+    "instrument_name": "France 40 7400 PUT (E1)",
+    "last_dealing_date": "2025-08-15T13:30",
+    "mid": 220.70000000000002,
+    "offer": 149.8,
+    "spread": 8.0
+  },
+  {
+    "bid": 785.0,
+    "epic": "OP.D.OTCCAC3.7100P.IP",
+    "instrument_name": "Japón 225 36000 PUT",
+    "last_dealing_date": "2025-07-11T06:30",
+    "mid": 1217.5,
+    "offer": 825.0,
+    "spread": 40.0
+  },
+  {
+    "bid": 328.3,
+    "epic": "OP.D.OTCCAC3.7200P.IP",
+    "instrument_name": "France 40 7600 CALL (E1)",
+    "last_dealing_date": "2025-08-15T13:30",
+    "mid": 500.45000000000005,
+    "offer": 336.3,
+    "spread": 8.0
+  },
+  {
+    "bid": 102.1,
+    "epic": "OP.D.OTCCAC3.7300P.IP",
+    "instrument_name": "France 40 7200 PUT (E1)",
+    "last_dealing_date": "2025-08-15T13:30",
+    "mid": 161.14999999999998,
+    "offer": 110.1,
+    "spread": 8.0
+  },
+  {
+    "bid": 63.2,
+    "epic": "OP.D.OTCCAC3.7400P.IP",
+    "instrument_name": "France 40 6900 PUT (E1)",
+    "last_dealing_date": "2025-08-15T13:30",
+    "mid": 102.80000000000001,
+    "offer": 71.2,
+    "spread": 8.0
+  },
+  {
+    "bid": 119.9,
+    "epic": "OP.D.OTCCAC3.7500P.IP",
+    "instrument_name": "France 40 7300 PUT (E1)",
+    "last_dealing_date": "2025-08-15T13:30",
+    "mid": 187.85000000000002,
+    "offer": 127.9,
+    "spread": 8.0
+  },
+  {
+    "bid": 167.7,
+    "epic": "OP.D.OTCCAC3.7600C.IP",
+    "instrument_name": "France 40 7500 PUT (E1)",
+    "last_dealing_date": "2025-08-15T13:30",
+    "mid": 259.54999999999995,
+    "offer": 175.7,
+    "spread": 8.0
+  }
+]
