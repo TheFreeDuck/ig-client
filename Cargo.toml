@@ -1,6 +1,6 @@
 [package]
 name = "ig-client"
-version = "0.1.7"
+version = "0.1.8"
 edition = "2024"
 authors = ["Joaquin Bejar <jb@taunais.com>"]
 description = "This crate provides a client for the IG Markets API"
@@ -12,6 +12,7 @@ keywords = ["finance", "ohlc", "tick", "trading"]
 categories = ["finance", "data-structures"]
 
 include = [
+    "benches/**/*",
     "src/**/*",
     "Cargo.toml",
     "README.md",
