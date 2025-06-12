@@ -11,6 +11,7 @@ use ig_client::{
 };
 use tokio::runtime::Runtime;
 use tracing::info;
+use ig_client::application::models::order::TimeInForce;
 
 #[test]
 #[ignore]
@@ -100,7 +101,7 @@ fn test_create_and_close_position() {
         create_order.expiry = Some("JUL-25".to_string()); // Use actual expiry date for options
         create_order.guaranteed_stop = Some(false); // Specify whether to use a guaranteed stop
         create_order.currency_code = Some("EUR".to_string()); // Set the currency code for the order
-        create_order.time_in_force = ig_client::application::models::order::TimeInForce::FillOrKill; // Use fill or kill
+        create_order.time_in_force = TimeInForce::FillOrKill; // Use fill or kill
 
         // Create the position
         let create_result = order_service.create_order(&session, &create_order).await;
