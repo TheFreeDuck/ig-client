@@ -53,11 +53,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let deal_reference = Some(nanoid!(30, &nanoid::alphabet::SAFE));
     println!("{:?}", deal_reference);
     let create_order = CreateOrderRequest::buy_option_to_market(
-        epic.to_string(),
-        size,
-        expiry.clone(),
-        deal_reference,
-        currency_code.clone(),
+        &epic.to_string(),
+        &size,
+        &expiry.clone(),
+        &deal_reference,
+        &currency_code.clone(),
     );
 
     // Create a market service
