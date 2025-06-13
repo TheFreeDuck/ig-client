@@ -77,11 +77,7 @@ fn test_create_order_request_with_take_profit() {
 #[test]
 fn test_close_position_request_market() {
     // Test the market constructor of ClosePositionRequest
-    let request = ClosePositionRequest::market(
-        "DEAL123".to_string(),
-        Direction::Sell,
-        1.0,
-    );
+    let request = ClosePositionRequest::market("DEAL123".to_string(), Direction::Sell, 1.0);
 
     // Verify that the fields were set correctly
     assert!(matches!(request.direction, Direction::Sell));

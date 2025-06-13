@@ -1,5 +1,6 @@
 // Authentication module for IG Markets API
 
+use crate::constants::USER_AGENT;
 use crate::{
     config::Config,
     error::AuthError,
@@ -12,7 +13,6 @@ use rand;
 use reqwest::{Client, StatusCode};
 use std::time::Duration;
 use tracing::{debug, error, info, warn};
-use crate::constants::USER_AGENT;
 
 /// Authentication handler for IG Markets API
 pub struct IgAuth<'a> {

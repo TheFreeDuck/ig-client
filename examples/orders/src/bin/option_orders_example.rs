@@ -1,4 +1,6 @@
-use ig_client::application::models::order::{ClosePositionRequest, CreateOrderRequest, Direction, Status};
+use ig_client::application::models::order::{
+    ClosePositionRequest, CreateOrderRequest, Direction, Status,
+};
 use ig_client::application::services::market_service::MarketServiceImpl;
 use ig_client::application::services::order_service::OrderServiceImpl;
 use ig_client::application::services::{MarketService, OrderService};
@@ -23,7 +25,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         RateLimitType::OnePerSecond,
         0.5,
     ));
-    
+
     info!("Configuration loaded");
 
     // Create HTTP client
@@ -40,7 +42,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Session started successfully");
 
     let epic = "DO.D.OTCDDAX.68.IP"; // Example epic for testing
-    let expiry = Some(chrono::Local::now().format("%d-%b-%y").to_string().to_uppercase());
+    let expiry = Some(
+        chrono::Local::now()
+            .format("%d-%b-%y")
+            .to_string()
+            .to_uppercase(),
+    );
     let size = 1.25; // Size of the order
     let currency_code = Some("EUR".to_string()); // Example currency code
     let deal_reference = Some(nanoid!(30, &nanoid::alphabet::SAFE));
@@ -78,18 +85,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             info!("  Reason: {:?}", confirmation.reason);
 
             // Ensure we have a deal ID
-            match (confirmation.status == Status::Rejected, confirmation.deal_id) {
+            match (
+                confirmation.status == Status::Rejected,
+                confirmation.deal_id,
+            ) {
                 (true, _) => {
                     error!("Order was rejected, cannot continue");
                     None
-                },
+                }
                 (false, Some(id)) => Some(id),
-                (false, None ) => {
+                (false, None) => {
                     error!("No deal ID received, cannot continue");
                     None
                 }
             }
-            
         }
         Err(e) => {
             error!("Failed to create position: {:?}", e);
@@ -104,10 +113,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Ok(());
     }
 
-    
     // sleep for a while to simulate some processing time
     tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
-    
+
     info!("Closing position with deal ID: {:?}", deal_id);
     let close_request = ClosePositionRequest::close_option_to_market_by_id(
         deal_id.unwrap(),
@@ -122,45 +130,49 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // );
     let close_result = order_service.close_position(&session, &close_request).await;
 
-
     match close_result {
         Ok(close_response) => {
             info!(
-                        "Position closed with deal reference: {}",
-                        close_response.deal_reference
-                    );
-    
+                "Position closed with deal reference: {}",
+                close_response.deal_reference
+            );
+
             // Get the close confirmation
             let close_confirmation = order_service
                 .get_order_confirmation(&session, &close_response.deal_reference)
                 .await
                 .expect("Failed to get close confirmation");
-    
+
             info!("Close confirmation received:");
             info!("  Deal ID: {:?}", close_confirmation.deal_id);
             info!("  Status: {:?}", close_confirmation.status);
             info!("  Reason: {:?}", close_confirmation.reason);
-            
-            match close_confirmation.status { 
+
+            match close_confirmation.status {
                 Status::Rejected => {
                     error!("Close order was rejected: {:?}", close_confirmation.reason);
-                },
+                }
                 Status::Open => {
-                    error!("Wrong side, we opened a new position instead of closing: {:?}", close_confirmation.reason);
-                },
+                    error!(
+                        "Wrong side, we opened a new position instead of closing: {:?}",
+                        close_confirmation.reason
+                    );
+                }
                 Status::Closed => {
-                    info!("Position closed successfully with deal ID: {:?}", close_confirmation.deal_id);
+                    info!(
+                        "Position closed successfully with deal ID: {:?}",
+                        close_confirmation.deal_id
+                    );
                 }
                 _ => {
                     warn!("Undefined situation: {:?}", close_confirmation.status);
                 }
             }
-            
         }
         Err(e) => {
             info!("Failed to close position: {:?}", e);
         }
     }
-    
+
     Ok(())
 }

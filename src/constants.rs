@@ -18,4 +18,5 @@ pub const BASE_DELAY_MS: u64 = 1000;
 /// This provides extra margin to ensure rate limits are not exceeded
 pub const SAFETY_BUFFER_MS: u64 = 1000;
 
+/// User agent string used in HTTP requests to identify this client to the IG Markets API
 pub const USER_AGENT: &str = "Rust-IG-Client/0.1.9";

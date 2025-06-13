@@ -253,7 +253,7 @@ impl CreateOrderRequest {
     /// - `time_in_force` is set to `FillOrKill`.
     /// - `level` is set to `Some(10000.0)`.
     /// - `force_open` is set to `Some(true)`.
-    /// Other optional parameters, such as stop levels, distances, expiry, and currency code, are left as `None`.
+    ///   Other optional parameters, such as stop levels, distances, expiry, and currency code, are left as `None`.
     ///
     /// # Parameters
     /// - `epic` (`String`): The identifier for the market or instrument to trade.
@@ -423,10 +423,10 @@ pub struct ClosePositionRequest {
     pub expiry: Option<String>,
     /// Instrument EPIC identifier
     pub epic: Option<String>,
-    
+
+    /// Quote identifier for the order, used for certain order types that require a specific quote
     #[serde(rename = "quoteId")]
     pub quote_id: Option<String>,
-
 }
 
 impl ClosePositionRequest {
@@ -448,12 +448,7 @@ impl ClosePositionRequest {
     /// Creates a request to close a position at a specific price level
     ///
     /// This is useful for instruments that don't support market orders
-    pub fn limit(
-        deal_id: String,
-        direction: Direction,
-        size: f64,
-        level: f64,
-    ) -> Self {
+    pub fn limit(deal_id: String, direction: Direction, size: f64, level: f64) -> Self {
         Self {
             deal_id: Some(deal_id),
             direction,
@@ -467,14 +462,19 @@ impl ClosePositionRequest {
         }
     }
 
-    pub fn close_option_to_market_by_id(
-        deal_id: String,
-        direction: Direction,
-        size: f64,
-    ) -> Self {
+    /// Creates a request to close an option position by deal ID using a limit order with predefined price levels
+    ///
+    /// This is specifically designed for options trading where market orders are not supported
+    /// and a limit order with a predefined price level is required based on the direction.
+    ///
+    /// # Arguments
+    /// * `deal_id` - The ID of the deal to close
+    /// * `direction` - The direction of the closing order (opposite of the position direction)
+    /// * `size` - The size of the position to close
+    pub fn close_option_to_market_by_id(deal_id: String, direction: Direction, size: f64) -> Self {
         let level = match direction {
-            Direction::Buy => Some(DEFAULT_ORDER_BUY_SIZE), 
-            Direction::Sell => Some(DEFAULT_ORDER_SELL_SIZE), 
+            Direction::Buy => Some(DEFAULT_ORDER_BUY_SIZE),
+            Direction::Sell => Some(DEFAULT_ORDER_SELL_SIZE),
         };
         Self {
             deal_id: Some(deal_id),
@@ -485,10 +485,21 @@ impl ClosePositionRequest {
             level,
             expiry: None,
             epic: None,
-            quote_id:  None,    
+            quote_id: None,
         }
     }
 
+    /// Creates a request to close an option position by epic identifier using a limit order with predefined price levels
+    ///
+    /// This is specifically designed for options trading where market orders are not supported
+    /// and a limit order with a predefined price level is required based on the direction.
+    /// This method is used when the deal ID is not available but the epic and expiry are known.
+    ///
+    /// # Arguments
+    /// * `epic` - The epic identifier of the instrument
+    /// * `expiry` - The expiry date of the option
+    /// * `direction` - The direction of the closing order (opposite of the position direction)
+    /// * `size` - The size of the position to close
     pub fn close_option_to_market_by_epic(
         epic: String,
         expiry: String,
@@ -508,11 +519,9 @@ impl ClosePositionRequest {
             level,
             expiry: Some(expiry),
             epic: Some(epic),
-            quote_id:  None,
+            quote_id: None,
         }
     }
-    
-    
 }
 
 /// Response to closing a position

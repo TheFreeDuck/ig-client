@@ -1,6 +1,7 @@
 // Integration tests for order service endpoints
 
 use crate::common;
+use ig_client::application::models::order::TimeInForce;
 use ig_client::utils::logger::setup_logger;
 use ig_client::{
     application::models::order::{
@@ -11,7 +12,6 @@ use ig_client::{
 };
 use tokio::runtime::Runtime;
 use tracing::info;
-use ig_client::application::models::order::TimeInForce;
 
 #[test]
 #[ignore]
