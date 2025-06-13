@@ -96,6 +96,20 @@ impl From<Box<dyn std::error::Error + Send + Sync>> for AuthError {
         }
     }
 }
+impl From<Box<dyn std::error::Error>> for AuthError {
+    fn from(e: Box<dyn std::error::Error>) -> Self {
+        match e.downcast::<reqwest::Error>() {
+            Ok(req) => AuthError::Network(*req),
+            Err(e) => match e.downcast::<serde_json::Error>() {
+                Ok(js) => AuthError::Json(*js),
+                Err(e) => match e.downcast::<io::Error>() {
+                    Ok(ioe) => AuthError::Io(*ioe),
+                    Err(other) => AuthError::Other(other.to_string()),
+                },
+            },
+        }
+    }
+}
 impl From<AppError> for AuthError {
     fn from(e: AppError) -> Self {
         match e {

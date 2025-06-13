@@ -8,7 +8,8 @@ use std::time::Duration;
 use tokio::sync::Semaphore;
 use tracing::{debug, error, info, warn};
 
-use crate::utils::rate_limiter::{app_non_trading_limiter, one_per_second_limiter};
+use crate::constants::USER_AGENT;
+use crate::utils::rate_limiter::app_non_trading_limiter;
 use crate::{config::Config, error::AppError, session::interface::IgSession};
 
 // Global semaphore to limit concurrent API requests
@@ -70,7 +71,7 @@ impl IgHttpClientImpl {
     /// Creates a new instance of the HTTP client
     pub fn new(config: Arc<Config>) -> Self {
         let client = Client::builder()
-            .user_agent("ig-client/0.1.0")
+            .user_agent(USER_AGENT)
             .timeout(Duration::from_secs(config.rest_api.timeout))
             .build()
             .expect("Failed to create HTTP client");
@@ -307,10 +308,6 @@ impl IgHttpClient for IgHttpClientImpl {
                 }
             }
 
-            // Enforce one request per second limit to prevent bursts
-            // This is crucial to avoid hitting rate limits
-            one_per_second_limiter().wait().await;
-
             let mut builder = self.client.request(method.clone(), &url);
             builder = self.add_common_headers(builder, version);
             builder = self.add_auth_headers(builder, session);
@@ -374,9 +371,6 @@ impl IgHttpClient for IgHttpClientImpl {
 
         // Respect rate limits
         session.respect_rate_limit().await?;
-
-        // Enforce one request per second limit to prevent bursts
-        one_per_second_limiter().wait().await;
 
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);
@@ -454,10 +448,6 @@ impl IgHttpClient for IgHttpClientImpl {
             let limiter = app_non_trading_limiter();
             limiter.wait().await;
 
-            // Enforce one request per second limit to prevent bursts
-            // This is crucial to avoid hitting rate limits
-            one_per_second_limiter().wait().await;
-
             let mut builder = self.client.request(method.clone(), &url);
             builder = self.add_common_headers(builder, version);
 
@@ -526,9 +516,6 @@ impl IgHttpClient for IgHttpClientImpl {
         // Use the global app rate limiter
         let limiter = app_non_trading_limiter();
         limiter.wait().await;
-
-        // Enforce one request per second limit to prevent bursts
-        one_per_second_limiter().wait().await;
 
         let mut builder = self.client.request(method, &url);
         builder = self.add_common_headers(builder, version);

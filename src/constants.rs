@@ -17,3 +17,5 @@ pub const BASE_DELAY_MS: u64 = 1000;
 /// Additional safety buffer in milliseconds added to wait times
 /// This provides extra margin to ensure rate limits are not exceeded
 pub const SAFETY_BUFFER_MS: u64 = 1000;
+
+pub const USER_AGENT: &str = "Rust-IG-Client/0.1.9";

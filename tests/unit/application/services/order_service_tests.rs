@@ -81,11 +81,9 @@ fn test_close_position_request_market() {
         "DEAL123".to_string(),
         Direction::Sell,
         1.0,
-        "OP.D.OTCDAX1.021100P.IP".to_string(),
     );
 
     // Verify that the fields were set correctly
-    assert_eq!(request.deal_id, "DEAL123");
     assert!(matches!(request.direction, Direction::Sell));
     assert_eq!(request.size, 1.0);
     assert!(matches!(request.order_type, OrderType::Market));

@@ -6,6 +6,9 @@
 use crate::impl_json_display;
 use serde::{Deserialize, Deserializer, Serialize};
 
+const DEFAULT_ORDER_SELL_SIZE: f64 = 0.0;
+const DEFAULT_ORDER_BUY_SIZE: f64 = 10000.0;
+
 /// Order direction (buy or sell)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 #[serde(rename_all = "UPPERCASE")]
@@ -184,6 +187,109 @@ impl CreateOrderRequest {
         }
     }
 
+    /// Creates a new instance of a market sell option with predefined parameters.
+    ///
+    /// This function sets up a sell option to the market for a given asset (`epic`)
+    /// with the specified size. It configures the order with default values
+    /// for attributes such as direction, order type, and time-in-force.
+    ///
+    /// # Parameters
+    /// - `epic`: A `String` that represents the epic (unique identifier or code) of the instrument
+    ///   being traded.
+    /// - `size`: A `f64` value representing the size or quantity of the order.
+    ///
+    /// # Returns
+    /// An instance of `Self` (the type implementing this function), containing the specified
+    /// `epic` and `size`, along with default values for other parameters:
+    ///
+    /// - `direction`: Set to `Direction::Sell`.
+    /// - `order_type`: Set to `OrderType::Limit`.
+    /// - `time_in_force`: Set to `TimeInForce::FillOrKill`.
+    /// - `level`: Set to `Some(0.1)`.
+    /// - `guaranteed_stop`: Set to `None`.
+    /// - `stop_level`: Set to `None`.
+    /// - `stop_distance`: Set to `None`.
+    /// - `limit_level`: Set to `None`.
+    /// - `limit_distance`: Set to `None`.
+    /// - `expiry`: Set to `None`.
+    /// - `deal_reference`: Set to `None`.
+    /// - `force_open`: Set to `Some(true)`.
+    /// - `currency_code`: Set to `None`.
+    ///
+    /// Note that this function allows for minimal input (the instrument and size),
+    /// while other fields are provided default values. If further customization is required,
+    /// you can modify the returned instance as needed.
+    pub fn sell_option_to_market(
+        epic: String,
+        size: f64,
+        expiry: Option<String>,
+        deal_reference: Option<String>,
+        currency_code: Option<String>,
+    ) -> Self {
+        Self {
+            epic,
+            direction: Direction::Sell,
+            size,
+            order_type: OrderType::Limit,
+            time_in_force: TimeInForce::FillOrKill,
+            level: Some(DEFAULT_ORDER_SELL_SIZE),
+            guaranteed_stop: Some(false),
+            stop_level: None,
+            stop_distance: None,
+            limit_level: None,
+            limit_distance: None,
+            expiry,
+            deal_reference,
+            force_open: Some(true),
+            currency_code,
+        }
+    }
+
+    /// Creates a new instance of an order to buy an option in the market with specified parameters.
+    ///
+    /// This method initializes an order with the following default values:
+    /// - `direction` is set to `Buy`.
+    /// - `order_type` is set to `Limit`.
+    /// - `time_in_force` is set to `FillOrKill`.
+    /// - `level` is set to `Some(10000.0)`.
+    /// - `force_open` is set to `Some(true)`.
+    /// Other optional parameters, such as stop levels, distances, expiry, and currency code, are left as `None`.
+    ///
+    /// # Parameters
+    /// - `epic` (`String`): The identifier for the market or instrument to trade.
+    /// - `size` (`f64`): The size or quantity of the order to be executed.
+    ///
+    /// # Returns
+    /// A new instance of `Self` that represents the configured buy option for the given market.
+    ///
+    /// # Note
+    /// Ensure the `epic` and `size` values provided are valid and match required market conditions.
+    pub fn buy_option_to_market(
+        epic: String,
+        size: f64,
+        expiry: Option<String>,
+        deal_reference: Option<String>,
+        currency_code: Option<String>,
+    ) -> Self {
+        Self {
+            epic,
+            direction: Direction::Buy,
+            size,
+            order_type: OrderType::Limit,
+            time_in_force: TimeInForce::FillOrKill,
+            level: Some(DEFAULT_ORDER_BUY_SIZE),
+            guaranteed_stop: Some(false),
+            stop_level: None,
+            stop_distance: None,
+            limit_level: None,
+            limit_distance: None,
+            expiry,
+            deal_reference,
+            force_open: Some(true),
+            currency_code,
+        }
+    }
+
     /// Adds a stop loss to the order
     pub fn with_stop_loss(mut self, stop_level: f64) -> Self {
         self.stop_level = Some(stop_level);
@@ -298,7 +404,7 @@ pub struct UpdatePositionRequest {
 pub struct ClosePositionRequest {
     /// Unique identifier for the position to close
     #[serde(rename = "dealId")]
-    pub deal_id: String,
+    pub deal_id: Option<String>,
     /// Direction of the closing order (opposite to the position)
     pub direction: Direction,
     /// Size/quantity to close
@@ -312,37 +418,30 @@ pub struct ClosePositionRequest {
     /// Price level for limit close orders
     #[serde(rename = "level", skip_serializing_if = "Option::is_none")]
     pub level: Option<f64>,
-    /// Whether to force open a new position
-    #[serde(rename = "forceOpen")]
-    pub force_open: bool,
     /// Expiry date for the order
     #[serde(rename = "expiry")]
-    pub expiry: String,
+    pub expiry: Option<String>,
     /// Instrument EPIC identifier
-    pub epic: String,
-    /// Currency code for the order (e.g., "USD", "EUR")
-    #[serde(rename = "currencyCode")]
-    pub currency_code: String,
-    /// Whether to use a guaranteed stop
-    #[serde(rename = "guaranteedStop")]
-    pub guaranteed_stop: bool,
+    pub epic: Option<String>,
+    
+    #[serde(rename = "quoteId")]
+    pub quote_id: Option<String>,
+
 }
 
 impl ClosePositionRequest {
     /// Creates a request to close a position at market price
-    pub fn market(deal_id: String, direction: Direction, size: f64, epic: String) -> Self {
+    pub fn market(deal_id: String, direction: Direction, size: f64) -> Self {
         Self {
-            deal_id,
+            deal_id: Some(deal_id),
             direction,
             size,
             order_type: OrderType::Market,
             time_in_force: TimeInForce::FillOrKill,
             level: None,
-            force_open: false,
-            expiry: "JUL-25".to_string(), // Use the same expiry as the position we're closing
-            epic,
-            currency_code: "EUR".to_string(), // Use EUR as the default currency code
-            guaranteed_stop: false,           // Do not use a guaranteed stop by default
+            expiry: None,
+            epic: None,
+            quote_id: None,
         }
     }
 
@@ -353,23 +452,67 @@ impl ClosePositionRequest {
         deal_id: String,
         direction: Direction,
         size: f64,
-        epic: String,
         level: f64,
     ) -> Self {
         Self {
-            deal_id,
+            deal_id: Some(deal_id),
             direction,
             size,
             order_type: OrderType::Limit,
             time_in_force: TimeInForce::FillOrKill,
             level: Some(level),
-            force_open: false,
-            expiry: "JUL-25".to_string(), // Use the same expiry as the position we're closing
-            epic,
-            currency_code: "EUR".to_string(), // Use EUR as the default currency code
-            guaranteed_stop: false,           // Do not use a guaranteed stop by default
+            expiry: None,
+            epic: None,
+            quote_id: None,
         }
     }
+
+    pub fn close_option_to_market_by_id(
+        deal_id: String,
+        direction: Direction,
+        size: f64,
+    ) -> Self {
+        let level = match direction {
+            Direction::Buy => Some(DEFAULT_ORDER_BUY_SIZE), 
+            Direction::Sell => Some(DEFAULT_ORDER_SELL_SIZE), 
+        };
+        Self {
+            deal_id: Some(deal_id),
+            direction,
+            size,
+            order_type: OrderType::Limit,
+            time_in_force: TimeInForce::FillOrKill,
+            level,
+            expiry: None,
+            epic: None,
+            quote_id:  None,    
+        }
+    }
+
+    pub fn close_option_to_market_by_epic(
+        epic: String,
+        expiry: String,
+        direction: Direction,
+        size: f64,
+    ) -> Self {
+        let level = match direction {
+            Direction::Buy => Some(DEFAULT_ORDER_BUY_SIZE),
+            Direction::Sell => Some(DEFAULT_ORDER_SELL_SIZE),
+        };
+        Self {
+            deal_id: None,
+            direction,
+            size,
+            order_type: OrderType::Limit,
+            time_in_force: TimeInForce::FillOrKill,
+            level,
+            expiry: Some(expiry),
+            epic: Some(epic),
+            quote_id:  None,
+        }
+    }
+    
+    
 }
 
 /// Response to closing a position

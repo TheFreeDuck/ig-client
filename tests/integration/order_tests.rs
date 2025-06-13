@@ -184,7 +184,6 @@ fn test_create_and_close_position() {
                         Direction::Sell => Direction::Buy,
                     },
                     create_order.size,
-                    epic.to_string(), // Pass the epic used to create the position
                     close_price,
                 );
 
@@ -536,7 +535,6 @@ fn test_update_position() {
                                     Direction::Sell => Direction::Buy,
                                 },
                                 create_order.size,
-                                epic.to_string(), // Pass the epic used to create the position
                                 close_price,
                             );
 
@@ -587,7 +585,6 @@ fn test_update_position() {
                                     Direction::Sell => Direction::Buy,
                                 },
                                 create_order.size,
-                                epic.to_string(), // Pass the epic used to create the position
                                 close_price,
                             );
 

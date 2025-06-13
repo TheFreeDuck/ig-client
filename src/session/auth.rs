@@ -12,6 +12,7 @@ use rand;
 use reqwest::{Client, StatusCode};
 use std::time::Duration;
 use tracing::{debug, error, info, warn};
+use crate::constants::USER_AGENT;
 
 /// Authentication handler for IG Markets API
 pub struct IgAuth<'a> {
@@ -31,7 +32,7 @@ impl<'a> IgAuth<'a> {
         Self {
             cfg,
             http: Client::builder()
-                .user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36")
+                .user_agent(USER_AGENT)
                 .build()
                 .expect("reqwest client"),
         }
@@ -108,7 +109,7 @@ impl IgAuthenticator for IgAuth<'_> {
 
             // Create a new client for each request to avoid any potential issues with cached state
             let client = Client::builder()
-                .user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36")
+                .user_agent(USER_AGENT)
                 .build()
                 .expect("reqwest client");
 
@@ -262,7 +263,7 @@ impl IgAuthenticator for IgAuth<'_> {
 
         // Create a new client for each request to avoid any potential issues with cached state
         let client = Client::builder()
-            .user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36")
+            .user_agent(USER_AGENT)
             .build()
             .expect("reqwest client");
 
@@ -384,7 +385,7 @@ impl IgAuthenticator for IgAuth<'_> {
 
         // Create a new client for each request
         let client = Client::builder()
-            .user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36")
+            .user_agent(USER_AGENT)
             .build()
             .expect("reqwest client");
 
