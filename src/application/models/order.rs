@@ -220,16 +220,16 @@ impl CreateOrderRequest {
     /// while other fields are provided default values. If further customization is required,
     /// you can modify the returned instance as needed.
     pub fn sell_option_to_market(
-        epic: String,
-        size: f64,
-        expiry: Option<String>,
-        deal_reference: Option<String>,
-        currency_code: Option<String>,
+        epic: &String,
+        size: &f64,
+        expiry: &Option<String>,
+        deal_reference: &Option<String>,
+        currency_code: &Option<String>,
     ) -> Self {
         Self {
-            epic,
+            epic: epic.clone(),
             direction: Direction::Sell,
-            size,
+            size: *size,
             order_type: OrderType::Limit,
             time_in_force: TimeInForce::FillOrKill,
             level: Some(DEFAULT_ORDER_SELL_SIZE),
@@ -238,10 +238,10 @@ impl CreateOrderRequest {
             stop_distance: None,
             limit_level: None,
             limit_distance: None,
-            expiry,
-            deal_reference,
+            expiry: expiry.clone(),
+            deal_reference: deal_reference.clone(),
             force_open: Some(true),
-            currency_code,
+            currency_code: currency_code.clone(),
         }
     }
 
@@ -265,16 +265,16 @@ impl CreateOrderRequest {
     /// # Note
     /// Ensure the `epic` and `size` values provided are valid and match required market conditions.
     pub fn buy_option_to_market(
-        epic: String,
-        size: f64,
-        expiry: Option<String>,
-        deal_reference: Option<String>,
-        currency_code: Option<String>,
+        epic: &String,
+        size: &f64,
+        expiry: &Option<String>,
+        deal_reference: &Option<String>,
+        currency_code: &Option<String>,
     ) -> Self {
         Self {
-            epic,
+            epic: epic.clone(),
             direction: Direction::Buy,
-            size,
+            size: *size,
             order_type: OrderType::Limit,
             time_in_force: TimeInForce::FillOrKill,
             level: Some(DEFAULT_ORDER_BUY_SIZE),
@@ -283,10 +283,10 @@ impl CreateOrderRequest {
             stop_distance: None,
             limit_level: None,
             limit_distance: None,
-            expiry,
-            deal_reference,
+            expiry: expiry.clone(),
+            deal_reference: deal_reference.clone(),
             force_open: Some(true),
-            currency_code,
+            currency_code: currency_code.clone(),
         }
     }
 
