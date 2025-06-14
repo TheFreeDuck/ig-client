@@ -219,6 +219,7 @@ impl CreateOrderRequest {
     /// Note that this function allows for minimal input (the instrument and size),
     /// while other fields are provided default values. If further customization is required,
     /// you can modify the returned instance as needed.
+    #[allow(clippy::ptr_arg)]
     pub fn sell_option_to_market(
         epic: &String,
         size: &f64,
@@ -264,6 +265,7 @@ impl CreateOrderRequest {
     ///
     /// # Note
     /// Ensure the `epic` and `size` values provided are valid and match required market conditions.
+    #[allow(clippy::ptr_arg)]
     pub fn buy_option_to_market(
         epic: &String,
         size: &f64,
