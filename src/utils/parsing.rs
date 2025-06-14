@@ -46,9 +46,9 @@ pub struct ParsedMarketData {
 /// Normalize text by removing accents and standardizing names
 ///
 /// This function converts accented characters to their non-accented equivalents
-/// and standardizes certain names (e.g., "Japón" to "Japan")
+/// and standardizes certain names (e.g., "Japan" in different languages)
 pub fn normalize_text(text: &str) -> String {
-    // Special case for Japan/Japón
+    // Special case for Japan in Spanish
     if text.contains("Japón") {
         return text.replace("Japón", "Japan");
     }

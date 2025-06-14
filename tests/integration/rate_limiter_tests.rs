@@ -134,8 +134,8 @@ async fn test_rate_limiter_integration() -> Result<(), Box<dyn std::error::Error
     // Verify that the minimum interval in rate-limited requests is close to
     // the expected minimum interval for NonTradingAccount
     let min_limited_interval = *limited_intervals.iter().min().unwrap_or(&0);
-    // Con la nueva implementación, calculamos el intervalo mínimo basado en el límite de solicitudes
-    // Para NonTradingAccount, el límite es de 30 solicitudes por minuto, lo que equivale a 2000 ms entre solicitudes
+    // With the new implementation, we calculate the minimum interval based on the request limit
+    // For NonTradingAccount, the limit is 30 requests per minute, which equals 2000 ms between requests
     let request_limit = RateLimitType::NonTradingAccount.request_limit() as u128;
     let expected_min_interval = 60000 / request_limit;
 
@@ -323,7 +323,7 @@ async fn test_rate_limiter_concurrent_requests() -> Result<(), Box<dyn std::erro
         info!("Max request duration: {} ms", max_duration);
 
         // Expected minimum time based on rate limiter settings
-        // Con la nueva implementación, calculamos el tiempo mínimo esperado basado en el límite de solicitudes
+        // With the new implementation, we calculate the expected minimum time based on the request limit
         let request_limit = RateLimitType::NonTradingAccount.request_limit() as u128;
         let min_interval = 60000 / request_limit;
         let expected_min_time = min_interval * (num_concurrent as u128 - 1);

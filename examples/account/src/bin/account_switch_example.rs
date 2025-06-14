@@ -62,7 +62,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             }
             Err(e) => {
                 error!("Account switch failed: {e:?}");
-                // Si el error es por límite de API, mostramos un mensaje más claro
+                // If the error is due to API rate limit, we show a clearer message
                 if let Some(_err_msg) = e.to_string().find("exceeded-api-key-allowance") {
                     error!(
                         "API rate limit exceeded. Please wait a few minutes before trying again."

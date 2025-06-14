@@ -362,17 +362,17 @@ pub struct MarketNavigationNode {
     pub name: String,
 }
 
-/// Estructura que representa un nodo en la jerarquía de mercados
+/// Structure representing a node in the market hierarchy
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MarketNode {
-    /// ID del nodo
+    /// Node ID
     pub id: String,
-    /// Nombre del nodo
+    /// Node name
     pub name: String,
-    /// Nodos hijos
+    /// Child nodes
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub children: Vec<MarketNode>,
-    /// Mercados en este nodo
+    /// Markets in this node
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub markets: Vec<MarketData>,
 }

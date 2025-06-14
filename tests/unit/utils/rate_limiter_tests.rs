@@ -35,32 +35,32 @@ mod tests {
         assert!(first_call_duration < Duration::from_millis(100));
     }
 
-    // Este test es más difícil de probar de manera determinista debido a la naturaleza del tiempo
-    // y cómo se maneja en el rate limiter. En lugar de verificar el tiempo exacto,
-    // vamos a verificar la funcionalidad básica sin depender del tiempo real.
+    // This test is more difficult to test deterministically due to the nature of time
+    // and how it is handled in the rate limiter. Instead of verifying the exact time,
+    // we will verify the basic functionality without depending on real time.
     #[test]
     fn test_rate_limiter_wait() {
-        // Creamos un rate limiter con un tipo que tiene un intervalo más corto para el test
+        // Create a rate limiter with a type that has a shorter interval for the test
         let limiter = RateLimiter::new(RateLimitType::TradingAccount); // 2000ms
 
-        // Primera llamada no debería esperar
+        // First call should not wait
         let start = Instant::now();
         block_on(limiter.wait());
         let first_duration = start.elapsed();
 
-        // La primera llamada debería ser muy rápida (menos de 100ms)
+        // The first call should be very fast (less than 100ms)
         assert!(first_duration < Duration::from_millis(100));
 
         // Verificamos que el last_call se haya actualizado (no podemos acceder directamente)
         // pero podemos verificar indirectamente creando un nuevo limiter y comparando comportamientos
         let limiter2 = RateLimiter::new(RateLimitType::TradingAccount);
 
-        // Este limiter no debería tener last_call configurado, así que debería ser rápido
+        // This limiter should not have last_call set, so it should be fast
         let start = Instant::now();
         block_on(limiter2.wait());
         let second_duration = start.elapsed();
 
-        // También debería ser rápido
+        // It should also be fast
         assert!(second_duration < Duration::from_millis(100));
     }
 

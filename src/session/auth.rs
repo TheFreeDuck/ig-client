@@ -66,9 +66,9 @@ impl<'a> IgAuth<'a> {
 #[async_trait]
 impl IgAuthenticator for IgAuth<'_> {
     async fn login(&self) -> Result<IgSession, AuthError> {
-        // Configuración para reintentos
+        // Configuration for retries
         const MAX_RETRIES: u32 = 3;
-        const INITIAL_RETRY_DELAY_MS: u64 = 10000; // 10 segundos
+        const INITIAL_RETRY_DELAY_MS: u64 = 10000; // 10 seconds
 
         let mut retry_count = 0;
         let mut retry_delay_ms = INITIAL_RETRY_DELAY_MS;
@@ -207,10 +207,10 @@ impl IgAuthenticator for IgAuth<'_> {
                     if body.contains("exceeded-api-key-allowance") {
                         error!("Rate Limit Exceeded: {}", &body);
 
-                        // Implementamos reintento con espera exponencial para este caso específico
+                        // Implementing retry with exponential backoff for this specific case
                         if retry_count < MAX_RETRIES {
                             retry_count += 1;
-                            // Usamos un retraso más largo y añadimos un poco de aleatoriedad para evitar patrones
+                            // Using a longer delay and adding some randomness to avoid patterns
                             let jitter = rand::random::<u64>() % 5000; // Hasta 5 segundos de jitter
                             let delay = retry_delay_ms + jitter;
                             warn!(
@@ -221,7 +221,7 @@ impl IgAuthenticator for IgAuth<'_> {
                             // Esperar antes de reintentar
                             tokio::time::sleep(Duration::from_millis(delay)).await;
 
-                            // Aumentar el tiempo de espera exponencialmente para el próximo reintento
+                            // Increase the waiting time exponentially for the next retry
                             retry_delay_ms *= 2; // Exponential backoff
                             continue;
                         } else {
@@ -430,8 +430,8 @@ impl IgAuthenticator for IgAuth<'_> {
                     .unwrap_or_else(|_| "Could not read response body".to_string());
                 error!("Response body: {}", body);
 
-                // Si el error es 401 Unauthorized, podría ser que el ID de cuenta no sea válido
-                // o no pertenezca al usuario autenticado
+                // If the error is 401 Unauthorized, it could be that the account ID is not valid
+                // or does not belong to the authenticated user
                 if other == StatusCode::UNAUTHORIZED {
                     warn!(
                         "Cannot switch to account ID: {}. The account might not exist or you don't have permission.",

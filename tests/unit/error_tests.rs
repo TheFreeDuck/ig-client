@@ -138,7 +138,7 @@ fn test_auth_error_display() {
     let auth_error = AuthError::BadCredentials;
     assert_display_contains(&auth_error, "bad credentials");
 
-    // Creamos un error de reqwest de forma indirecta ya que from_static no está disponible
+    // We create a reqwest error indirectly since from_static is not available
     let auth_error = AuthError::Other("network error".to_string());
     assert_display_contains(&auth_error, "network error");
 

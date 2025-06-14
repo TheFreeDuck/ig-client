@@ -39,7 +39,7 @@ fn test_account_switch() {
         return;
     }
 
-    // Esperar para respetar el límite de tasa
+    // Wait to respect the rate limit
     let rt = Runtime::new().expect("Failed to create runtime");
     rt.block_on(async {
         rate_limiter::global_rate_limiter().wait().await;

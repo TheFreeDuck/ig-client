@@ -3,8 +3,8 @@ use ig_client::utils::rate_limiter::RateLimitType;
 use std::env;
 use std::sync::Arc;
 
-// Helper function para obtener un valor de entorno o un valor por defecto
-// Esta es una implementación simplificada para los tests
+// Helper function to get an environment value or a default value
+// This is a simplified implementation for tests
 fn test_get_env_or_default<T: std::str::FromStr>(key: &str, default: T) -> T {
     match env::var(key) {
         Ok(val) => val.parse().unwrap_or(default),
@@ -31,22 +31,22 @@ fn test_credentials_display() {
     assert!(display_output.contains("account_id"));
     assert!(display_output.contains("api_key"));
 
-    // La implementación actual puede mostrar el password, así que no verificamos
-    // que no esté presente
+    // The current implementation may show the password, so we don't verify
+    // that it's not present
 }
 
 #[test]
 fn test_get_env_or_default_existing() {
-    // Establecemos la variable de entorno directamente
+    // Set the environment variable directly
     unsafe {
         env::set_var("TEST_VAR_EXISTING", "42");
     }
 
-    // Usamos nuestra función de test para verificar
+    // We use our test function to verify
     let result: i32 = test_get_env_or_default("TEST_VAR_EXISTING", 0);
     assert_eq!(result, 42);
 
-    // Limpiamos
+    // Clean up
     unsafe {
         env::remove_var("TEST_VAR_EXISTING");
     }
@@ -59,7 +59,7 @@ fn test_get_env_or_default_missing() {
         env::remove_var("TEST_VAR_MISSING");
     }
 
-    // Usamos nuestra función de test para verificar
+    // We use our test function to verify
     let result: i32 = test_get_env_or_default("TEST_VAR_MISSING", 42);
     assert_eq!(result, 42);
 }

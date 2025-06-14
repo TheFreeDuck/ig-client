@@ -70,7 +70,7 @@ fn test_http_client_new() {
     assert_eq!(config.rest_api.timeout, 5);
 }
 
-// No podemos probar build_url directamente ya que es un método privado
+// We cannot test build_url directly as it is a private method
 
 #[test]
 fn test_request_with_mockito() {
