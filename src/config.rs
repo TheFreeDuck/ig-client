@@ -8,7 +8,8 @@ use sqlx::postgres::PgPoolOptions;
 use std::env;
 use std::fmt::Debug;
 use std::str::FromStr;
-use tracing::{error, info, warn};
+use tracing::{error, warn};
+use tracing::log::debug;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 /// Authentication credentials for the IG Markets API
@@ -131,7 +132,7 @@ impl Config {
     pub fn with_rate_limit_type(rate_limit_type: RateLimitType, safety_margin: f64) -> Self {
         // Explicitly load the .env file
         match dotenv() {
-            Ok(_) => info!("Successfully loaded .env file"),
+            Ok(_) => debug!("Successfully loaded .env file"),
             Err(e) => warn!("Failed to load .env file: {}", e),
         }
 
@@ -156,8 +157,8 @@ impl Config {
         }
 
         // Print information about loaded environment variables
-        info!("Environment variables loaded:");
-        info!(
+        debug!("Environment variables loaded:");
+        debug!(
             "  IG_USERNAME: {}",
             if username == "default_username" {
                 "Not set"
@@ -165,7 +166,7 @@ impl Config {
                 "Set"
             }
         );
-        info!(
+        debug!(
             "  IG_PASSWORD: {}",
             if password == "default_password" {
                 "Not set"
@@ -173,7 +174,7 @@ impl Config {
                 "Set"
             }
         );
-        info!(
+        debug!(
             "  IG_API_KEY: {}",
             if api_key == "default_api_key" {
                 "Not set"

@@ -12,7 +12,7 @@ use async_trait::async_trait;
 use rand;
 use reqwest::{Client, StatusCode};
 use std::time::Duration;
-use tracing::{debug, error, info, warn};
+use tracing::{debug, error, trace, warn};
 
 /// Authentication handler for IG Markets API
 pub struct IgAuth<'a> {
@@ -87,12 +87,12 @@ impl IgAuthenticator for IgAuth<'_> {
             let password = self.cfg.credentials.password.trim();
 
             // Log the request details for debugging
-            info!("Login request to URL: {}", url);
-            info!("Using API key (length): {}", api_key.len());
-            info!("Using username: {}", username);
+            debug!("Login request to URL: {}", url);
+            debug!("Using API key (length): {}", api_key.len());
+            debug!("Using username: {}", username);
 
             if retry_count > 0 {
-                info!("Retry attempt {} of {}", retry_count, MAX_RETRIES);
+                debug!("Retry attempt {} of {}", retry_count, MAX_RETRIES);
             }
 
             // Create the body exactly as in the Python library
@@ -132,8 +132,8 @@ impl IgAuthenticator for IgAuth<'_> {
             };
 
             // Log the response status and headers for debugging
-            info!("Login response status: {}", resp.status());
-            debug!("Response headers: {:#?}", resp.headers());
+            debug!("Login response status: {}", resp.status());
+            trace!("Response headers: {:#?}", resp.headers());
 
             match resp.status() {
                 StatusCode::OK => {
@@ -143,7 +143,7 @@ impl IgAuthenticator for IgAuth<'_> {
                             let cst_str = value
                                 .to_str()
                                 .map_err(|_| AuthError::Unexpected(StatusCode::OK))?;
-                            info!(
+                            debug!(
                                 "Successfully obtained CST token of length: {}",
                                 cst_str.len()
                             );
@@ -160,7 +160,7 @@ impl IgAuthenticator for IgAuth<'_> {
                             let token_str = value
                                 .to_str()
                                 .map_err(|_| AuthError::Unexpected(StatusCode::OK))?;
-                            info!(
+                            debug!(
                                 "Successfully obtained X-SECURITY-TOKEN of length: {}",
                                 token_str.len()
                             );
@@ -256,10 +256,10 @@ impl IgAuthenticator for IgAuth<'_> {
         let api_key = self.cfg.credentials.api_key.trim();
 
         // Log the request details for debugging
-        info!("Refresh request to URL: {}", url);
-        info!("Using API key (length): {}", api_key.len());
-        info!("Using CST token (length): {}", sess.cst.len());
-        info!("Using X-SECURITY-TOKEN (length): {}", sess.token.len());
+        debug!("Refresh request to URL: {}", url);
+        debug!("Using API key (length): {}", api_key.len());
+        debug!("Using CST token (length): {}", sess.cst.len());
+        debug!("Using X-SECURITY-TOKEN (length): {}", sess.token.len());
 
         // Create a new client for each request to avoid any potential issues with cached state
         let client = Client::builder()
@@ -279,8 +279,8 @@ impl IgAuthenticator for IgAuth<'_> {
             .await?;
 
         // Log the response status and headers for debugging
-        info!("Refresh response status: {}", resp.status());
-        tracing::debug!("Response headers: {:#?}", resp.headers());
+        debug!("Refresh response status: {}", resp.status());
+        trace!("Response headers: {:#?}", resp.headers());
 
         match resp.status() {
             StatusCode::OK => {
@@ -290,7 +290,7 @@ impl IgAuthenticator for IgAuth<'_> {
                         let cst_str = value
                             .to_str()
                             .map_err(|_| AuthError::Unexpected(StatusCode::OK))?;
-                        info!(
+                        debug!(
                             "Successfully obtained refreshed CST token of length: {}",
                             cst_str.len()
                         );
@@ -307,7 +307,7 @@ impl IgAuthenticator for IgAuth<'_> {
                         let token_str = value
                             .to_str()
                             .map_err(|_| AuthError::Unexpected(StatusCode::OK))?;
-                        info!(
+                        debug!(
                             "Successfully obtained refreshed X-SECURITY-TOKEN of length: {}",
                             token_str.len()
                         );
@@ -321,7 +321,7 @@ impl IgAuthenticator for IgAuth<'_> {
 
                 // Parse the response body to get the account ID
                 let json: SessionResp = resp.json().await?;
-                info!("Refreshed session for Account ID: {}", json.account_id);
+                debug!("Refreshed session for Account ID: {}", json.account_id);
 
                 // Return a new session with the updated tokens
                 Ok(IgSession::from_config(
@@ -351,7 +351,7 @@ impl IgAuthenticator for IgAuth<'_> {
     ) -> Result<IgSession, AuthError> {
         // Check if the account to switch to is the same as the current one
         if session.account_id == account_id {
-            info!("Already on account ID: {}. No need to switch.", account_id);
+            debug!("Already on account ID: {}. No need to switch.", account_id);
             // Return a copy of the current session with the same rate limiter configuration
             return Ok(IgSession::from_config(
                 session.cst.clone(),
@@ -367,10 +367,10 @@ impl IgAuthenticator for IgAuth<'_> {
         let api_key = self.cfg.credentials.api_key.trim();
 
         // Log the request details for debugging
-        info!("Account switch request to URL: {}", url);
-        info!("Using API key (length): {}", api_key.len());
-        info!("Switching to account ID: {}", account_id);
-        info!("Set as default account: {:?}", default_account);
+        debug!("Account switch request to URL: {}", url);
+        debug!("Using API key (length): {}", api_key.len());
+        debug!("Switching to account ID: {}", account_id);
+        debug!("Set as default account: {:?}", default_account);
 
         // Create the request body
         let body = AccountSwitchRequest {
@@ -378,7 +378,7 @@ impl IgAuthenticator for IgAuth<'_> {
             default_account,
         };
 
-        tracing::debug!(
+        trace!(
             "Request body: {}",
             serde_json::to_string(&body).unwrap_or_default()
         );
@@ -403,15 +403,15 @@ impl IgAuthenticator for IgAuth<'_> {
             .await?;
 
         // Log the response status and headers for debugging
-        info!("Account switch response status: {}", resp.status());
-        tracing::debug!("Response headers: {:#?}", resp.headers());
+        debug!("Account switch response status: {}", resp.status());
+        trace!("Response headers: {:#?}", resp.headers());
 
         match resp.status() {
             StatusCode::OK => {
                 // Parse the response body
                 let switch_response: AccountSwitchResponse = resp.json().await?;
-                info!("Account switch successful");
-                tracing::debug!("Account switch response: {:?}", switch_response);
+                debug!("Account switch successful");
+                trace!("Account switch response: {:?}", switch_response);
 
                 // Return a new session with the updated account ID and the config's rate limiter settings
                 // The CST and token remain the same
@@ -433,7 +433,7 @@ impl IgAuthenticator for IgAuth<'_> {
                 // Si el error es 401 Unauthorized, podría ser que el ID de cuenta no sea válido
                 // o no pertenezca al usuario autenticado
                 if other == StatusCode::UNAUTHORIZED {
-                    tracing::warn!(
+                    warn!(
                         "Cannot switch to account ID: {}. The account might not exist or you don't have permission.",
                         account_id
                     );
