@@ -54,7 +54,7 @@ fn test_get_env_or_default_existing() {
 
 #[test]
 fn test_get_env_or_default_missing() {
-    // Aseguramos que la variable no existe
+    // Make sure the variable doesn't exist
     unsafe {
         env::remove_var("TEST_VAR_MISSING");
     }
