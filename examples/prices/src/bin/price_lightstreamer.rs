@@ -10,7 +10,7 @@ use lightstreamer_rs::subscription::{Snapshot, Subscription, SubscriptionMode};
 use lightstreamer_rs::utils::setup_signal_hook;
 use std::sync::Arc;
 use tokio::sync::{Mutex, Notify};
-use tracing::{Level, error, info, warn};
+use tracing::{error, info, warn};
 
 const MAX_CONNECTION_ATTEMPTS: u64 = 3;
 
@@ -68,7 +68,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Using XST token of length: {}", token.len());
 
     // Create a subscription for a market
-    let epic = format!("PRICE:{}:OP.D.OTCDAX1.021100P.IP", session.account_id);
+    let epic = format!("PRICE:{}:DO.D.OTCDDAX.95.IP", session.account_id);
 
     let mut subscription = Subscription::new(
         SubscriptionMode::Merge,
@@ -104,6 +104,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         client
             .connection_options
             .set_forced_transport(Some(Transport::WsStreaming));
+        info!("Subscription added ");
     }
 
     // Create a new Notify instance to send a shutdown signal to the signal handler thread.

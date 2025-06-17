@@ -10,7 +10,7 @@ use lightstreamer_rs::subscription::{Snapshot, Subscription, SubscriptionMode};
 use lightstreamer_rs::utils::setup_signal_hook;
 use std::sync::Arc;
 use tokio::sync::{Mutex, Notify};
-use tracing::{Level, error, info, warn};
+use tracing::{error, info, warn};
 
 const MAX_CONNECTION_ATTEMPTS: u64 = 3;
 
@@ -72,7 +72,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Using XST token of length: {}", token.len());
 
     // Create a subscription for a market
-    let epic = "MARKET:OP.D.OTCDAX1.021100P.IP"; // DAX 100
+    let epic = "MARKET:DO.D.OTCDDAX.95.IP"; // DAX 100
 
     let mut subscription = Subscription::new(
         SubscriptionMode::Merge,

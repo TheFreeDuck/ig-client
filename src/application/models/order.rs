@@ -227,10 +227,12 @@ impl CreateOrderRequest {
         deal_reference: &Option<String>,
         currency_code: &Option<String>,
     ) -> Self {
+        let rounded_size = (size * 100.0).floor() / 100.0;
+        
         Self {
             epic: epic.clone(),
             direction: Direction::Sell,
-            size: *size,
+            size: rounded_size,
             order_type: OrderType::Limit,
             time_in_force: TimeInForce::FillOrKill,
             level: Some(DEFAULT_ORDER_SELL_SIZE),
@@ -273,10 +275,11 @@ impl CreateOrderRequest {
         deal_reference: &Option<String>,
         currency_code: &Option<String>,
     ) -> Self {
+        let rounded_size = (size * 100.0).floor() / 100.0;
         Self {
             epic: epic.clone(),
             direction: Direction::Buy,
-            size: *size,
+            size: rounded_size,
             order_type: OrderType::Limit,
             time_in_force: TimeInForce::FillOrKill,
             level: Some(DEFAULT_ORDER_BUY_SIZE),

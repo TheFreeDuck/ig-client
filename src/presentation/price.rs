@@ -2,7 +2,7 @@ use crate::presentation::serialization::string_as_float_opt;
 use lightstreamer_rs::subscription::ItemUpdate;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::fmt;
+use crate::impl_json_display;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub enum DealingFlag {
@@ -32,15 +32,15 @@ pub enum DealingFlag {
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct PriceData {
     /// Name of the item (usually the market ID)
-    item_name: String,
+    pub item_name: String,
     /// Position of the item in the subscription
-    item_pos: i32,
+    pub item_pos: i32,
     /// All price fields for this market
-    fields: PriceFields,
+    pub fields: PriceFields,
     /// Fields that have changed in this update
-    changed_fields: PriceFields,
+    pub changed_fields: PriceFields,
     /// Whether this is a snapshot or an update
-    is_snapshot: bool,
+    pub is_snapshot: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -259,6 +259,8 @@ pub struct PriceFields {
     dealing_flag: Option<DealingFlag>,
 }
 
+impl_json_display!(PriceFields);
+
 impl PriceData {
     /// Converts a Lightstreamer ItemUpdate to a PriceData object
     ///
@@ -394,12 +396,7 @@ impl PriceData {
     }
 }
 
-impl fmt::Display for PriceData {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let json = serde_json::to_string(self).map_err(|_| fmt::Error)?;
-        write!(f, "{}", json)
-    }
-}
+impl_json_display!(PriceData);
 
 impl From<&ItemUpdate> for PriceData {
     fn from(item_update: &ItemUpdate) -> Self {
