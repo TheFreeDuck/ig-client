@@ -1,8 +1,8 @@
+use crate::impl_json_display;
 use crate::presentation::serialization::string_as_float_opt;
 use lightstreamer_rs::subscription::ItemUpdate;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use crate::impl_json_display;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub enum DealingFlag {

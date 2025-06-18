@@ -228,7 +228,7 @@ impl CreateOrderRequest {
         currency_code: &Option<String>,
     ) -> Self {
         let rounded_size = (size * 100.0).floor() / 100.0;
-        
+
         Self {
             epic: epic.clone(),
             direction: Direction::Sell,
