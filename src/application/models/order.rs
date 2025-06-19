@@ -228,6 +228,11 @@ impl CreateOrderRequest {
         currency_code: &Option<String>,
     ) -> Self {
         let rounded_size = (size * 100.0).floor() / 100.0;
+        let currency_code=  if let Some(code) = currency_code {
+            Some(code.clone())
+        } else {
+            Some("EUR".to_string())
+        };
 
         Self {
             epic: epic.clone(),
@@ -244,7 +249,7 @@ impl CreateOrderRequest {
             expiry: expiry.clone(),
             deal_reference: deal_reference.clone(),
             force_open: Some(true),
-            currency_code: currency_code.clone(),
+            currency_code,
         }
     }
 
@@ -276,6 +281,11 @@ impl CreateOrderRequest {
         currency_code: &Option<String>,
     ) -> Self {
         let rounded_size = (size * 100.0).floor() / 100.0;
+        let currency_code=  if let Some(code) = currency_code {
+            Some(code.clone())
+        } else {
+            Some("EUR".to_string())
+        };
         Self {
             epic: epic.clone(),
             direction: Direction::Buy,
