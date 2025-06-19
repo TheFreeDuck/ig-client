@@ -1,9 +1,11 @@
 #[cfg(test)]
 mod tests {
     use ig_client::application::models::market::{
-        Currency, DealingRules, MarketDetails, MarketSnapshot, StepDistance, StepUnit,
+        Currency, DealingRules, MarketData, MarketDetails, MarketNavigationResponse,
+        MarketSnapshot, StepDistance, StepUnit,
     };
     use serde::Deserialize;
+    use serde::de::Deserializer;
 
     /// Test the complete MarketDetails deserialization with the provided JSON
     #[test]
@@ -625,5 +627,134 @@ mod tests {
         assert_eq!(result.base_exchange_rate, Some(1.25));
         assert_eq!(result.exchange_rate, Some(1.0));
         assert_eq!(result.is_default, Some(false));
+    }
+
+    /// Test the deserialize_null_as_empty_vec helper function
+    #[test]
+    fn test_deserialize_null_as_empty_vec() {
+        // Define a test function that mimics the behavior of deserialize_null_as_empty_vec
+        fn deserialize_null_as_empty_vec<'de, D, T>(deserializer: D) -> Result<Vec<T>, D::Error>
+        where
+            D: Deserializer<'de>,
+            T: Deserialize<'de>,
+        {
+            let opt = Option::deserialize(deserializer)?;
+            Ok(opt.unwrap_or_default())
+        }
+
+        // Test struct that uses the function
+        #[derive(Debug, Deserialize)]
+        struct TestStruct {
+            #[serde(default, deserialize_with = "deserialize_null_as_empty_vec")]
+            items: Vec<String>,
+        }
+
+        // Test with null value
+        let json_null = r#"{"items": null}"#;
+        let result: TestStruct = serde_json::from_str(json_null).unwrap();
+        assert!(result.items.is_empty());
+
+        // Test with empty array
+        let json_empty = r#"{"items": []}"#;
+        let result: TestStruct = serde_json::from_str(json_empty).unwrap();
+        assert!(result.items.is_empty());
+
+        // Test with populated array
+        let json_populated = r#"{"items": ["item1", "item2"]}"#;
+        let result: TestStruct = serde_json::from_str(json_populated).unwrap();
+        assert_eq!(result.items.len(), 2);
+        assert_eq!(result.items[0], "item1");
+        assert_eq!(result.items[1], "item2");
+
+        // Test with missing field (should use default)
+        let json_missing = r#"{}"#;
+        let result: TestStruct = serde_json::from_str(json_missing).unwrap();
+        assert!(result.items.is_empty());
+    }
+
+    /// Test MarketNavigationResponse deserialization with null nodes and markets
+    #[test]
+    fn test_market_navigation_response_deserialization() {
+        // Test with null nodes and markets
+        let json_null = r#"{"nodes": null, "markets": null}"#;
+        let result: MarketNavigationResponse = serde_json::from_str(json_null).unwrap();
+        assert!(result.nodes.is_empty());
+        assert!(result.markets.is_empty());
+
+        // Test with empty arrays
+        let json_empty = r#"{"nodes": [], "markets": []}"#;
+        let result: MarketNavigationResponse = serde_json::from_str(json_empty).unwrap();
+        assert!(result.nodes.is_empty());
+        assert!(result.markets.is_empty());
+
+        // Test with populated arrays (minimal valid content)
+        let json_populated = r#"{
+            "nodes": [
+                {"id": "node1", "name": "Node 1"},
+                {"id": "node2", "name": "Node 2"}
+            ],
+            "markets": [
+                {
+                    "epic": "EPIC1",
+                    "instrumentName": "Instrument 1",
+                    "instrumentType": "SHARES",
+                    "expiry": "-",
+                    "marketStatus": "TRADEABLE"
+                },
+                {
+                    "epic": "EPIC2",
+                    "instrumentName": "Instrument 2",
+                    "instrumentType": "CURRENCIES",
+                    "expiry": "-",
+                    "marketStatus": "TRADEABLE"
+                }
+            ]
+        }"#;
+
+        let result: MarketNavigationResponse = serde_json::from_str(json_populated).unwrap();
+        assert_eq!(result.nodes.len(), 2);
+        assert_eq!(result.nodes[0].id, "node1");
+        assert_eq!(result.nodes[0].name, "Node 1");
+        assert_eq!(result.nodes[1].id, "node2");
+        assert_eq!(result.nodes[1].name, "Node 2");
+
+        assert_eq!(result.markets.len(), 2);
+        assert_eq!(result.markets[0].epic, "EPIC1");
+        assert_eq!(result.markets[0].instrument_name, "Instrument 1");
+        assert_eq!(result.markets[1].epic, "EPIC2");
+        assert_eq!(result.markets[1].instrument_name, "Instrument 2");
+    }
+
+    /// Test MarketData Display trait implementation
+    #[test]
+    fn test_market_data_display() {
+        // Create a minimal MarketData instance
+        let market_data = MarketData {
+            epic: "CS.D.EURUSD.CFD.IP".to_string(),
+            instrument_name: "EUR/USD".to_string(),
+            instrument_type: ig_client::presentation::InstrumentType::Currencies,
+            expiry: "-".to_string(),
+            high_limit_price: Some(1.2000),
+            low_limit_price: Some(1.1000),
+            market_status: "TRADEABLE".to_string(),
+            percentage_change: Some(0.5),
+            net_change: Some(0.0050),
+            update_time: Some("10:30:00".to_string()),
+            update_time_utc: Some("10:30:00Z".to_string()),
+            bid: Some(1.1800),
+            offer: Some(1.1810),
+        };
+
+        // Convert to string using Display trait
+        let display_output = format!("{}", market_data);
+
+        // Parse the output back to verify it's valid JSON
+        let parsed_json: serde_json::Value = serde_json::from_str(&display_output).unwrap();
+
+        // Verify key fields in the JSON output
+        assert_eq!(parsed_json["epic"], "CS.D.EURUSD.CFD.IP");
+        assert_eq!(parsed_json["instrumentName"], "EUR/USD");
+        assert_eq!(parsed_json["bid"], 1.18);
+        assert_eq!(parsed_json["offer"], 1.181);
     }
 }
