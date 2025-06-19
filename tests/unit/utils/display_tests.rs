@@ -80,6 +80,8 @@ mod tests {
 
         // Verify the JSON structure matches our struct
         assert_eq!(parsed_json["name"], "test name");
-        assert!(parsed_json["value"].as_f64().unwrap() - std::f64::consts::PI < f64::EPSILON);
+        assert!(
+            (parsed_json["value"].as_f64().unwrap() - std::f64::consts::PI).abs() < f64::EPSILON
+        );
     }
 }
