@@ -228,7 +228,7 @@ impl CreateOrderRequest {
         currency_code: &Option<String>,
     ) -> Self {
         let rounded_size = (size * 100.0).floor() / 100.0;
-        let currency_code=  if let Some(code) = currency_code {
+        let currency_code = if let Some(code) = currency_code {
             Some(code.clone())
         } else {
             Some("EUR".to_string())
@@ -281,7 +281,7 @@ impl CreateOrderRequest {
         currency_code: &Option<String>,
     ) -> Self {
         let rounded_size = (size * 100.0).floor() / 100.0;
-        let currency_code=  if let Some(code) = currency_code {
+        let currency_code = if let Some(code) = currency_code {
             Some(code.clone())
         } else {
             Some("EUR".to_string())

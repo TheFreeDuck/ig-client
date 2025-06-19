@@ -1,3 +1,4 @@
+use async_trait::async_trait;
 use ig_client::application::models::account::{
     Account, AccountActivity, AccountBalance, AccountInfo, PageData, Positions, TransactionHistory,
     TransactionMetadata, WorkingOrders,
@@ -8,10 +9,9 @@ use ig_client::config::Config;
 use ig_client::error::AppError;
 use ig_client::session::interface::IgSession;
 use ig_client::transport::http_client::IgHttpClient;
-use std::sync::Arc;
 use reqwest::Method;
 use serde::{Serialize, de::DeserializeOwned};
-use async_trait::async_trait;
+use std::sync::Arc;
 
 // Mock HTTP client for testing service methods without actual network calls
 struct MockHttpClient {
@@ -34,7 +34,7 @@ impl MockHttpClient {
             response_type,
         }
     }
-    
+
     fn create_response<R: DeserializeOwned>(&self) -> Result<R, AppError> {
         // Instead of serializing/deserializing, we'll create mock responses directly
         // This avoids the need for Serialize trait on the response types
@@ -58,21 +58,21 @@ impl MockHttpClient {
                     }]
                 }"#;
                 serde_json::from_str(json).map_err(|e| AppError::SerializationError(e.to_string()))
-            },
+            }
             ResponseType::Positions => {
                 // For Positions, create a JSON string directly
                 let json = r#"{
                     "positions": []
                 }"#;
                 serde_json::from_str(json).map_err(|e| AppError::SerializationError(e.to_string()))
-            },
+            }
             ResponseType::WorkingOrders => {
                 // For WorkingOrders, create a JSON string directly
                 let json = r#"{
                     "workingOrders": []
                 }"#;
                 serde_json::from_str(json).map_err(|e| AppError::SerializationError(e.to_string()))
-            },
+            }
             ResponseType::AccountActivity => {
                 // For AccountActivity, create a JSON string directly
                 let json = r#"{
@@ -80,7 +80,7 @@ impl MockHttpClient {
                     "metadata": null
                 }"#;
                 serde_json::from_str(json).map_err(|e| AppError::SerializationError(e.to_string()))
-            },
+            }
             ResponseType::TransactionHistory => {
                 // For TransactionHistory, create a JSON string directly
                 let json = r#"{
@@ -95,7 +95,7 @@ impl MockHttpClient {
                     }
                 }"#;
                 serde_json::from_str(json).map_err(|e| AppError::SerializationError(e.to_string()))
-            },
+            }
         }
     }
 }
@@ -111,13 +111,20 @@ impl IgHttpClient for MockHttpClient {
         _version: &str,
     ) -> Result<R, AppError> {
         // Verify the path matches what we expect
-        assert_eq!(path, self.expected_path, "Path mismatch: expected '{}', got '{}'", self.expected_path, path);
-        
+        assert_eq!(
+            path, self.expected_path,
+            "Path mismatch: expected '{}', got '{}'",
+            self.expected_path, path
+        );
+
         // Return a mock response based on the response type
         self.create_response()
     }
-    
-    async fn request_no_auth<T: Serialize + std::marker::Send + std::marker::Sync, R: DeserializeOwned>(
+
+    async fn request_no_auth<
+        T: Serialize + std::marker::Send + std::marker::Sync,
+        R: DeserializeOwned,
+    >(
         &self,
         _method: Method,
         _path: &str,
@@ -217,18 +224,18 @@ async fn test_account_service_get_accounts() {
     let mock_client = Arc::new(MockHttpClient::new("accounts", ResponseType::AccountInfo));
     let config = Arc::new(Config::default());
     let service = AccountServiceImpl::new(config, mock_client);
-    
+
     // Create a mock session
     let session = IgSession::new(
         "test_cst".to_string(),
         "test_token".to_string(),
         "test_account".to_string(),
     );
-    
+
     // Call the method - this will verify the path is correct
     let result = service.get_accounts(&session).await;
     assert!(result.is_ok());
-    
+
     // Verify the response structure
     let accounts = result.unwrap();
     assert_eq!(accounts.accounts.len(), 1);
@@ -241,14 +248,14 @@ async fn test_account_service_get_positions() {
     let mock_client = Arc::new(MockHttpClient::new("positions", ResponseType::Positions));
     let config = Arc::new(Config::default());
     let service = AccountServiceImpl::new(config, mock_client);
-    
+
     // Create a mock session
     let session = IgSession::new(
         "test_cst".to_string(),
         "test_token".to_string(),
         "test_account".to_string(),
     );
-    
+
     // Call the method - this will verify the path is correct
     let result = service.get_positions(&session).await;
     assert!(result.is_ok());
@@ -257,17 +264,20 @@ async fn test_account_service_get_positions() {
 #[tokio::test]
 async fn test_account_service_get_working_orders() {
     // Create a mock client that expects the correct path
-    let mock_client = Arc::new(MockHttpClient::new("workingorders", ResponseType::WorkingOrders));
+    let mock_client = Arc::new(MockHttpClient::new(
+        "workingorders",
+        ResponseType::WorkingOrders,
+    ));
     let config = Arc::new(Config::default());
     let service = AccountServiceImpl::new(config, mock_client);
-    
+
     // Create a mock session
     let session = IgSession::new(
         "test_cst".to_string(),
         "test_token".to_string(),
         "test_account".to_string(),
     );
-    
+
     // Call the method - this will verify the path is correct
     let result = service.get_working_orders(&session).await;
     assert!(result.is_ok());
@@ -277,19 +287,24 @@ async fn test_account_service_get_working_orders() {
 async fn test_account_service_get_activity() {
     // Create a mock client that expects the correct path with query parameters
     let expected_path = "history/activity?from=2023-01-01&to=2023-01-31&pageSize=500";
-    let mock_client = Arc::new(MockHttpClient::new(expected_path, ResponseType::AccountActivity));
+    let mock_client = Arc::new(MockHttpClient::new(
+        expected_path,
+        ResponseType::AccountActivity,
+    ));
     let config = Arc::new(Config::default());
     let service = AccountServiceImpl::new(config, mock_client);
-    
+
     // Create a mock session
     let session = IgSession::new(
         "test_cst".to_string(),
         "test_token".to_string(),
         "test_account".to_string(),
     );
-    
+
     // Call the method - this will verify the path is correct
-    let result = service.get_activity(&session, "2023-01-01", "2023-01-31").await;
+    let result = service
+        .get_activity(&session, "2023-01-01", "2023-01-31")
+        .await;
     assert!(result.is_ok());
 }
 
@@ -297,38 +312,49 @@ async fn test_account_service_get_activity() {
 async fn test_account_service_get_activity_with_details() {
     // Create a mock client that expects the correct path with query parameters
     let expected_path = "history/activity?from=2023-01-01&to=2023-01-31&detailed=true&pageSize=500";
-    let mock_client = Arc::new(MockHttpClient::new(expected_path, ResponseType::AccountActivity));
+    let mock_client = Arc::new(MockHttpClient::new(
+        expected_path,
+        ResponseType::AccountActivity,
+    ));
     let config = Arc::new(Config::default());
     let service = AccountServiceImpl::new(config, mock_client);
-    
+
     // Create a mock session
     let session = IgSession::new(
         "test_cst".to_string(),
         "test_token".to_string(),
         "test_account".to_string(),
     );
-    
+
     // Call the method - this will verify the path is correct
-    let result = service.get_activity_with_details(&session, "2023-01-01", "2023-01-31").await;
+    let result = service
+        .get_activity_with_details(&session, "2023-01-01", "2023-01-31")
+        .await;
     assert!(result.is_ok());
 }
 
 #[tokio::test]
 async fn test_account_service_get_transactions() {
     // Create a mock client that expects the correct path with query parameters
-    let expected_path = "history/transactions?from=2023-01-01&to=2023-01-31&pageSize=50&pageNumber=2";
-    let mock_client = Arc::new(MockHttpClient::new(expected_path, ResponseType::TransactionHistory));
+    let expected_path =
+        "history/transactions?from=2023-01-01&to=2023-01-31&pageSize=50&pageNumber=2";
+    let mock_client = Arc::new(MockHttpClient::new(
+        expected_path,
+        ResponseType::TransactionHistory,
+    ));
     let config = Arc::new(Config::default());
     let service = AccountServiceImpl::new(config, mock_client);
-    
+
     // Create a mock session
     let session = IgSession::new(
         "test_cst".to_string(),
         "test_token".to_string(),
         "test_account".to_string(),
     );
-    
+
     // Call the method - this will verify the path is correct
-    let result = service.get_transactions(&session, "2023-01-01", "2023-01-31", 50, 2).await;
+    let result = service
+        .get_transactions(&session, "2023-01-01", "2023-01-31", 50, 2)
+        .await;
     assert!(result.is_ok());
 }
