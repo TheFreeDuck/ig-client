@@ -10,9 +10,9 @@ fn test_create_order_request_market() {
     let epic = "CS.D.EURUSD.TODAY.IP";
     let direction = Direction::Buy;
     let size = 1.0;
-    
+
     let order = CreateOrderRequest::market(epic.to_string(), direction.clone(), size);
-    
+
     assert_eq!(order.epic, epic);
     assert_eq!(order.direction, direction);
     assert_eq!(order.size, size);
@@ -37,9 +37,9 @@ fn test_create_order_request_limit() {
     let direction = Direction::Sell;
     let size = 2.0;
     let level = 1.2345;
-    
+
     let order = CreateOrderRequest::limit(epic.to_string(), direction.clone(), size, level);
-    
+
     assert_eq!(order.epic, epic);
     assert_eq!(order.direction, direction);
     assert_eq!(order.size, size);
@@ -64,10 +64,10 @@ fn test_create_order_request_with_stop_loss() {
     let direction = Direction::Buy;
     let size = 1.0;
     let stop_level = 1.2000;
-    
-    let order = CreateOrderRequest::market(epic.to_string(), direction, size)
-        .with_stop_loss(stop_level);
-    
+
+    let order =
+        CreateOrderRequest::market(epic.to_string(), direction, size).with_stop_loss(stop_level);
+
     assert_eq!(order.stop_level, Some(stop_level));
 }
 
@@ -77,10 +77,10 @@ fn test_create_order_request_with_take_profit() {
     let direction = Direction::Buy;
     let size = 1.0;
     let limit_level = 1.3000;
-    
-    let order = CreateOrderRequest::market(epic.to_string(), direction, size)
-        .with_take_profit(limit_level);
-    
+
+    let order =
+        CreateOrderRequest::market(epic.to_string(), direction, size).with_take_profit(limit_level);
+
     assert_eq!(order.limit_level, Some(limit_level));
 }
 
@@ -90,10 +90,10 @@ fn test_create_order_request_with_reference() {
     let direction = Direction::Buy;
     let size = 1.0;
     let reference = "test-reference-123";
-    
+
     let order = CreateOrderRequest::market(epic.to_string(), direction, size)
         .with_reference(reference.to_string());
-    
+
     assert_eq!(order.deal_reference, Some(reference.to_string()));
 }
 
@@ -104,15 +104,15 @@ fn test_create_order_request_sell_option_to_market() {
     let expiry = Some("DEC-25".to_string());
     let deal_reference = Some("test-deal-ref".to_string());
     let currency_code = Some("USD".to_string());
-    
+
     let order = CreateOrderRequest::sell_option_to_market(
-        &epic, 
-        &size, 
-        &expiry, 
-        &deal_reference, 
-        &currency_code
+        &epic,
+        &size,
+        &expiry,
+        &deal_reference,
+        &currency_code,
     );
-    
+
     assert_eq!(order.epic, epic);
     assert_eq!(order.direction, Direction::Sell);
     // Check that size is rounded correctly
@@ -139,7 +139,7 @@ fn test_create_order_request_buy_option_to_market() {
     let expiry = "DEC-25";
     let deal_id = "test-deal-123";
     let currency = "USD";
-    
+
     let request = CreateOrderRequest::buy_option_to_market(
         &epic.to_string(),
         &size,
@@ -147,7 +147,7 @@ fn test_create_order_request_buy_option_to_market() {
         &Some(deal_id.to_string()),
         &Some(currency.to_string()),
     );
-    
+
     assert_eq!(request.epic, epic);
     assert_eq!(request.direction, Direction::Buy);
     assert_eq!(request.size, 2.5);
@@ -163,9 +163,9 @@ fn test_close_position_request_market() {
     let deal_id = "test-deal-123";
     let direction = Direction::Buy;
     let size = 1.0;
-    
+
     let request = ClosePositionRequest::market(deal_id.to_string(), direction.clone(), size);
-    
+
     assert_eq!(request.deal_id, Some(deal_id.to_string()));
     assert_eq!(request.direction, direction);
     assert_eq!(request.size, size);
@@ -179,9 +179,9 @@ fn test_close_position_request_limit() {
     let direction = Direction::Sell;
     let size = 2.0;
     let level = 1.2345;
-    
+
     let request = ClosePositionRequest::limit(deal_id.to_string(), direction.clone(), size, level);
-    
+
     assert_eq!(request.deal_id, Some(deal_id.to_string()));
     assert_eq!(request.direction, direction);
     assert_eq!(request.size, size);
@@ -196,19 +196,19 @@ fn test_close_position_request_close_option_to_market_by_epic() {
     let direction = Direction::Sell;
     let size = 1.0;
     let expiry = "DEC-25";
-    
+
     let request = ClosePositionRequest::close_option_to_market_by_epic(
         epic.to_string(),
         expiry.to_string(),
         direction.clone(),
         size,
     );
-    
+
     assert_eq!(request.epic, Some(epic.to_string()));
     assert_eq!(request.expiry, Some(expiry.to_string()));
     assert_eq!(request.direction, direction);
     assert_eq!(request.size, size);
-    assert_eq!(request.order_type, OrderType::Limit);  // Updated: order_type is now Limit
+    assert_eq!(request.order_type, OrderType::Limit); // Updated: order_type is now Limit
     assert!(request.deal_id.is_none());
     // time_in_force is now an enum, not an Option<TimeInForce>
 }
@@ -219,9 +219,9 @@ fn test_create_working_order_request_limit() {
     let direction = Direction::Buy;
     let size = 1.0;
     let level = 1.2345;
-    
+
     let order = CreateWorkingOrderRequest::limit(epic.to_string(), direction.clone(), size, level);
-    
+
     assert_eq!(order.epic, epic);
     assert_eq!(order.direction, direction);
     assert_eq!(order.size, size);
@@ -244,9 +244,9 @@ fn test_create_working_order_request_stop() {
     let direction = Direction::Sell;
     let size = 2.0;
     let level = 1.2345;
-    
+
     let order = CreateWorkingOrderRequest::stop(epic.to_string(), direction.clone(), size, level);
-    
+
     assert_eq!(order.epic, epic);
     assert_eq!(order.direction, direction);
     assert_eq!(order.size, size);
@@ -270,10 +270,10 @@ fn test_create_working_order_request_with_stop_loss() {
     let size = 1.0;
     let level = 1.2345;
     let stop_level = 1.2000;
-    
+
     let order = CreateWorkingOrderRequest::limit(epic.to_string(), direction, size, level)
         .with_stop_loss(stop_level);
-    
+
     assert_eq!(order.stop_level, Some(stop_level));
 }
 
@@ -284,10 +284,10 @@ fn test_create_working_order_request_with_take_profit() {
     let size = 1.0;
     let level = 1.2345;
     let limit_level = 1.3000;
-    
+
     let order = CreateWorkingOrderRequest::limit(epic.to_string(), direction, size, level)
         .with_take_profit(limit_level);
-    
+
     assert_eq!(order.limit_level, Some(limit_level));
 }
 
@@ -298,10 +298,10 @@ fn test_create_working_order_request_with_reference() {
     let size = 1.0;
     let level = 1.2345;
     let reference = "test-reference-123";
-    
+
     let order = CreateWorkingOrderRequest::limit(epic.to_string(), direction, size, level)
         .with_reference(reference.to_string());
-    
+
     assert_eq!(order.deal_reference, Some(reference.to_string()));
 }
 
@@ -312,10 +312,10 @@ fn test_create_working_order_request_expires_at() {
     let size = 1.0;
     let level = 1.2345;
     let expiry_date = "2025-12-31T23:59:59";
-    
+
     let order = CreateWorkingOrderRequest::limit(epic.to_string(), direction, size, level)
         .expires_at(expiry_date.to_string());
-    
+
     assert_eq!(order.time_in_force, TimeInForce::GoodTillDate);
     assert_eq!(order.good_till_date, Some(expiry_date.to_string()));
 }
@@ -330,7 +330,7 @@ fn test_deserialize_nullable_status() {
         #[serde(deserialize_with = "deserialize_status_or_default")]
         status: Status,
     }
-    
+
     // Función de deserialización local para pruebas
     fn deserialize_status_or_default<'de, D>(deserializer: D) -> Result<Status, D::Error>
     where
@@ -339,14 +339,14 @@ fn test_deserialize_nullable_status() {
         let opt = Option::deserialize(deserializer)?;
         Ok(opt.unwrap_or(Status::Rejected))
     }
-    
+
     // Test with a valid status
     let json_with_status = json!({
         "status": "OPEN"
     });
     let result: TestStatus = serde_json::from_value(json_with_status).unwrap();
     assert_eq!(result.status, Status::Open);
-    
+
     // Test with null status (should default to Rejected)
     let json_with_null = json!({
         "status": null
