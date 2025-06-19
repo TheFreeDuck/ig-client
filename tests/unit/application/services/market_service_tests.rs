@@ -1,8 +1,48 @@
 use ig_client::application::models::market::{
-    HistoricalPricesResponse, MarketData, MarketSearchResult,
+    HistoricalPricesResponse, MarketData, MarketNavigationNode, MarketNavigationResponse,
+    MarketSearchResult,
 };
+use ig_client::application::services::MarketService;
+use ig_client::application::services::market_service::MarketServiceImpl;
+use ig_client::config::Config;
+use ig_client::error::AppError;
 use ig_client::presentation::InstrumentType;
 use ig_client::session::interface::IgSession;
+use ig_client::transport::http_client::IgHttpClient;
+use ig_client::utils::rate_limiter::RateLimitType;
+use reqwest::Method;
+use serde::de::DeserializeOwned;
+use std::sync::Arc;
+
+// Mock HTTP client for testing service methods without actual network calls
+struct MockHttpClient {}
+
+#[async_trait::async_trait]
+impl IgHttpClient for MockHttpClient {
+    async fn request<T: serde::Serialize + Sync, R: DeserializeOwned>(
+        &self,
+        _method: Method,
+        _path: &str,
+        _session: &IgSession,
+        _body: Option<&T>,
+        _version: &str,
+    ) -> Result<R, AppError> {
+        // This mock will never be called in our tests
+        // We're only testing validation logic that happens before network calls
+        panic!("Mock HTTP client should not be called in these tests");
+    }
+
+    async fn request_no_auth<T: serde::Serialize + Send + Sync, R: DeserializeOwned>(
+        &self,
+        _method: Method,
+        _path: &str,
+        _body: Option<&T>,
+        _version: &str,
+    ) -> Result<R, AppError> {
+        // This mock will never be called in our tests
+        panic!("Mock HTTP client should not be called in these tests");
+    }
+}
 
 #[test]
 fn test_market_data_display() {
@@ -96,6 +136,22 @@ fn test_market_service_config() {
     assert_eq!(session.cst, "CST123");
     assert_eq!(session.token, "XST123");
     assert_eq!(session.account_id, "ACC123");
+
+    // Test service config methods
+    let config = Arc::new(Config::with_rate_limit_type(
+        RateLimitType::NonTradingAccount,
+        0.7,
+    ));
+    let client = Arc::new(MockHttpClient {});
+    let mut service = MarketServiceImpl::new(config.clone(), client);
+
+    // Test get_config
+    assert!(std::ptr::eq(service.get_config(), &*config));
+
+    // Test set_config
+    let new_config = Arc::new(Config::default());
+    service.set_config(new_config.clone());
+    assert!(std::ptr::eq(service.get_config(), &*new_config));
 }
 
 #[test]
@@ -148,4 +204,90 @@ fn test_historical_prices_response() {
     assert_eq!(allowance.remaining_allowance, 9999);
     assert_eq!(allowance.total_allowance, 10000);
     assert_eq!(allowance.allowance_expiry, 3600);
+}
+
+#[tokio::test]
+async fn test_get_multiple_market_details_empty_epics() {
+    // Setup
+    let config = Arc::new(Config::default());
+    let client = Arc::new(MockHttpClient {});
+    let service = MarketServiceImpl::new(config, client);
+    let session = IgSession::new(
+        "CST123".to_string(),
+        "XST123".to_string(),
+        "ACC123".to_string(),
+    );
+
+    // Test with empty epics array
+    let empty_epics: Vec<String> = vec![];
+    let result = service
+        .get_multiple_market_details(&session, &empty_epics)
+        .await;
+
+    // Verify empty vector is returned without error
+    assert!(result.is_ok());
+    assert_eq!(result.unwrap().len(), 0);
+}
+
+#[tokio::test]
+async fn test_get_multiple_market_details_too_many_epics() {
+    // Setup
+    let config = Arc::new(Config::default());
+    let client = Arc::new(MockHttpClient {});
+    let service = MarketServiceImpl::new(config, client);
+    let session = IgSession::new(
+        "CST123".to_string(),
+        "XST123".to_string(),
+        "ACC123".to_string(),
+    );
+
+    // Create array with 51 epics (exceeding the 50 limit)
+    let too_many_epics: Vec<String> = (0..51).map(|i| format!("EPIC{}", i)).collect();
+
+    // Test with too many epics
+    let result = service
+        .get_multiple_market_details(&session, &too_many_epics)
+        .await;
+
+    // Verify error is returned
+    assert!(result.is_err());
+    match result {
+        Err(AppError::InvalidInput(msg)) => {
+            assert!(msg.contains("maximum number of EPICs is 50"));
+        }
+        _ => panic!("Expected InvalidInput error"),
+    }
+}
+
+#[test]
+fn test_market_navigation_response() {
+    // Create a market navigation response
+    let nav_response = MarketNavigationResponse {
+        nodes: vec![MarketNavigationNode {
+            id: "123".to_string(),
+            name: "Test Node".to_string(),
+        }],
+        markets: vec![MarketData {
+            epic: "EPIC123".to_string(),
+            instrument_name: "Test Market".to_string(),
+            instrument_type: InstrumentType::Shares,
+            expiry: "DFB".to_string(),
+            high_limit_price: Some(100.0),
+            low_limit_price: Some(90.0),
+            market_status: "TRADEABLE".to_string(),
+            net_change: Some(1.5),
+            percentage_change: Some(1.5),
+            update_time: Some("12:00:00".to_string()),
+            update_time_utc: None,
+            bid: Some(95.0),
+            offer: Some(96.0),
+        }],
+    };
+
+    // Verify structure
+    assert_eq!(nav_response.nodes.len(), 1);
+    assert_eq!(nav_response.nodes[0].id, "123");
+    assert_eq!(nav_response.nodes[0].name, "Test Node");
+    assert_eq!(nav_response.markets.len(), 1);
+    assert_eq!(nav_response.markets[0].epic, "EPIC123");
 }

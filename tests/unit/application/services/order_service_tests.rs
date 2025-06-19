@@ -1,9 +1,49 @@
 use ig_client::application::models::order::{
-    ClosePositionRequest, CreateOrderRequest, Direction, OrderType, TimeInForce,
-    UpdatePositionRequest,
+    ClosePositionRequest, CreateOrderRequest, Direction, OrderConfirmation, OrderType, Status,
+    TimeInForce, UpdatePositionRequest,
 };
-
+use ig_client::application::models::working_order::{
+    CreateWorkingOrderRequest, CreateWorkingOrderResponse,
+};
+use ig_client::application::services::order_service::OrderServiceImpl;
+use ig_client::config::Config;
+use ig_client::error::AppError;
 use ig_client::session::interface::IgSession;
+use ig_client::transport::http_client::IgHttpClient;
+use ig_client::utils::rate_limiter::RateLimitType;
+use reqwest::Method;
+use serde::de::DeserializeOwned;
+use std::sync::Arc;
+
+// Mock HTTP client for testing service methods without actual network calls
+struct MockHttpClient {}
+
+#[async_trait::async_trait]
+impl IgHttpClient for MockHttpClient {
+    async fn request<T: serde::Serialize + Sync, R: DeserializeOwned>(
+        &self,
+        _method: Method,
+        _path: &str,
+        _session: &IgSession,
+        _body: Option<&T>,
+        _version: &str,
+    ) -> Result<R, AppError> {
+        // This mock will never be called in our tests
+        // We're only testing validation logic that happens before network calls
+        panic!("Mock HTTP client should not be called in these tests");
+    }
+
+    async fn request_no_auth<T: serde::Serialize + Send + Sync, R: DeserializeOwned>(
+        &self,
+        _method: Method,
+        _path: &str,
+        _body: Option<&T>,
+        _version: &str,
+    ) -> Result<R, AppError> {
+        // This mock will never be called in our tests
+        panic!("Mock HTTP client should not be called in these tests");
+    }
+}
 
 #[test]
 fn test_create_order_request_market() {
@@ -117,4 +157,88 @@ fn test_order_service_config() {
     assert_eq!(session.cst, "CST123");
     assert_eq!(session.token, "XST123");
     assert_eq!(session.account_id, "ACC123");
+
+    // Test service config methods
+    let config = Arc::new(Config::with_rate_limit_type(
+        RateLimitType::NonTradingAccount,
+        0.7,
+    ));
+    let client = Arc::new(MockHttpClient {});
+    let mut service = OrderServiceImpl::new(config.clone(), client);
+
+    // Test get_config
+    assert!(Arc::ptr_eq(&service.get_config(), &config));
+
+    // Test set_config
+    let new_config = Arc::new(Config::default());
+    service.set_config(new_config.clone());
+    assert!(Arc::ptr_eq(&service.get_config(), &new_config));
+}
+
+#[test]
+fn test_create_working_order_request() {
+    // Create a working order request using the builder pattern
+    let request =
+        CreateWorkingOrderRequest::limit("EPIC123".to_string(), Direction::Buy, 1.0, 100.0)
+            .with_reference("TEST_REF".to_string())
+            .with_expiry("DFB".to_string());
+
+    // Verify fields
+    assert_eq!(request.epic, "EPIC123");
+    assert_eq!(request.expiry, "DFB");
+    assert!(matches!(request.direction, Direction::Buy));
+    assert_eq!(request.size, 1.0);
+    assert_eq!(request.level, 100.0);
+    assert!(matches!(request.order_type, OrderType::Limit));
+    assert!(matches!(
+        request.time_in_force,
+        TimeInForce::GoodTillCancelled
+    ));
+    assert_eq!(request.deal_reference, Some("TEST_REF".to_string()));
+}
+
+#[test]
+fn test_create_working_order_response() {
+    // Create a working order response
+    let response = CreateWorkingOrderResponse {
+        deal_reference: "DEAL123".to_string(),
+    };
+
+    // Verify fields
+    assert_eq!(response.deal_reference, "DEAL123");
+}
+
+#[test]
+fn test_order_confirmation() {
+    // Create an order confirmation
+    let confirmation = OrderConfirmation {
+        date: "2023-01-01".to_string(),
+        status: Status::Accepted,
+        reason: None,
+        deal_status: Some("ACCEPTED".to_string()),
+        epic: Some("EPIC123".to_string()),
+        expiry: Some("DFB".to_string()),
+        deal_reference: "DEAL123".to_string(),
+        deal_id: Some("ID123".to_string()),
+        level: Some(100.0),
+        size: Some(1.0),
+        direction: Some(Direction::Buy),
+        stop_level: None,
+        limit_level: None,
+        stop_distance: None,
+        limit_distance: None,
+        guaranteed_stop: Some(false),
+        trailing_stop: Some(false),
+    };
+
+    // Verify fields
+    assert_eq!(confirmation.date, "2023-01-01");
+    assert!(matches!(confirmation.status, Status::Accepted));
+    assert_eq!(confirmation.deal_status, Some("ACCEPTED".to_string()));
+    assert_eq!(confirmation.epic, Some("EPIC123".to_string()));
+    assert_eq!(confirmation.deal_reference, "DEAL123");
+    assert_eq!(confirmation.deal_id, Some("ID123".to_string()));
+    assert_eq!(confirmation.level, Some(100.0));
+    assert_eq!(confirmation.size, Some(1.0));
+    assert!(matches!(confirmation.direction, Some(Direction::Buy)));
 }
