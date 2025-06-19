@@ -2,7 +2,6 @@
 mod tests {
     use ig_client::impl_json_display;
     use serde::Serialize;
-    use std::fmt;
 
     // Test struct to verify the macro implementation
     #[derive(Serialize)]
@@ -70,7 +69,7 @@ mod tests {
     fn test_json_display_multiple_structs() {
         let another_struct = AnotherStruct {
             name: "test name".to_string(),
-            value: 3.14159,
+            value: std::f64::consts::PI,
         };
 
         // Convert to string using Display trait
@@ -81,6 +80,6 @@ mod tests {
 
         // Verify the JSON structure matches our struct
         assert_eq!(parsed_json["name"], "test name");
-        assert!(parsed_json["value"].as_f64().unwrap() - 3.14159 < f64::EPSILON);
+        assert!(parsed_json["value"].as_f64().unwrap() - std::f64::consts::PI < f64::EPSILON);
     }
 }
