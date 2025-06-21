@@ -35,15 +35,15 @@ pub enum MarketState {
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct MarketData {
     /// Name of the item this data belongs to
-    item_name: String,
+    pub item_name: String,
     /// Position of the item in the subscription
-    item_pos: i32,
+    pub item_pos: i32,
     /// All market fields
-    fields: MarketFields,
+    pub fields: MarketFields,
     /// Fields that have changed in this update
-    changed_fields: MarketFields,
+    pub changed_fields: MarketFields,
     /// Whether this is a snapshot or an update
-    is_snapshot: bool,
+    pub is_snapshot: bool,
 }
 
 impl MarketData {
@@ -168,50 +168,50 @@ pub struct MarketFields {
     #[serde(rename = "MID_OPEN")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
-    mid_open: Option<f64>,
+    pub mid_open: Option<f64>,
 
     #[serde(rename = "HIGH")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
-    high: Option<f64>,
+    pub high: Option<f64>,
 
     #[serde(rename = "OFFER")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
-    offer: Option<f64>,
+    pub offer: Option<f64>,
 
     #[serde(rename = "CHANGE")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
-    change: Option<f64>,
+    pub change: Option<f64>,
 
     #[serde(rename = "MARKET_DELAY")]
     #[serde(with = "string_as_bool_opt")]
     #[serde(default)]
-    market_delay: Option<bool>,
+    pub market_delay: Option<bool>,
 
     #[serde(rename = "LOW")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
-    low: Option<f64>,
+    pub low: Option<f64>,
 
     #[serde(rename = "BID")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
-    bid: Option<f64>,
+    pub bid: Option<f64>,
 
     #[serde(rename = "CHANGE_PCT")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
-    change_pct: Option<f64>,
+    pub change_pct: Option<f64>,
 
     #[serde(rename = "MARKET_STATE")]
     #[serde(default)]
-    market_state: Option<MarketState>,
+    pub market_state: Option<MarketState>,
 
     #[serde(rename = "UPDATE_TIME")]
     #[serde(default)]
-    update_time: Option<String>,
+    pub update_time: Option<String>,
 }
 
 use once_cell::sync::Lazy;
