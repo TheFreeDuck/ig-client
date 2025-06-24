@@ -253,6 +253,77 @@ impl CreateOrderRequest {
         }
     }
 
+    /// Constructs and returns a new instance of the `Self` struct representing a sell option
+    /// to the market with specific parameters for execution.
+    ///
+    /// # Parameters
+    /// - `epic`: A reference to a string slice (`&String`) that specifies the EPIC
+    ///   (Exchanged Product Information Code) of the instrument for which the sell order is created.
+    /// - `size`: A reference to a floating-point number (`&f64`) that represents the size of the sell
+    ///   order. The size is rounded to two decimal places.
+    /// - `expiry`: An optional string (`Option<String>`) that indicates the expiry date or period for
+    ///   the sell order. If `None`, no expiry date will be set for the order.
+    /// - `deal_reference`: An optional string (`Option<String>`) that contains a reference or identifier
+    ///   for the deal. Can be used for tracking purposes.
+    /// - `currency_code`: An optional string (`Option<String>`) representing the currency code. Defaults
+    ///   to `"EUR"` if not provided.
+    /// - `force_open`: An optional boolean (`Option<bool>`) that specifies whether to force open the
+    ///   position. When `Some(true)`, a new position is opened even if an existing position for the
+    ///   same instrument and direction is available.
+    ///
+    /// # Returns
+    /// - `Self`: A new instance populated with the provided parameters, including the following default
+    ///   properties:
+    ///   - `direction`: Set to `Direction::Sell` to designate the sell operation.
+    ///   - `order_type`: Set to `OrderType::Limit` to signify the type of the order.
+    ///   - `time_in_force`: Set to `TimeInForce::FillOrKill` indicating the order should be fully
+    ///     executed or canceled.
+    ///   - `level`: Set to a constant value `DEFAULT_ORDER_SELL_SIZE`.
+    ///   - `guaranteed_stop`: Set to `Some(false)` indicating no guaranteed stop.
+    ///   - Other optional levels/distance fields (`stop_level`, `stop_distance`, `limit_level`,
+    ///     `limit_distance`): Set to `None` by default.
+    ///
+    /// # Notes
+    /// - The `#[allow(clippy::ptr_arg)]` attribute suppresses the lint warning for using
+    ///   `&String` instead of `&str`. Consider updating the function signature to use `&str`
+    ///   instead of `&String` for better idiomatic Rust code.
+    /// - The input `size` is automatically rounded down to two decimal places before being stored.
+    ///
+    #[allow(clippy::ptr_arg)]
+    pub fn sell_option_to_market_w_force(
+        epic: &String,
+        size: &f64,
+        expiry: &Option<String>,
+        deal_reference: &Option<String>,
+        currency_code: &Option<String>,
+        force_open: Option<bool>, // Compensate position if it is already open
+    ) -> Self {
+        let rounded_size = (size * 100.0).floor() / 100.0;
+        let currency_code = if let Some(code) = currency_code {
+            Some(code.clone())
+        } else {
+            Some("EUR".to_string())
+        };
+
+        Self {
+            epic: epic.clone(),
+            direction: Direction::Sell,
+            size: rounded_size,
+            order_type: OrderType::Limit,
+            time_in_force: TimeInForce::FillOrKill,
+            level: Some(DEFAULT_ORDER_SELL_SIZE),
+            guaranteed_stop: Some(false),
+            stop_level: None,
+            stop_distance: None,
+            limit_level: None,
+            limit_distance: None,
+            expiry: expiry.clone(),
+            deal_reference: deal_reference.clone(),
+            force_open,
+            currency_code,
+        }
+    }
+
     /// Creates a new instance of an order to buy an option in the market with specified parameters.
     ///
     /// This method initializes an order with the following default values:
@@ -301,6 +372,70 @@ impl CreateOrderRequest {
             expiry: expiry.clone(),
             deal_reference: deal_reference.clone(),
             force_open: Some(true),
+            currency_code: currency_code.clone(),
+        }
+    }
+
+    /// Constructs a new instance of an order to buy an option in the market with optional force_open behavior.
+    ///
+    /// # Parameters
+    ///
+    /// * `epic` - A string slice representing the unique identifier of the instrument to be traded.
+    /// * `size` - A reference to a 64-bit floating-point number that represents the size of the order.
+    /// * `expiry` - An optional string reference representing the expiry date of the option.
+    /// * `deal_reference` - An optional string reference for the deal reference identifier.
+    /// * `currency_code` - An optional string reference representing the currency in which the order is denominated.
+    ///   Defaults to "EUR" if not provided.
+    /// * `force_open` - An optional boolean indicating whether to force open a new position regardless of existing positions.
+    ///
+    /// # Returns
+    ///
+    /// Returns a new instance of `Self`, representing the constructed order with the provided parameters.
+    ///
+    /// # Behavior
+    ///
+    /// * The size of the order will be rounded down to two decimal places for precision.
+    /// * If a `currency_code` is not provided, the default currency code "EUR" is used.
+    /// * Other parameters are directly mapped into the returned instance.
+    ///
+    /// # Notes
+    ///
+    /// * This function assumes that other order-related fields such as `level`, `stop_level`, `stop_distance`,
+    ///   etc., are set to their defaults or require specific business logic, such as
+    ///   `DEFAULT_ORDER_BUY_SIZE` for the initial buy size.
+    /// * The Clippy lint for `clippy::ptr_arg` is explicitly allowed for the `epic` parameter, where
+    ///   using a reference to `String` is intentional.
+    ///
+    #[allow(clippy::ptr_arg)]
+    pub fn buy_option_to_market_w_force(
+        epic: &String,
+        size: &f64,
+        expiry: &Option<String>,
+        deal_reference: &Option<String>,
+        currency_code: &Option<String>,
+        force_open: Option<bool>,
+    ) -> Self {
+        let rounded_size = (size * 100.0).floor() / 100.0;
+        let currency_code = if let Some(code) = currency_code {
+            Some(code.clone())
+        } else {
+            Some("EUR".to_string())
+        };
+        Self {
+            epic: epic.clone(),
+            direction: Direction::Buy,
+            size: rounded_size,
+            order_type: OrderType::Limit,
+            time_in_force: TimeInForce::FillOrKill,
+            level: Some(DEFAULT_ORDER_BUY_SIZE),
+            guaranteed_stop: Some(false),
+            stop_level: None,
+            stop_distance: None,
+            limit_level: None,
+            limit_distance: None,
+            expiry: expiry.clone(),
+            deal_reference: deal_reference.clone(),
+            force_open,
             currency_code: currency_code.clone(),
         }
     }
