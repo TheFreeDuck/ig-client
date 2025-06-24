@@ -60,7 +60,7 @@ impl<T: IgHttpClient + 'static> AccountService for AccountServiceImpl<T> {
     }
 
     async fn get_positions(&self, session: &IgSession) -> Result<Positions, AppError> {
-        info!("Getting open positions");
+        debug!("Getting open positions");
 
         let result = self
             .client
