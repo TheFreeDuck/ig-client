@@ -98,7 +98,7 @@ pub enum TimeInForce {
 }
 
 /// Model for creating a new order
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateOrderRequest {
     /// Instrument EPIC identifier
     pub epic: String,
@@ -460,7 +460,7 @@ impl CreateOrderRequest {
 }
 
 /// Response to order creation
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateOrderResponse {
     /// Client-generated reference for the deal
     #[serde(rename = "dealReference")]
@@ -478,7 +478,7 @@ where
 }
 
 /// Details of a confirmed order
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OrderConfirmation {
     /// Date and time of the confirmation
     pub date: String,
@@ -530,7 +530,7 @@ pub struct OrderConfirmation {
 }
 
 /// Model for updating an existing position
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdatePositionRequest {
     /// New price level for stop loss
     #[serde(rename = "stopLevel", skip_serializing_if = "Option::is_none")]
@@ -550,7 +550,7 @@ pub struct UpdatePositionRequest {
 }
 
 /// Model for closing an existing position
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ClosePositionRequest {
     /// Unique identifier for the position to close
     #[serde(rename = "dealId")]
@@ -675,7 +675,7 @@ impl ClosePositionRequest {
 }
 
 /// Response to closing a position
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ClosePositionResponse {
     /// Client-generated reference for the closing deal
     #[serde(rename = "dealReference")]
@@ -683,7 +683,7 @@ pub struct ClosePositionResponse {
 }
 
 /// Response to updating a position
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdatePositionResponse {
     /// Client-generated reference for the update deal
     #[serde(rename = "dealReference")]
@@ -691,7 +691,7 @@ pub struct UpdatePositionResponse {
 }
 
 /// Model for creating a new working order
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateWorkingOrderRequest {
     /// Instrument EPIC identifier
     pub epic: String,
@@ -801,9 +801,21 @@ impl CreateWorkingOrderRequest {
 }
 
 /// Response to working order creation
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateWorkingOrderResponse {
     /// Client-generated reference for the deal
     #[serde(rename = "dealReference")]
     pub deal_reference: String,
 }
+
+impl_json_display!(
+    CreateOrderRequest,
+    CreateOrderResponse,
+    OrderConfirmation,
+    UpdatePositionRequest,
+    ClosePositionRequest,
+    ClosePositionResponse,
+    UpdatePositionResponse,
+    CreateWorkingOrderRequest,
+    CreateWorkingOrderResponse
+);
