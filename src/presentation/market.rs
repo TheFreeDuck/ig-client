@@ -165,50 +165,60 @@ impl From<&ItemUpdate> for MarketData {
 /// Fields containing market price and status information
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct MarketFields {
+    /// The mid-open price of the market
     #[serde(rename = "MID_OPEN")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub mid_open: Option<f64>,
 
+    /// The highest price reached by the market in the current trading session
     #[serde(rename = "HIGH")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub high: Option<f64>,
 
+    /// The current offer (ask) price of the market
     #[serde(rename = "OFFER")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub offer: Option<f64>,
 
+    /// The absolute price change since the previous close
     #[serde(rename = "CHANGE")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub change: Option<f64>,
 
+    /// Indicates if there is a delay in market data
     #[serde(rename = "MARKET_DELAY")]
     #[serde(with = "string_as_bool_opt")]
     #[serde(default)]
     pub market_delay: Option<bool>,
 
+    /// The lowest price reached by the market in the current trading session
     #[serde(rename = "LOW")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub low: Option<f64>,
 
+    /// The current bid price of the market
     #[serde(rename = "BID")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub bid: Option<f64>,
 
+    /// The percentage price change since the previous close
     #[serde(rename = "CHANGE_PCT")]
     #[serde(with = "string_as_float_opt")]
     #[serde(default)]
     pub change_pct: Option<f64>,
 
+    /// The current state of the market (e.g., Tradeable, Closed, etc.)
     #[serde(rename = "MARKET_STATE")]
     #[serde(default)]
     pub market_state: Option<MarketState>,
 
+    /// The timestamp of the last market update
     #[serde(rename = "UPDATE_TIME")]
     #[serde(default)]
     pub update_time: Option<String>,
