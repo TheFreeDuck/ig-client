@@ -163,7 +163,7 @@ impl From<&ItemUpdate> for MarketData {
 }
 
 /// Fields containing market price and status information
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct MarketFields {
     #[serde(rename = "MID_OPEN")]
     #[serde(with = "string_as_float_opt")]
