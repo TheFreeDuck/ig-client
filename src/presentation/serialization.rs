@@ -51,7 +51,7 @@ pub mod string_as_float_opt {
                     return Ok(None);
                 }
                 s.parse::<f64>().map(Some).map_err(|_| {
-                    serde::de::Error::custom(format!("Failed to parse string as float: {}", s))
+                    serde::de::Error::custom(format!("Failed to parse string as float: {s}"))
                 })
             }
             _ => Err(serde::de::Error::custom("Expected null, number or string")),
@@ -113,8 +113,7 @@ pub mod string_as_bool_opt {
                     "0" => Ok(Some(false)),
                     "1" => Ok(Some(true)),
                     _ => Err(serde::de::Error::custom(format!(
-                        "Invalid boolean value: {}",
-                        s
+                        "Invalid boolean value: {s}"
                     ))),
                 }
             }

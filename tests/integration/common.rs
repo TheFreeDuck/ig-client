@@ -59,7 +59,7 @@ pub async fn login_with_account_switch_async() -> Result<IgSession, String> {
     let session = match auth.login().await {
         Ok(session) => session,
         Err(e) => {
-            return Err(format!("Failed to login: {:?}", e));
+            return Err(format!("Failed to login: {e:?}"));
         }
     };
 

@@ -139,7 +139,7 @@ impl AccountData {
                 Some(val) if !val.is_empty() => val
                     .parse::<f64>()
                     .map(Some)
-                    .map_err(|_| format!("Failed to parse {} as float: {}", key, val)),
+                    .map_err(|_| format!("Failed to parse {key} as float: {val}")),
                 _ => Ok(None),
             }
         };
@@ -164,7 +164,7 @@ impl AccountData {
 impl fmt::Display for AccountData {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let json = serde_json::to_string(self).map_err(|_| fmt::Error)?;
-        write!(f, "{}", json)
+        write!(f, "{json}")
     }
 }
 

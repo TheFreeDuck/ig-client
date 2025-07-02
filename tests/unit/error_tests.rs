@@ -23,9 +23,7 @@ fn assert_display_contains<T: Display>(value: &T, expected: &str) {
     let display_string = value.to_string();
     assert!(
         display_string.contains(expected),
-        "Expected '{}' to contain '{}', but it didn't",
-        display_string,
-        expected
+        "Expected '{display_string}' to contain '{expected}', but it didn't"
     );
 }
 
@@ -38,7 +36,7 @@ fn test_app_error_from_io_error() {
         AppError::Io(_) => {
             // Test passed
         }
-        _ => panic!("Expected AppError::Io, got {:?}", app_error),
+        _ => panic!("Expected AppError::Io, got {app_error:?}"),
     }
 
     assert_display_contains(&app_error, "io error");
@@ -56,7 +54,7 @@ fn test_app_error_from_serde_json_error() {
         AppError::Json(_) => {
             // Test passed
         }
-        _ => panic!("Expected AppError::Json, got {:?}", app_error),
+        _ => panic!("Expected AppError::Json, got {app_error:?}"),
     }
 
     assert_display_contains(&app_error, "json error");
@@ -73,7 +71,7 @@ fn test_app_error_from_sqlx_error() {
         AppError::Db(_) => {
             // Test passed
         }
-        _ => panic!("Expected AppError::Db, got {:?}", app_error),
+        _ => panic!("Expected AppError::Db, got {app_error:?}"),
     }
 
     assert_display_contains(&app_error, "db error");
@@ -90,7 +88,7 @@ fn test_app_error_from_auth_error() {
         AppError::Unauthorized => {
             // Test passed
         }
-        _ => panic!("Expected AppError::Unauthorized, got {:?}", app_error),
+        _ => panic!("Expected AppError::Unauthorized, got {app_error:?}"),
     }
 
     assert_display_contains(&app_error, "unauthorized");
@@ -103,7 +101,7 @@ fn test_app_error_from_auth_error() {
         AppError::Unexpected(_) => {
             // Test passed
         }
-        _ => panic!("Expected AppError::Unexpected, got {:?}", app_error),
+        _ => panic!("Expected AppError::Unexpected, got {app_error:?}"),
     }
 }
 
@@ -173,7 +171,7 @@ fn test_app_error_from_box_dyn_error() {
         AppError::Io(_) => {
             // Test passed
         }
-        _ => panic!("Expected AppError::Io, got {:?}", app_error),
+        _ => panic!("Expected AppError::Io, got {app_error:?}"),
     }
 
     // Create a Box<dyn Error> containing a JsonError
@@ -188,7 +186,7 @@ fn test_app_error_from_box_dyn_error() {
         AppError::Json(_) => {
             // Test passed
         }
-        _ => panic!("Expected AppError::Json, got {:?}", app_error),
+        _ => panic!("Expected AppError::Json, got {app_error:?}"),
     }
 
     // Create a Box<dyn Error> containing a different error type
@@ -201,7 +199,7 @@ fn test_app_error_from_box_dyn_error() {
         AppError::Unexpected(_) => {
             // Test passed
         }
-        _ => panic!("Expected AppError::Unexpected, got {:?}", app_error),
+        _ => panic!("Expected AppError::Unexpected, got {app_error:?}"),
     }
 }
 
@@ -232,7 +230,7 @@ fn test_auth_error_from_box_dyn_error() {
         AuthError::Io(_) => {
             // Test passed
         }
-        _ => panic!("Expected AuthError::Io, got {:?}", auth_error),
+        _ => panic!("Expected AuthError::Io, got {auth_error:?}"),
     }
 
     // Create a Box<dyn Error> containing a JsonError
@@ -247,7 +245,7 @@ fn test_auth_error_from_box_dyn_error() {
         AuthError::Json(_) => {
             // Test passed
         }
-        _ => panic!("Expected AuthError::Json, got {:?}", auth_error),
+        _ => panic!("Expected AuthError::Json, got {auth_error:?}"),
     }
 
     // Create a Box<dyn Error> containing a different error type
@@ -260,7 +258,7 @@ fn test_auth_error_from_box_dyn_error() {
         AuthError::Other(_) => {
             // Test passed
         }
-        _ => panic!("Expected AuthError::Other, got {:?}", auth_error),
+        _ => panic!("Expected AuthError::Other, got {auth_error:?}"),
     }
 }
 
@@ -280,7 +278,7 @@ fn test_auth_error_from_box_dyn_error_send_sync() {
         AuthError::Io(_) => {
             // Test passed
         }
-        _ => panic!("Expected AuthError::Io, got {:?}", auth_error),
+        _ => panic!("Expected AuthError::Io, got {auth_error:?}"),
     }
 
     // Create a Box<dyn Error + Send + Sync> containing a JsonError
@@ -295,7 +293,7 @@ fn test_auth_error_from_box_dyn_error_send_sync() {
         AuthError::Json(_) => {
             // Test passed
         }
-        _ => panic!("Expected AuthError::Json, got {:?}", auth_error),
+        _ => panic!("Expected AuthError::Json, got {auth_error:?}"),
     }
 
     // Create a Box<dyn Error + Send + Sync> containing a different error type
@@ -308,7 +306,7 @@ fn test_auth_error_from_box_dyn_error_send_sync() {
         AuthError::Other(_) => {
             // Test passed
         }
-        _ => panic!("Expected AuthError::Other, got {:?}", auth_error),
+        _ => panic!("Expected AuthError::Other, got {auth_error:?}"),
     }
 }
 

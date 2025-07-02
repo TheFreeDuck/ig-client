@@ -49,7 +49,7 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
         session: &IgSession,
         search_term: &str,
     ) -> Result<MarketSearchResult, AppError> {
-        let path = format!("markets?searchTerm={}", search_term);
+        let path = format!("markets?searchTerm={search_term}");
         info!("Searching markets with term: {}", search_term);
 
         let result = self
@@ -66,7 +66,7 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
         session: &IgSession,
         epic: &str,
     ) -> Result<MarketDetails, AppError> {
-        let path = format!("markets/{}", epic);
+        let path = format!("markets/{epic}");
         info!("Getting market details: {}", epic);
 
         let result = self
@@ -93,7 +93,7 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
 
         // Join the EPICs with commas to create a single request
         let epics_str = epics.join(",");
-        let path = format!("markets?epics={}", epics_str);
+        let path = format!("markets?epics={epics_str}");
 
         debug!(
             "Getting market details for {} EPICs in a batch: {}",
@@ -128,10 +128,7 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
         from: &str,
         to: &str,
     ) -> Result<HistoricalPricesResponse, AppError> {
-        let path = format!(
-            "prices/{}?resolution={}&from={}&to={}",
-            epic, resolution, from, to
-        );
+        let path = format!("prices/{epic}?resolution={resolution}&from={from}&to={to}");
         info!("Getting historical prices for: {}", epic);
 
         let result = self
@@ -165,7 +162,7 @@ impl<T: IgHttpClient + 'static> MarketService for MarketServiceImpl<T> {
         session: &IgSession,
         node_id: &str,
     ) -> Result<MarketNavigationResponse, AppError> {
-        let path = format!("marketnavigation/{}", node_id);
+        let path = format!("marketnavigation/{node_id}");
         info!("Getting market navigation node: {}", node_id);
 
         let result = self

@@ -64,7 +64,7 @@ fn test_market_data_display() {
     };
 
     // Verify Display implementation works correctly
-    let display_string = format!("{}", market_data);
+    let display_string = format!("{market_data}");
     assert!(display_string.contains("OP.D.OTCDAX1.021100P.IP"));
     assert!(display_string.contains("EUR/USD"));
     assert!(display_string.contains("TRADEABLE"));
@@ -242,7 +242,7 @@ async fn test_get_multiple_market_details_too_many_epics() {
     );
 
     // Create array with 51 epics (exceeding the 50 limit)
-    let too_many_epics: Vec<String> = (0..51).map(|i| format!("EPIC{}", i)).collect();
+    let too_many_epics: Vec<String> = (0..51).map(|i| format!("EPIC{i}")).collect();
 
     // Test with too many epics
     let result = service

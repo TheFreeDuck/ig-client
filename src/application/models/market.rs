@@ -230,7 +230,7 @@ pub struct MarketData {
 impl Display for MarketData {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let json = serde_json::to_string(self).unwrap_or_else(|_| "Invalid JSON".to_string());
-        write!(f, "{}", json)
+        write!(f, "{json}")
     }
 }
 

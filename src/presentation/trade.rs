@@ -238,7 +238,7 @@ impl TradeData {
             if !opu_json.is_empty() {
                 match serde_json::from_str::<OpenPositionUpdate>(&opu_json) {
                     Ok(parsed_opu) => Some(parsed_opu),
-                    Err(e) => return Err(format!("Failed to parse OPU JSON: {}", e)),
+                    Err(e) => return Err(format!("Failed to parse OPU JSON: {e}")),
                 }
             } else {
                 None
@@ -252,7 +252,7 @@ impl TradeData {
             if !wou_json.is_empty() {
                 match serde_json::from_str::<WorkingOrderUpdate>(&wou_json) {
                     Ok(parsed_wou) => Some(parsed_wou),
-                    Err(e) => return Err(format!("Failed to parse WOU JSON: {}", e)),
+                    Err(e) => return Err(format!("Failed to parse WOU JSON: {e}")),
                 }
             } else {
                 None
@@ -268,7 +268,7 @@ impl TradeData {
 impl fmt::Display for TradeData {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let json = serde_json::to_string(self).map_err(|_| fmt::Error)?;
-        write!(f, "{}", json)
+        write!(f, "{json}")
     }
 }
 

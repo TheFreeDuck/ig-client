@@ -313,7 +313,7 @@ impl PriceData {
                 Some(val) if !val.is_empty() => val
                     .parse::<f64>()
                     .map(Some)
-                    .map_err(|_| format!("Failed to parse {} as float: {}", key, val)),
+                    .map_err(|_| format!("Failed to parse {key} as float: {val}")),
                 _ => Ok(None),
             }
         };
@@ -329,7 +329,7 @@ impl PriceData {
             Some("AUCTION") => Some(DealingFlag::Auction),
             Some("AUCTIONNOEDIT") => Some(DealingFlag::AuctionNoEdit),
             Some("SUSPEND") => Some(DealingFlag::Suspend),
-            Some(unknown) => return Err(format!("Unknown dealing flag: {}", unknown)),
+            Some(unknown) => return Err(format!("Unknown dealing flag: {unknown}")),
             None => None,
         };
 

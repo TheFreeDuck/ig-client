@@ -22,7 +22,7 @@ mod tests {
 
         for (instrument_type, expected_str) in types {
             let serialized = serde_json::to_string(&instrument_type).unwrap();
-            assert_eq!(serialized, format!("\"{}\"", expected_str));
+            assert_eq!(serialized, format!("\"{expected_str}\""));
         }
     }
 
@@ -60,7 +60,7 @@ mod tests {
 
         for (json_str, expected_type) in types {
             let deserialized: InstrumentType =
-                serde_json::from_str(&format!("\"{}\"", json_str)).unwrap();
+                serde_json::from_str(&format!("\"{json_str}\"")).unwrap();
             assert_eq!(deserialized, expected_type);
         }
     }
@@ -324,7 +324,7 @@ mod tests {
             offer: Some(1.0878),
         };
 
-        let display_str = format!("{}", market_data);
+        let display_str = format!("{market_data}");
         let parsed_json: serde_json::Value = serde_json::from_str(&display_str).unwrap();
 
         let expected_json = json!({

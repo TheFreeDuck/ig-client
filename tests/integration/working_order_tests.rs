@@ -140,7 +140,7 @@ pub fn test_working_orders() {
                 }
             }
             Err(e) => {
-                panic!("Failed to create working order: {:?}", e);
+                panic!("Failed to create working order: {e:?}");
             }
         }
     });

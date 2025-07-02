@@ -746,7 +746,7 @@ mod tests {
         };
 
         // Convert to string using Display trait
-        let display_output = format!("{}", market_data);
+        let display_output = format!("{market_data}");
 
         // Parse the output back to verify it's valid JSON
         let parsed_json: serde_json::Value = serde_json::from_str(&display_output).unwrap();

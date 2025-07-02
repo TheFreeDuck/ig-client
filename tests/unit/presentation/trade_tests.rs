@@ -378,7 +378,7 @@ mod tests {
 
         let trade_data = TradeData::from_item_update(&item_update).unwrap();
 
-        let display_string = format!("{}", trade_data);
+        let display_string = format!("{trade_data}");
         assert!(display_string.contains("\"item_name\":\"TestItem\""));
         assert!(display_string.contains("\"CONFIRMS\":\"TestConfirm123\""));
     }

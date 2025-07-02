@@ -74,7 +74,7 @@ impl<T: IgHttpClient + 'static> OrderService for OrderServiceImpl<T> {
         session: &IgSession,
         deal_reference: &str,
     ) -> Result<OrderConfirmation, AppError> {
-        let path = format!("confirms/{}", deal_reference);
+        let path = format!("confirms/{deal_reference}");
         info!("Getting confirmation for order: {}", deal_reference);
 
         let result = self
@@ -92,7 +92,7 @@ impl<T: IgHttpClient + 'static> OrderService for OrderServiceImpl<T> {
         deal_id: &str,
         update: &UpdatePositionRequest,
     ) -> Result<UpdatePositionResponse, AppError> {
-        let path = format!("positions/otc/{}", deal_id);
+        let path = format!("positions/otc/{deal_id}");
         info!("Updating position: {}", deal_id);
 
         let result = self

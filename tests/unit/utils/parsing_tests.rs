@@ -49,7 +49,7 @@ mod tests {
             option_type: Some("CALL".to_string()),
         };
         assert_eq!(
-            format!("{}", info),
+            format!("{info}"),
             "Asset: US Tech 100, Strike: 19200, Type: CALL"
         );
 
@@ -60,7 +60,7 @@ mod tests {
             option_type: None,
         };
         assert_eq!(
-            format!("{}", info),
+            format!("{info}"),
             "Asset: Germany 40, Strike: N/A, Type: N/A"
         );
 
@@ -70,10 +70,7 @@ mod tests {
             strike: Some("4500".to_string()),
             option_type: None,
         };
-        assert_eq!(
-            format!("{}", info),
-            "Asset: US 500, Strike: 4500, Type: N/A"
-        );
+        assert_eq!(format!("{info}"), "Asset: US 500, Strike: 4500, Type: N/A");
     }
 
     #[test]

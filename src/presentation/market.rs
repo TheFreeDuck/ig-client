@@ -105,7 +105,7 @@ impl MarketData {
             Some("auction") => Some(MarketState::Auction),
             Some("auction_no_edit") => Some(MarketState::AuctionNoEdit),
             Some("suspended") => Some(MarketState::Suspended),
-            Some(unknown) => return Err(format!("Unknown market state: {}", unknown)),
+            Some(unknown) => return Err(format!("Unknown market state: {unknown}")),
             None => None,
         };
 
@@ -113,7 +113,7 @@ impl MarketData {
         let market_delay = match get_field("MARKET_DELAY").as_deref() {
             Some("0") => Some(false),
             Some("1") => Some(true),
-            Some(val) => return Err(format!("Invalid MARKET_DELAY value: {}", val)),
+            Some(val) => return Err(format!("Invalid MARKET_DELAY value: {val}")),
             None => None,
         };
 
@@ -123,7 +123,7 @@ impl MarketData {
                 Some(val) if !val.is_empty() => val
                     .parse::<f64>()
                     .map(Some)
-                    .map_err(|_| format!("Failed to parse {} as float: {}", key, val)),
+                    .map_err(|_| format!("Failed to parse {key} as float: {val}")),
                 _ => Ok(None),
             }
         };
@@ -146,7 +146,7 @@ impl MarketData {
 impl fmt::Display for MarketData {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let json = serde_json::to_string(self).map_err(|_| fmt::Error)?;
-        write!(f, "{}", json)
+        write!(f, "{json}")
     }
 }
 

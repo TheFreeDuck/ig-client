@@ -48,8 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Err(e) => {
             error!("Failed to get activity: {}", e);
             return Err(Box::<dyn std::error::Error>::from(format!(
-                "Failed to get activity: {}",
-                e
+                "Failed to get activity: {e}"
             )));
         }
     };

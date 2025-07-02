@@ -73,7 +73,7 @@ fn test_create_and_close_position() {
                         (closed_epic, details)
                     },
                     Err(e) => {
-                        panic!("Both open and closed market requests failed: {:?}", e);
+                        panic!("Both open and closed market requests failed: {e:?}");
                     }
                 }
             }
@@ -303,12 +303,12 @@ fn test_closed_market_serialization() {
                         info!("✅ Closed market serialization test passed");
                     }
                     Err(e) => {
-                        panic!("Failed to get confirmation for closed market: {:?}", e);
+                        panic!("Failed to get confirmation for closed market: {e:?}");
                     }
                 }
             }
             Err(e) => {
-                panic!("Failed to create order for closed market test: {:?}", e);
+                panic!("Failed to create order for closed market test: {e:?}");
             }
         }
     });
@@ -387,7 +387,7 @@ fn test_update_position() {
                             (closed_epic, details)
                         }
                         Err(e) => {
-                            panic!("Both open and closed market requests failed: {:?}", e);
+                            panic!("Both open and closed market requests failed: {e:?}");
                         }
                     }
                 }

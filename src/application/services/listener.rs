@@ -69,7 +69,7 @@ where
         T: Display + Debug,
     {
         Self::new(|data| {
-            debug!("Mock trade callback received: {}", data);
+            debug!("Mock trade callback received: {data}");
             Ok(())
         })
     }
@@ -83,7 +83,7 @@ where
         let data: T = T::from(update);
 
         match self.callback(&data) {
-            Ok(_) => debug!("{}", data),
+            Ok(_) => debug!("{data}"),
             Err(e) => error!("Error in trade data callback: {}", e),
         }
     }
