@@ -10,7 +10,7 @@ use lightstreamer_rs::subscription::{Snapshot, Subscription, SubscriptionMode};
 use lightstreamer_rs::utils::setup_signal_hook;
 use std::sync::Arc;
 use tokio::sync::{Mutex, Notify};
-use tracing::{ error, info, warn};
+use tracing::{error, info, warn};
 
 const MAX_CONNECTION_ATTEMPTS: u64 = 3;
 
