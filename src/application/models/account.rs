@@ -8,6 +8,8 @@ use crate::application::models::market::InstrumentType;
 use crate::impl_json_display;
 use crate::presentation::MarketState;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::ops::Add;
 
 /// Account information
 #[derive(Debug, Clone, Deserialize)]
@@ -262,6 +264,34 @@ pub struct Positions {
     pub positions: Vec<Position>,
 }
 
+impl Positions {
+    /// Compact positions by epic, combining positions with the same epic
+    ///
+    /// This method takes a vector of positions and returns a new vector where
+    /// positions with the same epic have been combined into a single position.
+    ///
+    /// # Arguments
+    /// * `positions` - A vector of positions to compact
+    ///
+    /// # Returns
+    /// A vector of positions with unique epics
+    pub fn compact_by_epic(positions: Vec<Position>) -> Vec<Position> {
+        let mut epic_map: HashMap<String, Position> = std::collections::HashMap::new();
+
+        for position in positions {
+            let epic = position.market.epic.clone();
+            epic_map
+                .entry(epic)
+                .and_modify(|existing| {
+                    *existing = existing.clone() + position.clone();
+                })
+                .or_insert(position);
+        }
+
+        epic_map.into_values().collect()
+    }
+}
+
 /// Individual position
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Position {
@@ -271,6 +301,26 @@ pub struct Position {
     pub market: PositionMarket,
     /// Profit and loss for the position
     pub pnl: Option<f64>,
+}
+
+impl Add for Position {
+    type Output = Position;
+
+    fn add(self, other: Position) -> Position {
+        if self.market.epic != other.market.epic {
+            panic!("Cannot add positions from different markets");
+        }
+        Position {
+            position: self.position + other.position,
+            market: self.market,
+            pnl: match (self.pnl, other.pnl) {
+                (Some(a), Some(b)) => Some(a + b),
+                (Some(a), None) => Some(a),
+                (None, Some(b)) => Some(b),
+                (None, None) => None,
+            },
+        }
+    }
 }
 
 /// Details of a position
@@ -317,6 +367,42 @@ pub struct PositionDetails {
     /// Premium paid for limited risk
     #[serde(rename = "limitedRiskPremium")]
     pub limited_risk_premium: Option<f64>,
+}
+
+impl Add for PositionDetails {
+    type Output = PositionDetails;
+
+    fn add(self, other: PositionDetails) -> PositionDetails {
+        let (contract_size, size) = if self.direction != other.direction {
+            (
+                (self.contract_size - other.contract_size).abs(),
+                (self.size - other.size).abs(),
+            )
+        } else {
+            (
+                self.contract_size + other.contract_size,
+                self.size + other.size,
+            )
+        };
+
+        PositionDetails {
+            contract_size,
+            created_date: self.created_date,
+            created_date_utc: self.created_date_utc,
+            deal_id: self.deal_id,
+            deal_reference: self.deal_reference,
+            direction: self.direction,
+            limit_level: other.limit_level.or(self.limit_level),
+            level: (self.level + other.level) / 2.0, // Average level
+            size,
+            stop_level: other.stop_level.or(self.stop_level),
+            trailing_step: other.trailing_step.or(self.trailing_step),
+            trailing_stop_distance: other.trailing_stop_distance.or(self.trailing_stop_distance),
+            currency: self.currency.clone(),
+            controlled_risk: self.controlled_risk || other.controlled_risk,
+            limited_risk_premium: other.limited_risk_premium.or(self.limited_risk_premium),
+        }
+    }
 }
 
 /// Market information for a position
