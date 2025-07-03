@@ -575,4 +575,11 @@ pub struct AccountTransaction {
     pub cash_transaction: bool,
 }
 
-impl_json_display!(AccountTransaction);
+impl_json_display!(
+    Positions,
+    Position,
+    AccountTransaction,
+    MarketData,
+    PositionDetails,
+    PositionMarket
+);
