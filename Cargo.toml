@@ -1,6 +1,6 @@
 [package]
 name = "ig-client"
-version = "0.1.16"
+version = "0.1.17"
 edition = "2024"
 authors = ["Joaquin Bejar <jb@taunais.com>"]
 description = "This crate provides a client for the IG Markets API"
@@ -42,6 +42,7 @@ lightstreamer-rs = { workspace = true}
 once_cell = { workspace = true}
 lazy_static = { workspace = true}
 rand = { workspace = true}
+nanoid = { workspace = true}
 
 [dev-dependencies]
 assert-json-diff = "2.0"

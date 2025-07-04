@@ -234,6 +234,12 @@ impl CreateOrderRequest {
             Some("EUR".to_string())
         };
 
+        let deal_reference = if deal_reference.is_none() {
+            &Some(nanoid::nanoid!(30, &nanoid::alphabet::SAFE))
+        } else {
+            deal_reference
+        };
+
         Self {
             epic: epic.clone(),
             direction: Direction::Sell,
@@ -304,7 +310,11 @@ impl CreateOrderRequest {
         } else {
             Some("EUR".to_string())
         };
-
+        let deal_reference = if deal_reference.is_none() {
+            &Some(nanoid::nanoid!(30, &nanoid::alphabet::SAFE))
+        } else {
+            deal_reference
+        };
         Self {
             epic: epic.clone(),
             direction: Direction::Sell,
@@ -356,6 +366,11 @@ impl CreateOrderRequest {
             Some(code.clone())
         } else {
             Some("EUR".to_string())
+        };
+        let deal_reference = if deal_reference.is_none() {
+            &Some(nanoid::nanoid!(30, &nanoid::alphabet::SAFE))
+        } else {
+            deal_reference
         };
         Self {
             epic: epic.clone(),
@@ -420,6 +435,11 @@ impl CreateOrderRequest {
             Some(code.clone())
         } else {
             Some("EUR".to_string())
+        };
+        let deal_reference = if deal_reference.is_none() {
+            &Some(nanoid::nanoid!(30, &nanoid::alphabet::SAFE))
+        } else {
+            deal_reference
         };
         Self {
             epic: epic.clone(),
