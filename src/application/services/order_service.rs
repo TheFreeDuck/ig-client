@@ -118,7 +118,7 @@ impl<T: IgHttpClient + 'static> OrderService for OrderServiceImpl<T> {
         session: &IgSession,
         close_request: &ClosePositionRequest,
     ) -> Result<ClosePositionResponse, AppError> {
-        println!("{}", serde_json::to_string(close_request)?);
+        info!("{}", serde_json::to_string(close_request)?);
         let result = self
             .client
             .request::<ClosePositionRequest, ClosePositionResponse>(
