@@ -258,7 +258,7 @@ pub struct ActivityAction {
 }
 
 /// Open positions
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct Positions {
     /// List of open positions
     pub positions: Vec<Position>,
