@@ -67,7 +67,6 @@ name = "benchmarks"
 harness = false
 path = "benches/benchmarks.rs"
 
-
 [workspace]
 members = [
     "examples/account",
