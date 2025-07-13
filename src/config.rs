@@ -8,8 +8,8 @@ use sqlx::postgres::PgPoolOptions;
 use std::env;
 use std::fmt::Debug;
 use std::str::FromStr;
-use tracing::log::debug;
 use tracing::error;
+use tracing::log::debug;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 /// Authentication credentials for the IG Markets API
