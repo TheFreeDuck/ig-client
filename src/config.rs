@@ -133,7 +133,7 @@ impl Config {
         // Explicitly load the .env file
         match dotenv() {
             Ok(_) => debug!("Successfully loaded .env file"),
-            Err(e) => warn!("Failed to load .env file: {}", e),
+            Err(e) => debug!("Failed to load .env file: {}", e),
         }
 
         // Check if environment variables are configured
