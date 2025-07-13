@@ -41,4 +41,3 @@ Licensed under MIT license
 ## Disclaimer
 
 This software is not officially associated with IG Markets. Trading financial instruments carries risk, and this library is provided as-is without any guarantees. Always test thoroughly with a demo account before using in a live trading environment.
-
