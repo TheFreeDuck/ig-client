@@ -9,7 +9,7 @@ use std::env;
 use std::fmt::Debug;
 use std::str::FromStr;
 use tracing::log::debug;
-use tracing::{error, warn};
+use tracing::error;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 /// Authentication credentials for the IG Markets API
@@ -133,7 +133,7 @@ impl Config {
         // Explicitly load the .env file
         match dotenv() {
             Ok(_) => debug!("Successfully loaded .env file"),
-            Err(e) => debug!("Failed to load .env file: {}", e),
+            Err(e) => debug!("Failed to load .env file: {e}"),
         }
 
         // Check if environment variables are configured
