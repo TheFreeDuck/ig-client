@@ -14,7 +14,6 @@
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://docs.rs/ig-client)
 [![Wiki](https://img.shields.io/badge/wiki-latest-blue.svg)](https://deepwiki.com/joaquinbejar/ig-client)
 
-
 ## IG Markets API Client for Rust
 
 A comprehensive Rust client for interacting with the IG Markets trading API. This library provides a type-safe and ergonomic way to access IG Markets' REST and WebSocket APIs for trading and market data retrieval.
@@ -516,8 +515,6 @@ Contributions are welcome! Here's how you can contribute:
 6. Submit a pull request
 
 Please make sure your code passes all tests and linting checks before submitting a pull request.
-
-
 
 ## Contribution and Contact
 
