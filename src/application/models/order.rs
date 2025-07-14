@@ -7,7 +7,7 @@ use crate::impl_json_display;
 use serde::{Deserialize, Deserializer, Serialize};
 
 //const DEFAULT_ORDER_SELL_SIZE: f64 = 0.0;
-const DEFAULT_ORDER_BUY_SIZE: f64 = 10000.0;
+//const DEFAULT_ORDER_BUY_SIZE: f64 = 10000.0;
 
 /// Order direction (buy or sell)
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
