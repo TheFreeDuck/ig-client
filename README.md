@@ -50,7 +50,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-ig-client = "0.1.20"
+ig-client = {git ="https://github.com/TheFreeDuck/ig-client", branch = "main"}
 tokio = { version = "1", features = ["full"] }  # For async runtime
 dotenv = "0.15"                                 # For environment variable loading
 tracing = "0.1"                                # For logging
