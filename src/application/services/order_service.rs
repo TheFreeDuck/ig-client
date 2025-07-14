@@ -122,7 +122,7 @@ impl<T: IgHttpClient + 'static> OrderService for OrderServiceImpl<T> {
         let result = self
             .client
             .request::<ClosePositionRequest, ClosePositionResponse>(
-                Method::DELETE,
+                Method::POST,
                 "positions/otc",
                 session,
                 Some(close_request),
