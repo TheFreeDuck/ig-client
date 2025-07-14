@@ -16,7 +16,9 @@
 
 ## IG Markets API Client for Rust
 
-A comprehensive Rust client for interacting with the IG Markets trading API. This library provides a type-safe and ergonomic way to access IG Markets' REST and WebSocket APIs for trading and market data retrieval. I have forked this repo beacuse i could not get positions to close. I am not sure why but i had to change the CreateOrderRequest and CloseOrderRequest structs to work with the api
+A comprehensive Rust client for interacting with the IG Markets trading API. This library provides a type-safe and ergonomic way to access IG Markets' REST and WebSocket APIs for trading and market data retrieval. 
+
+I have forked this repo beacuse i could not get positions to close. I am not sure why but i had to change the CreateOrderRequest and CloseOrderRequest structs to work with the api
 
 ### Overview
 
