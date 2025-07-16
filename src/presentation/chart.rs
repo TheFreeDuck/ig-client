@@ -163,6 +163,89 @@ pub struct ChartFields {
     candle_tick_count: Option<f64>,
 }
 
+impl ChartFields {
+    pub fn last_traded_volume(&self) -> Option<f64> {
+        self.last_traded_volume
+    }
+    pub fn incremental_trading_volume(&self) -> Option<f64> {
+        self.incremental_trading_volume
+    }
+    pub fn update_time(&self) -> Option<f64> {
+        self.update_time
+    }
+    pub fn day_open_mid(&self) -> Option<f64> {
+        self.day_open_mid
+    }
+    pub fn day_net_change_mid(&self) -> Option<f64> {
+        self.day_net_change_mid
+    }
+    pub fn day_percentage_change_mid(&self) -> Option<f64> {
+        self.day_percentage_change_mid
+    }
+    pub fn day_high(&self) -> Option<f64> {
+        self.day_high
+    }
+    pub fn day_low(&self) -> Option<f64> {
+        self.day_low
+    }
+
+    pub fn bid(&self) -> Option<f64> {
+        self.bid
+    }
+    pub fn offer(&self) -> Option<f64> {
+        self.offer
+    }
+    pub fn last_traded_price(&self) -> Option<f64> {
+        self.last_traded_price
+    }
+
+    pub fn offer_open(&self) -> Option<f64> {
+        self.offer_open
+    }
+    pub fn offer_high(&self) -> Option<f64> {
+        self.offer_high
+    }
+    pub fn offer_low(&self) -> Option<f64> {
+        self.offer_low
+    }
+    pub fn offer_close(&self) -> Option<f64> {
+        self.offer_close
+    }
+
+    pub fn bid_open(&self) -> Option<f64> {
+        self.bid_open
+    }
+    pub fn bid_high(&self) -> Option<f64> {
+        self.bid_high
+    }
+    pub fn bid_low(&self) -> Option<f64> {
+        self.bid_low
+    }
+    pub fn bid_close(&self) -> Option<f64> {
+        self.bid_close
+    }
+
+    pub fn ltp_open(&self) -> Option<f64> {
+        self.ltp_open
+    }
+    pub fn ltp_high(&self) -> Option<f64> {
+        self.ltp_high
+    }
+    pub fn ltp_low(&self) -> Option<f64> {
+        self.ltp_low
+    }
+    pub fn ltp_close(&self) -> Option<f64> {
+        self.ltp_close
+    }
+
+    pub fn candle_end(&self) -> Option<f64> {
+        self.candle_end
+    }
+    pub fn candle_tick_count(&self) -> Option<f64> {
+        self.candle_tick_count
+    }
+}
+
 impl ChartData {
     /// Converts a Lightstreamer ItemUpdate to a ChartData object
     ///
