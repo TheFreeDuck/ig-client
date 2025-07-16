@@ -301,7 +301,7 @@ impl ChartData {
         &self.fields
     }
 
-    pub fn raw_fields_map(&self) -> &HashMap<String, Option<String>> {
+    pub fn get_raw_fields_map(&self) -> &HashMap<String, Option<String>> {
         &self.raw_fields
     }
 }
