@@ -29,6 +29,7 @@ pub struct ChartData {
     scale: ChartScale, // Derived from the item name or the {scale} field
     fields: ChartFields,
     changed_fields: ChartFields,
+    raw_fields: HashMap<String, Option<String>>,
     is_snapshot: bool,
 }
 
@@ -202,7 +203,7 @@ impl ChartData {
         } else {
             ChartScale::default()
         };
-
+        let raw_fields = item_update.fields.clone();
         // Convert item_pos from usize to i32
         let item_pos = item_update.item_pos as i32;
 
@@ -226,6 +227,7 @@ impl ChartData {
             fields,
             changed_fields,
             is_snapshot,
+            raw_fields,
         })
     }
 
@@ -297,6 +299,10 @@ impl ChartData {
     }
     pub fn get_fields(&self) -> &ChartFields {
         &self.fields
+    }
+
+    pub fn raw_fields_map(&self) -> &HashMap<String, Option<String>> {
+        &self.raw_fields
     }
 }
 
