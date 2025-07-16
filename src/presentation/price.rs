@@ -258,6 +258,147 @@ pub struct PriceFields {
     #[serde(default)]
     dealing_flag: Option<DealingFlag>,
 }
+impl PriceFields {
+    pub fn mid_open(&self) -> Option<f64> {
+        self.mid_open
+    }
+    pub fn high(&self) -> Option<f64> {
+        self.high
+    }
+    pub fn low(&self) -> Option<f64> {
+        self.low
+    }
+
+    pub fn bid_quote_id(&self) -> Option<&str> {
+        self.bid_quote_id.as_deref()
+    }
+    pub fn ask_quote_id(&self) -> Option<&str> {
+        self.ask_quote_id.as_deref()
+    }
+
+    pub fn bid_price1(&self) -> Option<f64> {
+        self.bid_price1
+    }
+    pub fn bid_price2(&self) -> Option<f64> {
+        self.bid_price2
+    }
+    pub fn bid_price3(&self) -> Option<f64> {
+        self.bid_price3
+    }
+    pub fn bid_price4(&self) -> Option<f64> {
+        self.bid_price4
+    }
+    pub fn bid_price5(&self) -> Option<f64> {
+        self.bid_price5
+    }
+
+    pub fn ask_price1(&self) -> Option<f64> {
+        self.ask_price1
+    }
+    pub fn ask_price2(&self) -> Option<f64> {
+        self.ask_price2
+    }
+    pub fn ask_price3(&self) -> Option<f64> {
+        self.ask_price3
+    }
+    pub fn ask_price4(&self) -> Option<f64> {
+        self.ask_price4
+    }
+    pub fn ask_price5(&self) -> Option<f64> {
+        self.ask_price5
+    }
+
+    pub fn bid_size1(&self) -> Option<f64> {
+        self.bid_size1
+    }
+    pub fn bid_size2(&self) -> Option<f64> {
+        self.bid_size2
+    }
+    pub fn bid_size3(&self) -> Option<f64> {
+        self.bid_size3
+    }
+    pub fn bid_size4(&self) -> Option<f64> {
+        self.bid_size4
+    }
+    pub fn bid_size5(&self) -> Option<f64> {
+        self.bid_size5
+    }
+
+    pub fn ask_size1(&self) -> Option<f64> {
+        self.ask_size1
+    }
+    pub fn ask_size2(&self) -> Option<f64> {
+        self.ask_size2
+    }
+    pub fn ask_size3(&self) -> Option<f64> {
+        self.ask_size3
+    }
+    pub fn ask_size4(&self) -> Option<f64> {
+        self.ask_size4
+    }
+    pub fn ask_size5(&self) -> Option<f64> {
+        self.ask_size5
+    }
+
+    pub fn currency0(&self) -> Option<&str> {
+        self.currency0.as_deref()
+    }
+    pub fn currency1(&self) -> Option<&str> {
+        self.currency1.as_deref()
+    }
+    pub fn currency2(&self) -> Option<&str> {
+        self.currency2.as_deref()
+    }
+    pub fn currency3(&self) -> Option<&str> {
+        self.currency3.as_deref()
+    }
+    pub fn currency4(&self) -> Option<&str> {
+        self.currency4.as_deref()
+    }
+    pub fn currency5(&self) -> Option<&str> {
+        self.currency5.as_deref()
+    }
+
+    pub fn c1_bid_size(&self) -> Option<f64> {
+        self.c1_bid_size
+    }
+    pub fn c2_bid_size(&self) -> Option<f64> {
+        self.c2_bid_size
+    }
+    pub fn c3_bid_size(&self) -> Option<f64> {
+        self.c3_bid_size
+    }
+    pub fn c4_bid_size(&self) -> Option<f64> {
+        self.c4_bid_size
+    }
+    pub fn c5_bid_size(&self) -> Option<f64> {
+        self.c5_bid_size
+    }
+
+    pub fn c1_ask_size(&self) -> Option<f64> {
+        self.c1_ask_size
+    }
+    pub fn c2_ask_size(&self) -> Option<f64> {
+        self.c2_ask_size
+    }
+    pub fn c3_ask_size(&self) -> Option<f64> {
+        self.c3_ask_size
+    }
+    pub fn c4_ask_size(&self) -> Option<f64> {
+        self.c4_ask_size
+    }
+    pub fn c5_ask_size(&self) -> Option<f64> {
+        self.c5_ask_size
+    }
+
+    pub fn timestamp(&self) -> Option<f64> {
+        self.timestamp
+    }
+
+    pub fn dealing_flag(&self) -> Option<&DealingFlag> {
+        self.dealing_flag.as_ref()
+    }
+}
 
 impl_json_display!(PriceFields);
 
