@@ -295,6 +295,9 @@ impl ChartData {
     pub fn get_scale(&self) -> &ChartScale {
         &self.scale
     }
+    pub fn get_fields(&self) -> &ChartFields {
+        &self.fields
+    }
 }
 
 impl fmt::Display for ChartData {
